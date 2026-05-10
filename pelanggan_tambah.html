@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spincyle Laundry - Add Customer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* =========================================
+           CSS Murni: Replikasi UI Mobile
+        ========================================= */
+        :root {
+            --bg-color: #A9C9F1; /* Warna latar belakang biru muda dari gambar */
+            --card-color: #FFFFFF;
+            --text-main: #333333;
+            --text-sub: #757575;
+            --input-bg: #F5F5F5;
+            --input-border: #E0E0E0;
+            --btn-blue: #15428F; /* Warna biru tua tombol Save */
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #eaeaea; /* Latar desktop agar HP menonjol */
+            display: flex;
+            justify-content: center; /* Tengahkan simulasi HP */
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* 1. CONTAINER SIMULASI LAYAR HP */
+        .mobile-screen {
+            background-color: var(--bg-color);
+            width: 375px; /* Lebar standar mobile */
+            height: 750px; /* Tinggi standar mobile */
+            border-radius: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden; /* Agar konten tidak keluar sudut lengkung */
+            display: flex;
+            flex-direction: column;
+            border: 10px solid #333; /* Simulasi bezel HP */
+            position: relative;
+        }
+
+        /* 2. HEADER AREA */
+        .header {
+            padding: 20px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #15428F; /* Warna teks biru tua header */
+            font-weight: bold;
+        }
+        .header .title {
+            font-size: 18px;
+        }
+        .header .avatar img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+        }
+
+        /* 3. JUDUL AREA */
+        .title-area {
+            padding: 0 25px 20px 25px;
+        }
+        .title-area h1 {
+            font-size: 28px;
+            color: #15428F;
+            margin-bottom: 5px;
+        }
+        .title-area p {
+            font-size: 12px;
+            color: #15428F;
+            opacity: 0.8;
+            line-height: 1.4;
+        }
+
+        /* 4. FORM CARD (Rounded White Section) */
+        .form-card {
+            background-color: var(--card-color);
+            flex: 1; /* Isi sisa ruang ke bawah */
+            border-top-left-radius: 30px;
+            border-top-right-radius: 30px;
+            padding: 30px 25px;
+            box-shadow: var(--shadow);
+            overflow-y: auto; /* Jika form panjang bisa scroll dalam card */
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 70px; /* Ruang untuk bottom nav */
+        }
+
+        /* 5. STYLING INPUT GROUPS */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+        
+        /* Container untuk Input + Ikon */
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            color: #bdbdbd; /* Warna ikon abu-abu */
+            font-size: 14px;
+        }
+        .input-wrapper input {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 14px 14px 14px 45px; /* Padding kiri lebih besar untuk ikon */
+            font-size: 14px;
+            color: var(--text-main);
+            outline: none;
+            transition: 0.2s;
+        }
+        .input-wrapper input::placeholder {
+            color: #bdbdbd;
+        }
+        .input-wrapper input:focus {
+            border-color: #3498db;
+            background-color: #fff;
+        }
+
+        /* Area Teks Khusus (Address) */
+        .input-wrapper textarea {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            padding: 14px 14px 14px 45px;
+            font-size: 14px;
+            color: var(--text-main);
+            outline: none;
+            resize: none;
+            height: 60px;
+        }
+
+        /* 6. TOMBOL ACTION AREA */
+        .action-area {
+            margin-top: auto; /* Dorong tombol ke paling bawah card */
+            padding-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-cancel {
+            background: none;
+            border: none;
+            color: #757575;
+            font-size: 14px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-save {
+            width: 100%;
+            background-color: var(--btn-blue);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 10px rgba(21, 66, 143, 0.3);
+            transition: 0.3s;
+        }
+        .btn-save:hover {
+            opacity: 0.9;
+        }
+
+        /* 7. BOTTOM NAVIGATION BAR */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #F8FAFC;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 0 10px;
+        }
+        .nav-item {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 9px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .nav-item i {
+            font-size: 18px;
+        }
+        .nav-item.active {
+            color: #15428F;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-screen">
+        
+        <div class="header">
+            <i class="fas fa-arrow-left"></i>
+            <span class="title">Spincyle Laundry</span>
+            <div class="avatar">
+                <img src="https://via.placeholder.com/150/ff9999/ffffff?text=U" alt="User">
+            </div>
+        </div>
+
+        <div class="title-area">
+            <h1>Add Customer</h1>
+            <p>Isi form di bawah untuk menambahkan pelanggan baru</p>
+        </div>
+
+        <div class="form-card">
+            
+            <div class="form-group">
+                <label>Name (Required)</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="name" placeholder="Justin Dean" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Phone (Required)</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-phone-alt"></i>
+                    <input type="text" id="phone" placeholder="+62 xxx-xxxx-xxxx" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" placeholder="justindean@yahoo.co.id">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Address</label>
+                <div class="input-wrapper">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <textarea id="address" placeholder="Planet Bekasi" required></textarea>
+                </div>
+            </div>
+
+            <div class="action-area">
+                <button class="btn-cancel" onclick="window.history.back()">Cancel</button>
+                <button class="btn-save" onclick="simpanData()">
+                    <i class="fas fa-id-card"></i> Save Customer
+                </button>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item">
+                <i class="fas fa-file-invoice"></i>
+                <span>ORDERS</span>
+            </div>
+            <div class="nav-item active">
+                <i class="fas fa-users"></i>
+                <span>CUSTOMERS</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>REPORTS</span>
+            </div>
+            <div class="nav-item">
+                <i class="fas fa-cog"></i>
+                <span>SETTINGS</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        /* =========================================
+           JAVASCRIPT: LOGIKANYA TETAP SAMA
+        ========================================= */
+        const apiUrl = 'http://localhost:3000/api/pelanggan';
+
+        async function simpanData() {
+            // Mengambil data berdasarkan ID input baru yang kita buat
+            const data = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value,
+                email: document.getElementById('email').value
+            };
+
+            // Validasi sederhana (sesuai gambar: required)
+            if(!data.name || !data.phone || !data.address) return alert("Mohon isi Nama, WhatsApp, dan Alamat!");
+
+            try {
+                // Menembak data ke backend yang sedang menyala
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+                if (result.status === 'SUKSES') {
+                    alert(result.pesan);
+                    resetForm();
+                    // Optional: Kembali ke halaman daftar pelanggan
+                    // window.location.href = 'pelanggan_daftar.html'; 
+                }
+            } catch (error) {
+                alert("Terjadi kesalahan sistem saat menyimpan!");
+            }
+        }
+
+        function resetForm() {
+            document.getElementById('name').value = '';
+            document.getElementById('phone').value = '';
+            document.getElementById('address').value = '';
+            document.getElementById('email').value = '';
+        }
+    </script>
+</body>
+</html>

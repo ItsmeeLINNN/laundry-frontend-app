@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS Kasir - Lather & Linen</title>
+    <style>
+        /* CSS Murni untuk Tampilan Card yang Modern */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        /* Grid Container untuk menampung kartu-kartu */
+        .katalog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        /* Desain Kartu Layanan */
+        .card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border-left: 5px solid #3498db;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .card-price {
+            font-size: 20px;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .card-type {
+            font-size: 12px;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Katalog Layanan Lather & Linen</h2>
+    
+    <div class="katalog-grid" id="katalog-container">
+        <p style="text-align: center; color: #7f8c8d; grid-column: 1 / -1;">Sedang memuat data dari server...</p>
+    </div>
+
+    <script>
+        // JAVASCRIPT MURNI (Vanilla JS)
+        // Fungsi untuk mengambil data dari Backend Node.js
+        async function ambilDataLayanan() {
+            try {
+                // 1. Menghubungi API Backend yang sedang menyala di port 3000
+                const response = await fetch('http://localhost:3000/api/layanan');
+                
+                // 2. Mengubah balasan server menjadi JSON
+                const hasil = await response.json();
+                
+                // 3. Menangkap elemen container di HTML
+                const container = document.getElementById('katalog-container');
+                
+                if (hasil.status === 'SUKSES') {
+                    // Kosongkan tulisan "Sedang memuat..."
+                    container.innerHTML = ''; 
+
+                    // 4. Melakukan Looping (perulangan) untuk setiap data layanan
+                    hasil.data.forEach(layanan => {
+                        // Merapikan format uang (Contoh: 6000.00 menjadi Rp 6.000)
+                        const hargaRupiah = new Intl.NumberFormat('id-ID', {
+                            style: 'currency', currency: 'IDR', minimumFractionDigits: 0
+                        }).format(layanan.harga);
+
+                        // Membedakan nama untuk item khusus (seperti Selimut/Tas)
+                        const namaTampil = layanan.item_name ? layanan.item_name : layanan.service_name;
+
+                        // Membuat elemen HTML untuk Kartu
+                        const cardHTML = `
+                            <div class="card" onclick="alert('Kamu memilih layanan: ${namaTampil}')">
+                                <div class="card-title">${namaTampil}</div>
+                                <div class="card-price">${hargaRupiah}</div>
+                                <div class="card-type">${layanan.satuan}</div>
+                            </div>
+                        `;
+                        
+                        // Memasukkan kartu ke dalam container di layar
+                        container.innerHTML += cardHTML;
+                    });
+                }
+            } catch (error) {
+                console.error("Gagal mengambil data:", error);
+                document.getElementById('katalog-container').innerHTML = 
+                    `<p style="color:red; text-align:center; grid-column: 1 / -1;">Gagal memuat data. Pastikan server Node.js menyala.</p>`;
+            }
+        }
+
+        // Jalankan fungsi saat halaman web pertama kali dibuka
+        window.onload = ambilDataLayanan;
+    </script>
+
+</body>
+</html>
