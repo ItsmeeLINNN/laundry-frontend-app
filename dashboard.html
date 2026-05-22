@@ -208,7 +208,7 @@
                 }
 
                 // B. Tarik Data Pesanan Terbaru (API Pesanan yang sudah ada)
-                const resOrder = await fetch('https://laundry-backend-api-production.up.railway.app/api/pesanan.html');
+                const resOrder = await fetch('https://laundry-backend-api-production.up.railway.app/api/pesanan');
                 const resultOrder = await resOrder.json();
                 
                 const containerRecent = document.getElementById('recent-orders-container');
