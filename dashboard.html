@@ -196,7 +196,7 @@
         async function muatDataDashboard() {
             try {
                 // A. Tarik Data Statistik (API Dashboard)
-                const resDash = await fetch('https://laundry-backend-api-production.up.railway.app/api/dashboard.html');
+                const resDash = await fetch('https://laundry-backend-api-production.up.railway.app/api/dashboard');
                 const resultDash = await resDash.json();
 
                 if (resultDash.status === 'SUKSES') {
