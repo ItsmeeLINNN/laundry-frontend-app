@@ -208,7 +208,7 @@
             btn.disabled = true;
 
             try {
-                const response = await fetch('http://localhost:3000/api/pesanan', {
+                const response = await fetch('laundry-backend-api-production.up.railway.app', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)

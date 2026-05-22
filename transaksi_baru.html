@@ -122,7 +122,7 @@
         async function muatDataAwal() {
             try {
                 // Fetch Pelanggan
-                const resPelanggan = await fetch('http://localhost:3000/api/pelanggan');
+                const resPelanggan = await fetch('laundry-backend-api-production.up.railway.app');
                 const dataPelanggan = await resPelanggan.json();
                 let htmlPelanggan = '<option value="">-- Pilih Nama Pelanggan --</option>';
                 
@@ -136,7 +136,7 @@
                 document.getElementById('pilih-pelanggan').innerHTML = htmlPelanggan;
 
                 // Fetch Layanan
-                const resLayanan = await fetch('http://localhost:3000/api/layanan');
+                const resLayanan = await fetch('laundry-backend-api-production.up.railway.app');
                 const dataLayanan = await resLayanan.json();
                 
                 let htmlKiloan = ''; let htmlSatuan = '';
