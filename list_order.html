@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spincycle - Daftar Pesanan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* CSS Tema Spincycle */
+        :root { --dark-blue: #15428F; --light-blue: #9BB8EA; --text-main: #333333; --text-sub: #757575; --warning: #f59e0b; --success: #10B981; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .mobile-screen { background: linear-gradient(180deg, #ffffff 0%, #e6f0fa 100%); width: 375px; height: 750px; border-radius: 30px; box-shadow: 0 15px 45px rgba(21, 66, 143, 0.15); border: 10px solid #333; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+
+        .header { padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header i { font-size: 18px; color: var(--dark-blue); cursor: pointer; }
+        .header h2 { font-size: 18px; color: var(--dark-blue); font-weight: bold; }
+        
+        .scrollable-content { flex: 1; overflow-y: auto; padding: 0 20px 80px 20px; scrollbar-width: none; }
+        .scrollable-content::-webkit-scrollbar { display: none; }
+        
+        .title-area { margin-bottom: 20px; }
+        .title-area h1 { font-size: 24px; color: var(--dark-blue); margin-bottom: 4px; }
+        .title-area p { font-size: 11px; color: var(--text-sub); }
+
+        /* Order Cards */
+        .order-card { background: white; border-radius: 15px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.03); border-top: 4px solid var(--light-blue); }
+        .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed #eee; }
+        .nota-badge { font-size: 10px; font-weight: bold; background: #f0f4f8; color: var(--dark-blue); padding: 4px 8px; border-radius: 6px; }
+        .status-badge { font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 20px; }
+        .status-proses { background: #fef3c7; color: #d97706; }
+        .status-selesai { background: #d1fae5; color: #059669; }
+
+        .order-body { display: flex; gap: 15px; align-items: center; margin-bottom: 12px; }
+        .customer-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--light-blue); color: var(--dark-blue); display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 16px; }
+        .order-info h3 { font-size: 14px; color: var(--text-main); margin-bottom: 2px; }
+        .order-info p { font-size: 11px; color: var(--text-sub); margin-bottom: 4px; }
+        .order-total { font-size: 13px; font-weight: bold; color: var(--dark-blue); }
+
+        .btn-action { width: 100%; background: var(--dark-blue); color: white; border: none; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-action:active { transform: scale(0.98); }
+
+        .bottom-nav { position: absolute; bottom: 0; width: 100%; background-color: white; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #eee; z-index: 10; }
+        .nav-item { text-align: center; color: #94a3b8; font-size: 9px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+        .nav-item i { font-size: 18px; }
+        .nav-item.active { color: var(--dark-blue); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-screen">
+        <div class="header">
+            <i class="fas fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
+            <h2>Pesanan Aktif</h2>
+            <div style="width: 18px;"></div>
+        </div>
+
+        <div class="scrollable-content">
+            <div class="title-area">
+                <h1>Daftar Transaksi</h1>
+                <p>Pantau riwayat dan status cucian pelanggan</p>
+            </div>
+
+            <div id="order-list-container">
+                <p style="text-align: center; font-size: 12px; color: #888; margin-top: 30px;">
+                    <i class="fas fa-spinner fa-spin"></i> Memuat data pesanan...
+                </p>
+            </div>
+        </div> 
+
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fas fa-home"></i><span>BERANDA</span></div>
+            <div class="nav-item active" onclick="window.location.href='list_order.html'"><i class="fas fa-file-alt"></i><span>PESANAN</span></div>
+            <div class="nav-item" onclick="window.location.href='pelanggan_tambah.html'"><i class="fas fa-users"></i><span>CUSTOMERS</span></div>
+            <div class="nav-item" onclick="window.location.href='profile.html'"><i class="fas fa-user-circle"></i><span>PROFILE</span></div>
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost:3000/api/pesanan';
+
+        // 1. Ambil Data Pesanan dari Database
+        async function muatDaftarPesanan() {
+            try {
+                const response = await fetch(apiUrl);
+                const result = await response.json();
+                const container = document.getElementById('order-list-container');
+                container.innerHTML = '';
+
+                if (result.data.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; font-size:12px; color:#aaa; padding-top:20px;">Belum ada transaksi.</p>';
+                    return;
+                }
+
+                result.data.forEach(order => {
+                    // Format Tanggal (Misal: 15 Mei 2024)
+                    const tgl = new Date(order.tanggal_order).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                    // Format Uang
+                    const totalRp = new Intl.NumberFormat('id-ID').format(order.total_tagihan);
+                    
+                    // Setel warna status
+                    const isProses = order.status === 'Proses';
+                    const statusClass = isProses ? 'status-proses' : 'status-selesai';
+                    const inisial = order.nama_pelanggan ? order.nama_pelanggan.charAt(0).toUpperCase() : 'U';
+
+                    // Hanya tampilkan tombol "Selesai" jika statusnya masih proses
+                    const actionBtn = isProses 
+                        ? `<button class="btn-action" onclick="tandaiSelesai(${order.id}, '${order.nomor_nota}')"><i class="fas fa-check"></i> Tandai Selesai</button>` 
+                        : '';
+
+                    container.innerHTML += `
+                        <div class="order-card">
+                            <div class="order-header">
+                                <span class="nota-badge"><i class="fas fa-receipt"></i> ${order.nomor_nota}</span>
+                                <span class="status-badge ${statusClass}">${order.status}</span>
+                            </div>
+                            <div class="order-body">
+                                <div class="customer-avatar">${inisial}</div>
+                                <div class="order-info">
+                                    <h3>${order.nama_pelanggan}</h3>
+                                    <p>${tgl} • ${order.metode_pembayaran}</p>
+                                    <div class="order-total">Rp ${totalRp}</div>
+                                </div>
+                            </div>
+                            ${actionBtn}
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                document.getElementById('order-list-container').innerHTML = 
+                    '<p style="color:red; text-align:center; font-size:12px;">Gagal terhubung ke database.</p>';
+            }
+        }
+
+        // 2. Ubah Status ke Selesai
+        async function tandaiSelesai(id, nota) {
+            if(confirm(`Tandai cucian nota ${nota} sudah selesai?`)) {
+                try {
+                    const response = await fetch(`${apiUrl}/${id}/status`, { method: 'PUT' });
+                    const result = await response.json();
+                    
+                    if (result.status === 'SUKSES') {
+                        muatDaftarPesanan(); // Refresh data di layar
+                    } else {
+                        alert(result.pesan);
+                    }
+                } catch (error) {
+                    alert('Gagal mengubah status. Periksa koneksi server.');
+                }
+            }
+        }
+
+        // Jalankan saat layar dibuka
+        window.onload = muatDaftarPesanan;
+    </script>
+</body>
+</html>

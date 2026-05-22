@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spincycle Laundry - Profil Pengguna</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* CSS Tema Gradasi Biru-Putih Spincycle */
+        :root {
+            --dark-blue: #15428F; --light-blue: #9BB8EA;
+            --text-main: #333333; --text-sub: #757575;
+            --input-bg: #F5F5F5; --danger: #e74c3c;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+        body { background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .mobile-screen { background: linear-gradient(180deg, #ffffff 0%, #e6f0fa 100%); width: 375px; height: 750px; border-radius: 30px; box-shadow: 0 15px 45px rgba(21, 66, 143, 0.15); border: 10px solid #333; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+
+        .header { padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header i { font-size: 18px; color: var(--dark-blue); cursor: pointer; }
+        .header h2 { font-size: 18px; color: var(--dark-blue); font-weight: bold; }
+        .header .ghost-icon { width: 18px; }
+
+        .scrollable-content { flex: 1; overflow-y: auto; padding: 0 20px 20px 20px; scrollbar-width: none; }
+        .scrollable-content::-webkit-scrollbar { display: none; }
+
+        .profile-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; margin-top: 10px; }
+        .avatar-container { width: 90px; height: 90px; border-radius: 50%; background-color: var(--light-blue); color: var(--dark-blue); display: flex; justify-content: center; align-items: center; font-size: 35px; font-weight: bold; margin-bottom: 10px; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
+        .profile-header h3 { font-size: 18px; color: var(--dark-blue); margin-bottom: 2px; }
+        .profile-header p { font-size: 12px; color: var(--text-sub); font-weight: bold; }
+
+        .form-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 15px; border-top: 4px solid var(--dark-blue); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 10px; font-weight: bold; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; }
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        .input-wrapper i { position: absolute; left: 15px; color: #bdbdbd; font-size: 13px; }
+        .input-wrapper input { width: 100%; background-color: var(--input-bg); border: 1px solid #eee; border-radius: 10px; padding: 12px 12px 12px 40px; font-size: 13px; color: var(--text-main); outline: none; }
+        .input-wrapper input:disabled { background-color: #e9ecef; color: #888; }
+
+        /* MENU ROW KHUSUS ADMIN */
+        .menu-row { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: var(--input-bg); border-radius: 12px; cursor: pointer; transition: 0.2s; border: 1px solid #eee; }
+        .menu-row:active { background: #e0e0e0; }
+        .menu-info { display: flex; align-items: center; gap: 15px; }
+        .menu-info i { color: var(--dark-blue); font-size: 18px; width: 20px; text-align: center; }
+        .menu-text h4 { font-size: 13px; color: var(--dark-blue); margin-bottom: 2px; font-weight: bold; }
+        .menu-text p { font-size: 10px; color: var(--text-sub); }
+
+        .btn-logout { width: 100%; background-color: #fff0f0; color: var(--danger); border: 1px solid #fadbd8; border-radius: 10px; padding: 14px; font-size: 13px; font-weight: bold; cursor: pointer; margin-top: 10px; margin-bottom: 20px; }
+
+        .bottom-nav { background-color: white; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #eee; z-index: 10; }
+        .nav-item { text-align: center; color: #94a3b8; font-size: 9px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+        .nav-item i { font-size: 18px; }
+        .nav-item.active { color: var(--dark-blue); font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-screen">
+        <div class="header">
+            <i class="fas fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
+            <h2>User Profile</h2>
+            <div class="ghost-icon"></div> 
+        </div>
+
+        <div class="scrollable-content">
+            
+            <div class="profile-header">
+                <div class="avatar-container" id="avatar-inisial">U</div>
+                <h3 id="display-name">Memuat nama...</h3>
+                <p id="display-role">Memuat akses...</p>
+            </div>
+
+            <div class="form-card" id="admin-menu" style="display: none; border-top-color: var(--warning);">
+                <div style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase;">
+                    <i class="fas fa-tools" style="margin-right: 5px;"></i> Pengaturan Toko
+                </div>
+                
+                <div class="menu-row" onclick="window.location.href='layanan.html'">
+                    <div class="menu-info">
+                        <i class="fas fa-tags"></i>
+                        <div class="menu-text">
+                            <h4>Manajemen Layanan & Harga</h4>
+                            <p>Tambah/Hapus katalog harga laundry</p>
+                        </div>
+                    </div>
+                    <i class="fas fa-chevron-right" style="color:#ccc; font-size:14px;"></i>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <div class="form-group">
+                    <label>Fullname</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" id="input-fullname" disabled>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Hak Akses (Role)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user-shield"></i>
+                        <input type="text" id="input-role" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-logout" onclick="logoutSistem()">
+                <i class="fas fa-sign-out-alt" style="margin-right: 6px;"></i> Keluar Akun
+            </button>
+
+        </div> 
+
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fas fa-home"></i><span>BERANDA</span></div>
+            <div class="nav-item" onclick="window.location.href='list_order.html'"><i class="fas fa-file-alt"></i><span>PESANAN</span></div>
+            <div class="nav-item" onclick="window.location.href='pelanggan_tambah.html'"><i class="fas fa-users"></i><span>CUSTOMERS</span></div>
+            <div class="nav-item active" onclick="window.location.href='profile.html'"><i class="fas fa-user-circle"></i><span>PROFILE</span></div>
+        </div>
+
+    </div>
+
+    <script>
+        window.onload = function() {
+            // Ambil data user yang sedang login dari memori browser
+            const nama = localStorage.getItem('nama_kasir') || 'Pengguna Tidak Dikenal';
+            const role = localStorage.getItem('role_kasir') || 'Karyawan';
+
+            // Setel Tampilan Profil
+            document.getElementById('display-name').innerText = nama;
+            document.getElementById('display-role').innerText = role === 'Admin' ? 'Pemilik (Admin)' : 'Kasir (Karyawan)';
+            document.getElementById('avatar-inisial').innerText = nama.charAt(0).toUpperCase();
+
+            // Setel Form Input (Read-Only)
+            document.getElementById('input-fullname').value = nama;
+            document.getElementById('input-role').value = role;
+
+            // Logika RBAC Visual: Munculkan menu pengaturan Layanan JIKA Admin
+            if(role === 'Admin') {
+                document.getElementById('admin-menu').style.display = 'block';
+            }
+        };
+
+        function logoutSistem() {
+            if(confirm("Apakah Anda yakin ingin keluar dari aplikasi?")) {
+                // Hapus sesi login
+                localStorage.removeItem('nama_kasir');
+                localStorage.removeItem('role_kasir');
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+</body>
+</html>

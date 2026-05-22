@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spincycle - Pembayaran</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* CSS Tema Gradasi Biru-Putih Spincycle */
+        :root { --dark-blue: #15428F; --light-blue: #9BB8EA; --badge-blue: #88B0E6; --bg-card: #E2E4E5; --text-main: #333333; --text-sub: #666666; --success: #10B981; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .mobile-screen { background: linear-gradient(180deg, #ffffff 0%, #e6f0fa 100%); width: 375px; height: 750px; border-radius: 30px; box-shadow: 0 15px 45px rgba(21, 66, 143, 0.15); border: 10px solid #333; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+
+        .header { padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header i { font-size: 18px; color: var(--dark-blue); cursor: pointer; }
+        .header h2 { font-size: 18px; color: var(--dark-blue); font-weight: bold; }
+        
+        .progress-container { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; }
+        .progress-step { height: 6px; width: 40px; background-color: #DFDFDF; border-radius: 5px; }
+        .progress-step.active { background-color: var(--badge-blue); }
+
+        .scrollable-content { flex: 1; overflow-y: auto; padding: 0 20px 20px 20px; scrollbar-width: none; }
+        .scrollable-content::-webkit-scrollbar { display: none; }
+        
+        .total-card { background-color: var(--dark-blue); border-radius: 15px; padding: 25px 20px; text-align: center; color: white; margin-bottom: 20px; box-shadow: 0 10px 20px rgba(21, 66, 143, 0.2); }
+        .total-card p { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; margin-bottom: 5px; }
+        .total-card h1 { font-size: 32px; font-weight: bold; }
+
+        .section-title { font-size: 14px; color: var(--dark-blue); font-weight: bold; margin-bottom: 12px; }
+        .payment-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .payment-method { background: white; border: 2px solid transparent; border-radius: 12px; padding: 15px 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: 0.2s; }
+        .payment-method i { font-size: 20px; color: var(--text-sub); }
+        .payment-method span { font-size: 11px; font-weight: bold; color: var(--text-main); }
+        .payment-method.active { border-color: var(--dark-blue); background-color: #F0F4F8; }
+        .payment-method.active i, .payment-method.active span { color: var(--dark-blue); }
+
+        .cash-section { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); display: block; margin-bottom: 25px;}
+        .input-group label { display: block; font-size: 11px; color: var(--text-sub); font-weight: bold; margin-bottom: 6px; }
+        .input-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; font-weight: bold; color: var(--dark-blue); outline: none; background: #f9f9f9; margin-bottom: 15px;}
+        .input-group input:focus { border-color: var(--light-blue); background: white; }
+        .change-display { background: var(--bg-card); padding: 15px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .change-display span { font-size: 12px; color: var(--text-sub); font-weight: bold; }
+        .change-display h3 { font-size: 18px; color: var(--success); }
+
+        .btn-bayar { width: 100%; background-color: var(--success); color: white; border: none; padding: 18px; border-radius: 12px; font-weight: bold; font-size: 15px; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); transition: 0.2s; }
+        .btn-bayar:disabled { background-color: #a7d9c5; cursor: not-allowed; }
+        .btn-bayar:active:not(:disabled) { transform: scale(0.98); }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-screen">
+        <div class="header">
+            <i class="fas fa-arrow-left" onclick="window.history.back()"></i>
+            <h2>Pembayaran</h2>
+            <div style="width: 18px;"></div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-step"></div>
+            <div class="progress-step"></div>
+            <div class="progress-step active"></div>
+        </div>
+
+        <div class="scrollable-content">
+            <div class="total-card">
+                <p>Total Tagihan</p>
+                <h1 id="tampil-total">Rp 0</h1>
+            </div>
+
+            <div class="section-title">Metode Pembayaran</div>
+            <div class="payment-grid">
+                <div class="payment-method active" onclick="pilihMetode(this, 'Tunai')">
+                    <i class="fas fa-money-bill-wave"></i><span>Tunai</span>
+                </div>
+                <div class="payment-method" onclick="pilihMetode(this, 'QRIS')">
+                    <i class="fas fa-qrcode"></i><span>QRIS</span>
+                </div>
+                <div class="payment-method" onclick="pilihMetode(this, 'Transfer')">
+                    <i class="fas fa-university"></i><span>Transfer</span>
+                </div>
+            </div>
+
+            <div class="cash-section" id="form-tunai">
+                <div class="input-group">
+                    <label>Jumlah Uang Diterima (Rp)</label>
+                    <input type="number" id="uang-diterima" placeholder="Contoh: 100000" onkeyup="hitungKembalian()">
+                </div>
+                <div class="change-display">
+                    <span>Kembalian:</span>
+                    <h3 id="uang-kembalian">Rp 0</h3>
+                </div>
+            </div>
+
+            <div class="cash-section" id="form-qris" style="display: none; text-align: center;">
+                <p style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 10px;">Scan QRIS di Bawah Ini</p>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" alt="QRIS" style="width: 150px; height: 150px; border-radius: 10px; border: 2px solid #eee; padding: 5px;">
+                <p style="font-size: 12px; color: var(--dark-blue); font-weight: bold; margin-top: 10px;">A.n. Spincycle Laundry</p>
+            </div>
+
+            <div class="cash-section" id="form-transfer" style="display: none; text-align: center;">
+                <p style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 10px;">Transfer ke Rekening Berikut</p>
+                <div style="background: var(--bg-card); padding: 15px; border-radius: 10px;">
+                    <h3 style="color: var(--dark-blue); margin-bottom: 5px;">BCA - 1234567890</h3>
+                    <p style="font-size: 12px; color: var(--text-main); font-weight: bold;">A.n. Andra Kubaik Achmad</p>
+                </div>
+                <p style="font-size: 10px; color: var(--warning); margin-top: 10px;">*Pastikan saldo sudah masuk sebelum klik Bayar</p>
+            </div>
+
+            <button class="btn-bayar" id="btn-submit" onclick="prosesPembayaran()">
+                <i class="fas fa-check-circle" style="margin-right: 8px;"></i> Bayar Sekarang
+            </button>
+        </div> 
+    </div>
+
+    <script>
+        // Variabel global untuk menampung data dari LocalStorage
+        let totalTagihan = 0;
+        let metodeTerpilih = 'Tunai';
+        let pelangganId = null;
+        let dataKeranjang = [];
+        let namaKasir = "Sistem"; // Default fallback
+
+        window.onload = function() {
+            // Ambil data memori
+            totalTagihan = parseInt(localStorage.getItem('trx_total')) || 0;
+            pelangganId = localStorage.getItem('trx_pelanggan_id');
+            const keranjangRaw = localStorage.getItem('trx_keranjang');
+            namaKasir = localStorage.getItem('nama_kasir') || "Sistem";
+
+            // Validasi data tidak boleh kosong
+            if (!totalTagihan || !pelangganId || !keranjangRaw) {
+                alert("Data pesanan hilang! Mengembalikan ke menu awal.");
+                window.location.href = 'transaksi_baru.html';
+                return;
+            }
+
+            dataKeranjang = JSON.parse(keranjangRaw);
+
+            // Tampilkan total ke layar
+            document.getElementById('tampil-total').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalTagihan);
+            
+            // Set input default uang pas
+            document.getElementById('uang-diterima').value = totalTagihan;
+        };
+
+        function pilihMetode(elemen, metode) {
+            document.querySelectorAll('.payment-method').forEach(btn => btn.classList.remove('active'));
+            elemen.classList.add('active');
+            metodeTerpilih = metode;
+
+            const formTunai = document.getElementById('form-tunai');
+            const formQris = document.getElementById('form-qris');
+            const formTransfer = document.getElementById('form-transfer');
+
+            // Reset semua tampilan
+            formTunai.style.display = 'none';
+            formQris.style.display = 'none';
+            formTransfer.style.display = 'none';
+
+            // Munculkan sesuai pilihan
+            if(metode === 'Tunai') {
+                formTunai.style.display = 'block';
+                document.getElementById('uang-diterima').value = totalTagihan;
+                hitungKembalian();
+            } else if (metode === 'QRIS') {
+                formQris.style.display = 'block';
+            } else if (metode === 'Transfer') {
+                formTransfer.style.display = 'block';
+            }
+        }
+
+        function hitungKembalian() {
+            const uangDiterima = parseInt(document.getElementById('uang-diterima').value) || 0;
+            let kembalian = uangDiterima - totalTagihan;
+            if (kembalian < 0) kembalian = 0;
+
+            document.getElementById('uang-kembalian').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(kembalian);
+        }
+
+        async function prosesPembayaran() {
+            let uangDiterimaFinal = totalTagihan;
+            let uangKembalianFinal = 0;
+
+            if (metodeTerpilih === 'Tunai') {
+                uangDiterimaFinal = parseInt(document.getElementById('uang-diterima').value) || 0;
+                if (uangDiterimaFinal < totalTagihan) {
+                    alert("Uang yang diterima kasir kurang dari total tagihan!");
+                    return;
+                }
+                uangKembalianFinal = uangDiterimaFinal - totalTagihan;
+            }
+
+            // Paket data yang akan dikirim ke Node.js
+            const payload = {
+                pelanggan_id: pelangganId,
+                nama_kasir: namaKasir,
+                metode_pembayaran: metodeTerpilih,
+                total_tagihan: totalTagihan,
+                uang_diterima: uangDiterimaFinal,
+                uang_kembalian: uangKembalianFinal,
+                keranjang: dataKeranjang
+            };
+
+            const btn = document.getElementById('btn-submit');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses Data...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/pesanan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'SUKSES') {
+                    alert(`🎉 Transaksi Berhasil!\n\nNota: ${result.nomor_nota}\nMetode: ${metodeTerpilih}\nKembalian: Rp ${uangKembalianFinal}`);
+                    
+                    // Bersihkan memori keranjang agar bersih untuk pelanggan selanjutnya
+                    localStorage.removeItem('trx_pelanggan_id');
+                    localStorage.removeItem('trx_pelanggan_nama');
+                    localStorage.removeItem('trx_keranjang');
+                    localStorage.removeItem('trx_total');
+
+                    // Kembali ke Dashboard Utama
+                    window.location.href = 'dashboard.html';
+                } else {
+                    alert("Gagal: " + result.pesan);
+                }
+            } catch (error) {
+                alert("Gagal terhubung ke database server Node.js!");
+            } finally {
+                btn.innerHTML = '<i class="fas fa-check-circle"></i> Bayar Sekarang';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>

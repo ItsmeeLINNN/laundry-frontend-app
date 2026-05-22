@@ -181,8 +181,9 @@
         <div class="content-wrapper">
             
             <div class="header-top">
-                <div class="logo-box">
-                    <i class="fas fa-soap"></i> </div>
+                <div style="margin-bottom: 15px;">
+                    <img src="Logo4.png" alt="Logo Spincycle" style="width: 100px; height: auto; border-radius: 18px; box-shadow: 0 0px 0px rgba(0,0,0,0.1);">
+                </div>
                 <div class="welcome-text">
                     welcome to,<br>spincycle laundry
                 </div>
@@ -190,7 +191,8 @@
 
             <div id="form-login" class="form-section">
                 <div class="mid-text">
-                    <h2>Ayo login biar<br>cucianmu cepet beres</h2>
+                    <h2></h2>
+                    <h2>Langsung Login kan</h2>
                     <p>Lengkapi data dirimu dulu ya</p>
                 </div>
 
@@ -208,36 +210,6 @@
                         <input type="checkbox"> Remember Me
                     </label>
                     <a href="#">Lupa Password?</a>
-                </div>
-
-                <div class="footer-link">
-                    Belum punya akun? <span onclick="switchForm('register')">Daftar di sini!</span>
-                </div>
-            </div>
-
-            <div id="form-register" class="form-section hidden">
-                <div class="mid-text">
-                    <h2>Daftar sebentar,<br>hemat waktu seharian.</h2>
-                    <p>Lengkapi data dirimu dulu ya</p>
-                </div>
-
-                <div class="input-group">
-                    <input type="text" id="reg-username" placeholder="Username">
-                </div>
-                <div class="input-group">
-                    <input type="password" id="reg-password" placeholder="Password">
-                </div>
-                <div class="input-group">
-                    <input type="text" id="reg-phone" placeholder="Phone Number">
-                </div>
-                <div class="input-group">
-                    <input type="text" id="reg-address" placeholder="Address">
-                </div>
-
-                <button class="btn-submit" onclick="prosesDaftar()">Daftar</button>
-
-                <div class="footer-link">
-                    Sudah punya akun? <span onclick="switchForm('login')">Masuk di sini!</span>
                 </div>
             </div>
 
@@ -264,7 +236,8 @@
         }
 
         // Simulasi fungsi Login yang akan dikonek ke Node.js nanti
-        function prosesLogin() {
+        // Simulasi fungsi Login yang terhubung ke Dashboard
+async function prosesLogin() {
             const user = document.getElementById('login-username').value;
             const pass = document.getElementById('login-password').value;
 
@@ -273,29 +246,37 @@
                 return;
             }
 
-            // Nanti di sini kita pasang fungsi fetch() ke backend API/login
-            alert(`Proses login untuk: ${user}\n\n(Nanti ini akan dicek ke database MySQL)`);
-            
-            // Jika berhasil login, pindah ke halaman kasir/dashboard
-            // window.location.href = 'pelanggan_tambah.html';
+            try {
+                // Tembak API Node.js secara Real-Time
+                const response = await fetch('http://localhost:3000/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'SUKSES') {
+                    // Simpan Fullname dan Role (Admin/Karyawan) asli dari MySQL ke memori browser
+                    localStorage.setItem('nama_kasir', result.data.fullname);
+                    localStorage.setItem('role_kasir', result.data.role);
+
+                    alert(`Login Berhasil!\nSelamat datang, ${result.data.fullname} [${result.data.role}]`);
+                    
+                    // Pindah ke Dashboard
+                    window.location.href = 'dashboard.html';
+                } else {
+                    // Tampilkan pesan gagal dari backend
+                    alert(`Gagal Masuk: ${result.pesan}`);
+                }
+
+            } catch (error) {
+                alert("Gagal terhubung ke server Node.js. Pastikan 'node server.js' sudah dinyalakan di terminal!");
+                console.error(error);
+            }
         }
 
         // Simulasi fungsi Daftar yang akan dikonek ke Node.js nanti
-        function prosesDaftar() {
-            const user = document.getElementById('reg-username').value;
-            const phone = document.getElementById('reg-phone').value;
-
-            if(!user || !phone) {
-                alert("Semua data wajib diisi!");
-                return;
-            }
-
-            // Nanti di sini kita pasang fungsi fetch() ke backend API/users
-            alert(`Pendaftaran berhasil untuk: ${user}!\nSilakan login menggunakan akun baru.`);
-            
-            // Otomatis pindah ke form login setelah daftar sukses
-            switchForm('login');
-        }
     </script>
 </body>
 </html>

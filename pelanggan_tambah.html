@@ -3,355 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spincyle Laundry - Add Customer</title>
+    <title>Spincycle Laundry - Customers CRUD</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* =========================================
-           CSS Murni: Replikasi UI Mobile
-        ========================================= */
+        /* CSS Tema Gradasi Biru-Putih Spincycle */
         :root {
-            --bg-color: #A9C9F1; /* Warna latar belakang biru muda dari gambar */
-            --card-color: #FFFFFF;
+            --dark-blue: #15428F;
+            --light-blue: #9BB8EA;
             --text-main: #333333;
             --text-sub: #757575;
             --input-bg: #F5F5F5;
-            --input-border: #E0E0E0;
-            --btn-blue: #15428F; /* Warna biru tua tombol Save */
-            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --danger: #e74c3c;
+            --warning: #f39c12;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
 
         body {
-            background-color: #eaeaea; /* Latar desktop agar HP menonjol */
-            display: flex;
-            justify-content: center; /* Tengahkan simulasi HP */
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); 
+            display: flex; justify-content: center; align-items: center;
+            min-height: 100vh; padding: 20px;
         }
 
-        /* 1. CONTAINER SIMULASI LAYAR HP */
         .mobile-screen {
-            background-color: var(--bg-color);
-            width: 375px; /* Lebar standar mobile */
-            height: 750px; /* Tinggi standar mobile */
-            border-radius: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            overflow: hidden; /* Agar konten tidak keluar sudut lengkung */
-            display: flex;
-            flex-direction: column;
-            border: 10px solid #333; /* Simulasi bezel HP */
-            position: relative;
+            background: linear-gradient(180deg, #ffffff 0%, #e6f0fa 100%);
+            width: 375px; height: 750px; border-radius: 30px;
+            box-shadow: 0 15px 45px rgba(21, 66, 143, 0.15); 
+            border: 10px solid #333; position: relative; display: flex; flex-direction: column; overflow: hidden;
         }
 
-        /* 2. HEADER AREA */
-        .header {
-            padding: 20px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #15428F; /* Warna teks biru tua header */
-            font-weight: bold;
-        }
-        .header .title {
-            font-size: 18px;
-        }
-        .header .avatar img {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-        }
-
-        /* 3. JUDUL AREA */
-        .title-area {
-            padding: 0 25px 20px 25px;
-        }
-        .title-area h1 {
-            font-size: 28px;
-            color: #15428F;
-            margin-bottom: 5px;
-        }
-        .title-area p {
-            font-size: 12px;
-            color: #15428F;
-            opacity: 0.8;
-            line-height: 1.4;
-        }
-
-        /* 4. FORM CARD (Rounded White Section) */
-        .form-card {
-            background-color: var(--card-color);
-            flex: 1; /* Isi sisa ruang ke bawah */
-            border-top-left-radius: 30px;
-            border-top-right-radius: 30px;
-            padding: 30px 25px;
-            box-shadow: var(--shadow);
-            overflow-y: auto; /* Jika form panjang bisa scroll dalam card */
-            display: flex;
-            flex-direction: column;
-            padding-bottom: 70px; /* Ruang untuk bottom nav */
-        }
-
-        /* 5. STYLING INPUT GROUPS */
-        .form-group {
-            margin-bottom: 15px;
-        }
-        .form-group label {
-            display: block;
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 6px;
-        }
+        .header { padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header i { font-size: 18px; color: var(--dark-blue); cursor: pointer; }
+        .header h2 { font-size: 18px; color: var(--dark-blue); font-weight: bold; }
         
-        /* Container untuk Input + Ikon */
-        .input-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-        .input-wrapper i {
-            position: absolute;
-            left: 15px;
-            color: #bdbdbd; /* Warna ikon abu-abu */
-            font-size: 14px;
-        }
+        .scrollable-content { flex: 1; overflow-y: auto; padding: 0 20px 20px 20px; scrollbar-width: none; }
+        .scrollable-content::-webkit-scrollbar { display: none; }
+        
+        .title-area { margin-bottom: 15px; }
+        .title-area h1 { font-size: 24px; color: var(--dark-blue); margin-bottom: 4px; }
+        .title-area p { font-size: 11px; color: var(--dark-blue); opacity: 0.8; }
+
+        /* FORM INPUT */
+        .form-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 25px; border-top: 4px solid var(--dark-blue); }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 10px; font-weight: bold; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; }
+        .input-wrapper { position: relative; display: flex; align-items: center; }
+        .input-wrapper i { position: absolute; left: 15px; color: #bdbdbd; font-size: 13px; }
         .input-wrapper input {
-            width: 100%;
-            background-color: var(--input-bg);
-            border: 1px solid var(--input-border);
-            border-radius: 12px;
-            padding: 14px 14px 14px 45px; /* Padding kiri lebih besar untuk ikon */
-            font-size: 14px;
-            color: var(--text-main);
-            outline: none;
-            transition: 0.2s;
+            width: 100%; background-color: var(--input-bg); border: 1px solid #eee;
+            border-radius: 10px; padding: 12px 12px 12px 40px; font-size: 13px; outline: none; transition: 0.3s;
         }
-        .input-wrapper input::placeholder {
-            color: #bdbdbd;
-        }
-        .input-wrapper input:focus {
-            border-color: #3498db;
-            background-color: #fff;
-        }
-
-        /* Area Teks Khusus (Address) */
-        .input-wrapper textarea {
-            width: 100%;
-            background-color: var(--input-bg);
-            border: 1px solid var(--input-border);
-            border-radius: 12px;
-            padding: 14px 14px 14px 45px;
-            font-size: 14px;
-            color: var(--text-main);
-            outline: none;
-            resize: none;
-            height: 60px;
-        }
-
-        /* 6. TOMBOL ACTION AREA */
-        .action-area {
-            margin-top: auto; /* Dorong tombol ke paling bawah card */
-            padding-top: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .btn-cancel {
-            background: none;
-            border: none;
-            color: #757575;
-            font-size: 14px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
+        .input-wrapper input:focus { border-color: var(--light-blue); background: white; }
+        
+        .button-group { display: flex; gap: 10px; margin-top: 15px; }
         .btn-save {
-            width: 100%;
-            background-color: var(--btn-blue);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            padding: 16px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 10px rgba(21, 66, 143, 0.3);
-            transition: 0.3s;
+            flex: 1; background-color: var(--dark-blue); color: white; border: none;
+            border-radius: 10px; padding: 12px; font-size: 13px; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 10px rgba(21, 66, 143, 0.15); transition: 0.2s;
         }
-        .btn-save:hover {
-            opacity: 0.9;
+        .btn-cancel {
+            display: none; background-color: white; color: var(--danger); border: 1px solid var(--danger);
+            border-radius: 10px; padding: 12px 15px; font-size: 13px; font-weight: bold; cursor: pointer;
         }
 
-        /* 7. BOTTOM NAVIGATION BAR */
-        .bottom-nav {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 60px;
-            background-color: #F8FAFC;
-            border-top: 1px solid #eee;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 0 10px;
+        /* CUSTOMER LIST */
+        .section-title { font-size: 14px; font-weight: bold; color: var(--dark-blue); margin-bottom: 12px; }
+        .customer-item {
+            background: white; padding: 12px 15px; border-radius: 12px; display: flex;
+            justify-content: space-between; align-items: center; margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
-        .nav-item {
-            text-align: center;
-            color: #94a3b8;
-            font-size: 9px;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-        .nav-item i {
-            font-size: 18px;
-        }
-        .nav-item.active {
-            color: #15428F;
-            font-weight: bold;
-        }
+        .cust-main-info { display: flex; align-items: center; gap: 12px; }
+        .cust-avatar { width: 35px; height: 35px; border-radius: 50%; background: var(--light-blue); color: var(--dark-blue); display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 14px; }
+        .cust-details h4 { font-size: 13px; color: var(--text-main); margin-bottom: 2px; }
+        .cust-details p { font-size: 10px; color: var(--text-sub); }
+        
+        .action-buttons { display: flex; gap: 8px; align-items: center; }
+        .btn-icon { background: none; border: none; font-size: 14px; cursor: pointer; padding: 5px; }
+        .btn-edit { color: var(--warning); }
+        .btn-delete { color: var(--danger); }
+        .btn-wa { background-color: #25D366; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; justify-content: center; align-items: center; text-decoration: none; font-size: 14px; margin-left: 5px; }
+
+        .bottom-nav { background-color: white; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #eee; z-index: 10; }
+        .nav-item { text-align: center; color: #94a3b8; font-size: 9px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+        .nav-item i { font-size: 18px; }
+        .nav-item.active { color: var(--dark-blue); font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="mobile-screen">
-        
         <div class="header">
-            <i class="fas fa-arrow-left"></i>
-            <span class="title">Spincyle Laundry</span>
-            <div class="avatar">
-                <img src="https://via.placeholder.com/150/ff9999/ffffff?text=U" alt="User">
-            </div>
+            <i class="fas fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
+            <h2>Data Pelanggan</h2>
+            <div style="width:18px"></div>
         </div>
 
-        <div class="title-area">
-            <h1>Add Customer</h1>
-            <p>Isi form di bawah untuk menambahkan pelanggan baru</p>
-        </div>
+        <div class="scrollable-content">
+            <div class="title-area">
+                <h1 id="form-title">Tambah Data</h1>
+                <p>Kelola buku kontak pelanggan toko</p>
+            </div>
 
-        <div class="form-card">
-            
-            <div class="form-group">
-                <label>Name (Required)</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-user"></i>
-                    <input type="text" id="name" placeholder="Justin Dean" required>
+            <div class="form-card">
+                <input type="hidden" id="cust-id" value="">
+
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="cust-name" placeholder="Contoh: Justin Dean">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Nomor WhatsApp</label>
+                    <div class="input-wrapper">
+                        <i class="fab fa-whatsapp"></i>
+                        <input type="tel" id="cust-phone" placeholder="Contoh: 08123456789">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Alamat (Opsional)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" id="cust-address" placeholder="Contoh: Jl. Sudirman No. 10">
+                    </div>
+                </div>
+                
+                <div class="button-group">
+                    <button class="btn-save" id="btn-submit" onclick="simpanPelanggan()">Simpan Pelanggan</button>
+                    <button class="btn-cancel" id="btn-cancel" onclick="batalEdit()">Batal</button>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>Phone (Required)</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-phone-alt"></i>
-                    <input type="text" id="phone" placeholder="+62 xxx-xxxx-xxxx" required>
+            <div class="section-title">Daftar Kontak</div>
+            <div id="customer-list">
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label>Email</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="email" placeholder="justindean@yahoo.co.id">
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label>Address</label>
-                <div class="input-wrapper">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <textarea id="address" placeholder="Planet Bekasi" required></textarea>
-                </div>
-            </div>
-
-            <div class="action-area">
-                <button class="btn-cancel" onclick="window.history.back()">Cancel</button>
-                <button class="btn-save" onclick="simpanData()">
-                    <i class="fas fa-id-card"></i> Save Customer
-                </button>
-            </div>
         </div>
 
         <div class="bottom-nav">
-            <div class="nav-item">
-                <i class="fas fa-file-invoice"></i>
-                <span>ORDERS</span>
-            </div>
-            <div class="nav-item active">
-                <i class="fas fa-users"></i>
-                <span>CUSTOMERS</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-chart-line"></i>
-                <span>REPORTS</span>
-            </div>
-            <div class="nav-item">
-                <i class="fas fa-cog"></i>
-                <span>SETTINGS</span>
-            </div>
+            <div class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fas fa-home"></i><span>BERANDA</span></div>
+            <div class="nav-item" onclick="window.location.href='list_order.html'"><i class="fas fa-file-alt"></i><span>PESANAN</span></div>
+            <div class="nav-item active" onclick="window.location.href='pelanggan_tambah.html'"><i class="fas fa-users"></i><span>CUSTOMERS</span></div>
+            <div class="nav-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>PROFILE</span></div>
         </div>
-
     </div>
 
     <script>
-        /* =========================================
-           JAVASCRIPT: LOGIKANYA TETAP SAMA
-        ========================================= */
         const apiUrl = 'http://localhost:3000/api/pelanggan';
 
-        async function simpanData() {
-            // Mengambil data berdasarkan ID input baru yang kita buat
-            const data = {
-                name: document.getElementById('name').value,
-                phone: document.getElementById('phone').value,
-                address: document.getElementById('address').value,
-                email: document.getElementById('email').value
-            };
-
-            // Validasi sederhana (sesuai gambar: required)
-            if(!data.name || !data.phone || !data.address) return alert("Mohon isi Nama, WhatsApp, dan Alamat!");
-
+        // 1. READ: Ambil Data
+        async function muatDaftarPelanggan() {
             try {
-                // Menembak data ke backend yang sedang menyala
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
+                const response = await fetch(apiUrl);
                 const result = await response.json();
-                if (result.status === 'SUKSES') {
-                    alert(result.pesan);
-                    resetForm();
-                    // Optional: Kembali ke halaman daftar pelanggan
-                    // window.location.href = 'pelanggan_daftar.html'; 
+                const container = document.getElementById('customer-list');
+                container.innerHTML = '';
+
+                if (result.data.length === 0) {
+                    container.innerHTML = '<p style="text-align:center; font-size:12px; color:#aaa; padding-top:10px;">Belum ada data pelanggan.</p>';
+                    return;
                 }
+
+                result.data.forEach(p => {
+                    const inisial = p.name ? p.name.charAt(0).toUpperCase() : 'C';
+                    // Escape petik tunggal pada parameter fungsi agar tidak error di HTML
+                    const safeName = p.name.replace(/'/g, "\\'"); 
+                    const safeAddress = p.address ? p.address.replace(/'/g, "\\'") : '';
+
+                    container.innerHTML += `
+                        <div class="customer-item">
+                            <div class="cust-main-info">
+                                <div class="cust-avatar">${inisial}</div>
+                                <div class="cust-details">
+                                    <h4>${p.name}</h4>
+                                    <p>${p.phone}</p>
+                                </div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn-icon btn-edit" onclick="siapkanEdit('${p.id}', '${safeName}', '${p.phone}', '${safeAddress}')"><i class="fas fa-edit"></i></button>
+                                <button class="btn-icon btn-delete" onclick="hapusPelanggan('${p.id}', '${safeName}')"><i class="fas fa-trash"></i></button>
+                                <a href="https://wa.me/${p.phone.replace(/[^0-9]/g, '')}" target="_blank" class="btn-wa"><i class="fab fa-whatsapp"></i></a>
+                            </div>
+                        </div>
+                    `;
+                });
             } catch (error) {
-                alert("Terjadi kesalahan sistem saat menyimpan!");
+                document.getElementById('customer-list').innerHTML = '<p style="color:red; text-align:center; font-size:11px;">Gagal mengambil data dari server.</p>';
             }
         }
 
-        function resetForm() {
-            document.getElementById('name').value = '';
-            document.getElementById('phone').value = '';
-            document.getElementById('address').value = '';
-            document.getElementById('email').value = '';
+        // 2. TAMPILAN FORM EDIT (Menyiapkan state)
+        function siapkanEdit(id, name, phone, address) {
+            document.getElementById('form-title').innerText = "Edit Data";
+            document.getElementById('cust-id').value = id;
+            document.getElementById('cust-name').value = name;
+            document.getElementById('cust-phone').value = phone;
+            document.getElementById('cust-address').value = address !== 'null' ? address : '';
+            
+            document.getElementById('btn-submit').innerText = "Update Pelanggan";
+            document.getElementById('btn-submit').style.backgroundColor = "var(--warning)";
+            document.getElementById('btn-cancel').style.display = "block";
+            
+            // Scroll otomatis ke atas
+            document.querySelector('.scrollable-content').scrollTo({ top: 0, behavior: 'smooth' });
         }
+
+        function batalEdit() {
+            document.getElementById('form-title').innerText = "Tambah Data";
+            document.getElementById('cust-id').value = "";
+            document.getElementById('cust-name').value = "";
+            document.getElementById('cust-phone').value = "";
+            document.getElementById('cust-address').value = "";
+            
+            document.getElementById('btn-submit').innerText = "Simpan Pelanggan";
+            document.getElementById('btn-submit').style.backgroundColor = "var(--dark-blue)";
+            document.getElementById('btn-cancel').style.display = "none";
+        }
+
+        // 3. CREATE & UPDATE (Digabung dalam 1 tombol)
+        async function simpanPelanggan() {
+            const id = document.getElementById('cust-id').value;
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const address = document.getElementById('cust-address').value;
+
+            if(!name || !phone) {
+                alert('Nama dan Nomor HP wajib diisi!');
+                return;
+            }
+
+            const btn = document.getElementById('btn-submit');
+            const originalText = btn.innerText;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Proses...';
+            btn.disabled = true;
+
+            // Jika ada ID berarti EDIT (PUT), jika kosong berarti TAMBAH (POST)
+            const method = id ? 'PUT' : 'POST';
+            const fetchUrl = id ? `${apiUrl}/${id}` : apiUrl;
+
+            try {
+                const response = await fetch(fetchUrl, {
+                    method: method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, phone, address })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'SUKSES') {
+                    alert(result.pesan);
+                    batalEdit(); // Reset form ke kondisi awal
+                    muatDaftarPelanggan(); // Refresh list
+                } else {
+                    alert(result.pesan);
+                }
+            } catch (error) {
+                alert('Terjadi kesalahan sistem!');
+            } finally {
+                btn.innerText = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        // 4. DELETE: Hapus Data
+        async function hapusPelanggan(id, name) {
+            if(confirm(`Yakin ingin menghapus pelanggan "${name}" dari sistem?`)) {
+                try {
+                    const response = await fetch(`${apiUrl}/${id}`, { method: 'DELETE' });
+                    const result = await response.json();
+                    
+                    if (result.status === 'SUKSES') {
+                        muatDaftarPelanggan(); // Refresh list jika sukses
+                    } else {
+                        alert(result.pesan);
+                    }
+                } catch (error) {
+                    alert('Gagal menghapus data.');
+                }
+            }
+        }
+
+        window.onload = muatDaftarPelanggan;
     </script>
 </body>
 </html>
