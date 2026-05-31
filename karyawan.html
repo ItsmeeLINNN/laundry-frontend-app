@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manajemen Karyawan - Spincycle Laundry</title>
+    <style>
+        /* CSS dasar agar rapi, kamu bisa sesuaikan dengan file CSS aslimu nanti */
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 800px; margin: auto; }
+        .form-group { margin-bottom: 15px; }
+        input, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        button { padding: 10px 15px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f4f4f4; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Manajemen Karyawan</h2>
+    
+    <div style="background: #f9f9f9; padding: 20px; border-radius: 5px;">
+        <h3>Tambah Karyawan Baru</h3>
+        <form id="formKaryawan">
+            <div class="form-group">
+                <label>Nama Lengkap:</label>
+                <input type="text" id="nama" required>
+            </div>
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" id="username" required>
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <input type="password" id="password" required>
+            </div>
+            <div class="form-group">
+                <label>Nomor Telepon:</label>
+                <input type="text" id="no_telepon">
+            </div>
+            <div class="form-group">
+                <label>Jabatan:</label>
+                <select id="jabatan">
+                    <option value="Kasir">Kasir</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Kurir">Kurir</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Hari Kerja (contoh: Senin-Sabtu):</label>
+                <input type="text" id="hari_kerja">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="width: 50%;">
+                    <label>Jam Masuk:</label>
+                    <input type="time" id="jam_masuk">
+                </div>
+                <div class="form-group" style="width: 50%;">
+                    <label>Jam Pulang:</label>
+                    <input type="time" id="jam_pulang">
+                </div>
+            </div>
+            <button type="submit">Simpan Karyawan</button>
+        </form>
+    </div>
+
+    <hr style="margin: 30px 0;">
+
+    <h3>Daftar & Jadwal Karyawan</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Nama</th>
+                <th>Username</th>
+                <th>Jabatan</th>
+                <th>Hari Kerja</th>
+                <th>Jam Shift</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody id="tabelKaryawan">
+            <tr><td colspan="6" style="text-align:center;">Memuat data...</td></tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // URL Backend Railway kamu
+    const API_URL = 'https://laundry-backend-api-production.up.railway.app/api/karyawan';
+
+    // 1. FUNGSI MENAMPILKAN DATA (GET)
+    async function loadDataKaryawan() {
+        try {
+            const response = await fetch(API_URL);
+            const data = await response.json();
+            
+            const tbody = document.getElementById('tabelKaryawan');
+            tbody.innerHTML = ''; // Kosongkan tabel dulu
+
+            if(data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Belum ada karyawan terdaftar</td></tr>';
+                return;
+            }
+
+            data.forEach(karyawan => {
+                const statusHtml = karyawan.status_aktif ? 
+                    '<span style="color:green; font-weight:bold;">Aktif</span>' : 
+                    '<span style="color:red;">Nonaktif</span>';
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${karyawan.nama}</td>
+                        <td>${karyawan.username}</td>
+                        <td>${karyawan.jabatan}</td>
+                        <td>${karyawan.hari_kerja || '-'}</td>
+                        <td>${karyawan.jam_masuk || '-'} s/d ${karyawan.jam_pulang || '-'}</td>
+                        <td>${statusHtml}</td>
+                    </tr>
+                `;
+            });
+        } catch (error) {
+            console.error("Gagal mengambil data:", error);
+            document.getElementById('tabelKaryawan').innerHTML = '<tr><td colspan="6" style="color:red; text-align:center;">Gagal terhubung ke server!</td></tr>';
+        }
+    }
+
+    // 2. FUNGSI MENYIMPAN DATA (POST)
+    document.getElementById('formKaryawan').addEventListener('submit', async function(e) {
+        e.preventDefault(); // Mencegah halaman me-refresh
+
+        // Ambil nilai dari inputan
+        const dataBaru = {
+            nama: document.getElementById('nama').value,
+            username: document.getElementById('username').value,
+            password: document.getElementById('password').value,
+            no_telepon: document.getElementById('no_telepon').value,
+            jabatan: document.getElementById('jabatan').value,
+            hari_kerja: document.getElementById('hari_kerja').value,
+            jam_masuk: document.getElementById('jam_masuk').value,
+            jam_pulang: document.getElementById('jam_pulang').value
+        };
+
+        try {
+            const response = await fetch(API_URL + '/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataBaru)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                alert("Berhasil: " + result.message);
+                document.getElementById('formKaryawan').reset(); // Kosongkan form
+                loadDataKaryawan(); // Refresh tabel otomatis
+            } else {
+                alert("Gagal: " + (result.error || "Terjadi kesalahan"));
+            }
+        } catch (error) {
+            alert("Error jaringan. Pastikan backend Railway menyala.");
+        }
+    });
+
+    // Jalankan fungsi load data saat halaman pertama kali dibuka
+    loadDataKaryawan();
+</script>
+
+</body>
+</html>
