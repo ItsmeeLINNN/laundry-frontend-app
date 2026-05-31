@@ -6,7 +6,6 @@
     <title>Spincycle - Beranda</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* CSS Tema Spincycle Ultimate */
         :root { 
             --dark-blue: #15428F; --light-blue: #9BB8EA; --bg-main: #f4f7fb;
             --text-main: #2d3748; --text-sub: #718096; 
@@ -17,112 +16,27 @@
         body { background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
         .mobile-screen { background: var(--bg-main); width: 375px; height: 750px; border-radius: 30px; box-shadow: 0 15px 45px rgba(21, 66, 143, 0.15); border: 10px solid #333; position: relative; overflow: hidden; display: flex; flex-direction: column; }
 
-        /* Header Premium */
-        .header { background: white; padding: 25px 20px 15px 20px; border-radius: 0 0 20px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 5; }
+        /* HEADER */
+        .header { background: white; padding: 25px 20px 15px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; }
         .user-info { display: flex; align-items: center; gap: 12px; }
-        .avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--light-blue), var(--dark-blue)); color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 16px; border: 2px solid white; box-shadow: 0 2px 8px rgba(21,66,143,0.3); }
-        .greet p { font-size: 10px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-        .greet h2 { font-size: 15px; color: var(--text-main); font-weight: 700; }
-        .btn-notif { background: #f0f4f8; border: none; width: 38px; height: 38px; border-radius: 50%; color: var(--dark-blue); font-size: 16px; cursor: pointer; position: relative; transition: 0.2s; }
-        .btn-notif:active { transform: scale(0.9); }
-        .notif-dot { position: absolute; top: 8px; right: 10px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid #f0f4f8; }
+        .avatar { width: 42px; height: 42px; border-radius: 50%; background: var(--dark-blue); color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; }
+        .greet p { font-size: 10px; color: var(--text-sub); text-transform: uppercase; }
+        .greet h2 { font-size: 15px; font-weight: 700; color: var(--text-main); }
 
-        .scrollable-content { flex: 1; overflow-y: auto; padding: 20px 20px 80px 20px; scrollbar-width: none; }
-        .scrollable-content::-webkit-scrollbar { display: none; }
-
-        /* Omset Card (Glassmorphism style) */
-        .revenue-card { background: linear-gradient(135deg, var(--dark-blue) 0%, #2a5eb5 100%); border-radius: 20px; padding: 25px 20px; color: white; margin-bottom: 25px; box-shadow: 0 10px 25px rgba(21, 66, 143, 0.25); position: relative; overflow: hidden; }
-        .revenue-card::after { content: ''; position: absolute; right: -30px; top: -30px; width: 120px; height: 120px; background: rgba(255,255,255,0.08); border-radius: 50%; }
-        .revenue-card::before { content: ''; position: absolute; right: 40px; bottom: -40px; width: 80px; height: 80px; background: rgba(255,255,255,0.05); border-radius: 50%; }
-        .rev-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; position: relative; z-index: 2; }
-        .rev-header p { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.85; }
-        .rev-badge { background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: bold; }
-        .revenue-card h1 { font-size: 28px; font-weight: 800; position: relative; z-index: 2; letter-spacing: -0.5px; }
-
-        /* Quick Actions Grid */
-        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px; }
-        .action-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; cursor: pointer; }
-        .action-icon { width: 50px; height: 50px; border-radius: 16px; background: white; display: flex; justify-content: center; align-items: center; font-size: 20px; box-shadow: var(--card-shadow); transition: 0.2s; }
-        .action-icon.blue { color: var(--dark-blue); }
-        .action-icon.green { color: var(--success); }
-        .action-icon.orange { color: var(--warning); }
-        .action-icon.purple { color: #805ad5; }
-        .action-btn:active .action-icon { transform: translateY(2px); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .action-btn span { font-size: 10px; color: var(--text-main); font-weight: 600; text-align: center; }
-
-        /* Rangkuman Statistik */
-        .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
-        .section-title { font-size: 15px; font-weight: 800; color: var(--text-main); }
-        .section-link { font-size: 11px; color: var(--dark-blue); font-weight: 600; text-decoration: none; }
-        
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
-        .stat-card { background: white; border-radius: 16px; padding: 15px; box-shadow: var(--card-shadow); display: flex; align-items: center; gap: 12px; }
-        .stat-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 18px; }
-        .stat-icon.warning { background: #fef3c7; color: var(--warning); }
-        .stat-icon.success { background: #d1fae5; color: var(--success); }
-        .stat-icon.primary { background: #e0eafc; color: var(--dark-blue); }
-        .stat-info h3 { font-size: 18px; font-weight: 800; color: var(--text-main); line-height: 1.1; }
-        .stat-info p { font-size: 10px; color: var(--text-sub); font-weight: 500; }
-
-        /* Widget Pesanan Terbaru */
-        .recent-list { display: flex; flex-direction: column; gap: 10px; }
-        .recent-item { background: white; padding: 12px 15px; border-radius: 16px; box-shadow: var(--card-shadow); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid transparent; }
-        .recent-item.proses { border-left-color: var(--warning); }
-        .recent-item.selesai { border-left-color: var(--success); }
-        .ri-left { display: flex; gap: 12px; align-items: center; }
-        .ri-icon { width: 35px; height: 35px; border-radius: 10px; background: #f0f4f8; display: flex; justify-content: center; align-items: center; color: var(--text-sub); font-size: 14px; }
-        .ri-text h4 { font-size: 13px; color: var(--text-main); margin-bottom: 2px; }
-        .ri-text p { font-size: 10px; color: var(--text-sub); }
-        .ri-right { text-align: right; }
-        .ri-price { font-size: 12px; font-weight: 700; color: var(--dark-blue); margin-bottom: 2px; }
-        .ri-status { font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 6px; }
-        .ri-status.proses { background: #fef3c7; color: #d97706; }
-        .ri-status.selesai { background: #d1fae5; color: #059669; }
-
-        /* Loader */
-        .loader-text { text-align: center; font-size: 12px; color: var(--text-sub); padding: 20px; }
-
-        /* Bottom Nav */
-        .bottom-nav { position: absolute; bottom: 0; width: 100%; background-color: white; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #eee; z-index: 10; box-shadow: 0 -5px 15px rgba(0,0,0,0.02); }
-        .nav-item { text-align: center; color: #a0aec0; font-size: 9px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; align-items: center; transition: 0.2s; }
-        .nav-item i { font-size: 20px; }
-        .nav-item.active { color: var(--dark-blue); font-weight: 700; transform: translateY(-2px); }
-    :root { 
-            --dark-blue: #15428F; --light-blue: #9BB8EA; --bg-main: #f4f7fb;
-            --text-main: #2d3748; --text-sub: #718096; 
-            --success: #10B981; --warning: #f59e0b; --danger: #e53e3e;
-            --card-shadow: 0 4px 15px rgba(0,0,0,0.03);
-        }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .mobile-screen { background: var(--bg-main); width: 375px; height: 750px; border-radius: 30px; box-shadow: 0 15px 45px rgba(21, 66, 143, 0.15); border: 10px solid #333; position: relative; overflow: hidden; display: flex; flex-direction: column; }
-        .header { background: white; padding: 25px 20px 15px 20px; border-radius: 0 0 20px 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 5; }
-        .user-info { display: flex; align-items: center; gap: 12px; }
-        .avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--light-blue), var(--dark-blue)); color: white; display: flex; justify-content: center; align-items: center; font-weight: bold; font-size: 16px; border: 2px solid white; box-shadow: 0 2px 8px rgba(21,66,143,0.3); }
-        .greet p { font-size: 10px; color: var(--text-sub); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-        .greet h2 { font-size: 15px; color: var(--text-main); font-weight: 700; }
-        .btn-notif { background: #f0f4f8; border: none; width: 38px; height: 38px; border-radius: 50%; color: var(--dark-blue); font-size: 16px; cursor: pointer; position: relative; }
-        .notif-dot { position: absolute; top: 8px; right: 10px; width: 8px; height: 8px; background: var(--danger); border-radius: 50%; border: 2px solid #f0f4f8; }
-        .scrollable-content { flex: 1; overflow-y: auto; padding: 20px 20px 80px 20px; scrollbar-width: none; }
-        .scrollable-content::-webkit-scrollbar { display: none; }
-        .revenue-card { background: linear-gradient(135deg, var(--dark-blue) 0%, #2a5eb5 100%); border-radius: 20px; padding: 25px 20px; color: white; margin-bottom: 25px; box-shadow: 0 10px 25px rgba(21, 66, 143, 0.25); position: relative; overflow: hidden; }
-        .rev-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .rev-badge { background: rgba(255,255,255,0.2); padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: bold; }
+        /* OMSET CARD */
+        .revenue-card { background: var(--dark-blue); border-radius: 20px; padding: 25px 20px; color: white; margin: 20px; }
+        .rev-header { display: flex; justify-content: space-between; margin-bottom: 8px; opacity: 0.8; font-size: 11px; }
         .revenue-card h1 { font-size: 28px; font-weight: 800; }
-        .quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 25px; }
-        .action-btn { display: flex; flex-direction: column; align-items: center; gap: 8px; text-decoration: none; cursor: pointer; }
-        .action-icon { width: 50px; height: 50px; border-radius: 16px; background: white; display: flex; justify-content: center; align-items: center; font-size: 20px; box-shadow: var(--card-shadow); }
-        .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
-        .section-title { font-size: 15px; font-weight: 800; color: var(--text-main); }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 25px; }
+
+        /* STATS GRID - FONT DIPERBAIKI */
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 0 20px 20px 20px; }
         .stat-card { background: white; border-radius: 16px; padding: 15px; box-shadow: var(--card-shadow); display: flex; align-items: center; gap: 12px; }
         .stat-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; justify-content: center; align-items: center; font-size: 18px; }
-        .recent-list { display: flex; flex-direction: column; gap: 10px; }
-        .recent-item { background: white; padding: 12px 15px; border-radius: 16px; box-shadow: var(--card-shadow); display: flex; justify-content: space-between; align-items: center; border-left: 4px solid transparent; }
-        .recent-item.proses { border-left-color: var(--warning); }
-        .recent-item.selesai { border-left-color: var(--success); }
-        .bottom-nav { position: absolute; bottom: 0; width: 100%; background-color: white; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #eee; z-index: 10; }
-        .nav-item { text-align: center; color: #a0aec0; font-size: 9px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; align-items: center; }
+        .stat-info h3 { font-size: 20px; font-weight: 800; color: var(--dark-blue); } /* Font dibuat tebal dan besar */
+        .stat-info p { font-size: 10px; font-weight: 700; color: var(--text-sub); text-transform: uppercase; } /* Label dibuat tegas */
+
+        .bottom-nav { position: absolute; bottom: 0; width: 100%; background-color: white; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #eee; }
+        .nav-item { text-align: center; color: #a0aec0; font-size: 9px; cursor: pointer; }
         .nav-item.active { color: var(--dark-blue); font-weight: 700; }
     </style>
 </head>
@@ -136,33 +50,33 @@
                     <h2 id="greet-name">Memuat...</h2>
                 </div>
             </div>
-            <button class="btn-notif"><i class="fas fa-bell"></i><div class="notif-dot"></div></button>
         </div>
+
         <div class="scrollable-content">
             <div class="revenue-card">
-                <div class="rev-header"><p>Omset Hari Ini</p><div class="rev-badge">IDR</div></div>
+                <div class="rev-header"><span>OMSET HARI INI</span><span>IDR</span></div>
                 <h1 id="dash-pendapatan">Rp 0</h1>
             </div>
-            <div class="quick-actions">
-                <a href="transaksi_baru.html" class="action-btn"><div class="action-icon" style="color:#15428F"><i class="fas fa-plus"></i></div><span>Order Baru</span></a>
-                <a href="pelanggan_tambah.html" class="action-btn"><div class="action-icon" style="color:#10B981"><i class="fas fa-user-plus"></i></div><span>Pelanggan</span></a>
-                <a href="layanan.html" class="action-btn"><div class="action-icon" style="color:#f59e0b"><i class="fas fa-tags"></i></div><span>Layanan</span></a>
-                <a href="list_order.html" class="action-btn"><div class="action-icon" style="color:#805ad5"><i class="fas fa-search-dollar"></i></div><span>Cek Nota</span></a>
-            </div>
-            <div class="section-header"><h3 class="section-title">Ringkasan Operasional</h3></div>
+
             <div class="stats-grid">
-                <div class="stat-card"><div class="stat-icon" style="background:#fef3c7; color:#f59e0b"><i class="fas fa-clock"></i></div><div><h3 id="dash-proses">0</h3><p>DIPROSES</p></div></div>
-                <div class="stat-card"><div class="stat-icon" style="background:#d1fae5; color:#10B981"><i class="fas fa-check-double"></i></div><div><h3 id="dash-selesai">0</h3><p>SELESAI</p></div></div>
-                <div class="stat-card" style="grid-column: span 2;"><div class="stat-icon" style="background:#e0eafc; color:#15428F"><i class="fas fa-users"></i></div><div><h3 id="dash-pelanggan">0</h3><p>TOTAL PELANGGAN</p></div></div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#fef3c7; color:#f59e0b"><i class="fas fa-clock"></i></div>
+                    <div class="stat-info"><h3 id="dash-proses">0</h3><p>DIPROSES</p></div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background:#d1fae5; color:#10B981"><i class="fas fa-check-double"></i></div>
+                    <div class="stat-info"><h3 id="dash-selesai">0</h3><p>SELESAI</p></div>
+                </div>
+                <div class="stat-card" style="grid-column: span 2;">
+                    <div class="stat-icon" style="background:#e0eafc; color:#15428F"><i class="fas fa-users"></i></div>
+                    <div class="stat-info"><h3 id="dash-pelanggan">0</h3><p>TOTAL PELANGGAN</p></div>
+                </div>
             </div>
-            <div class="section-header"><h3 class="section-title">Pesanan Terbaru</h3></div>
-            <div class="recent-list" id="recent-orders-container"></div>
         </div>
+
         <div class="bottom-nav">
-            <div class="nav-item active"><i class="fas fa-home"></i><span>BERANDA</span></div>
-            <div class="nav-item" onclick="window.location.href='list_order.html'"><i class="fas fa-file-alt"></i><span>PESANAN</span></div>
-            <div class="nav-item" onclick="window.location.href='pelanggan_tambah.html'"><i class="fas fa-users"></i><span>CUSTOMERS</span></div>
-            <div class="nav-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>PROFILE</span></div>
+            <div class="nav-item active"><i class="fas fa-home"></i><br>BERANDA</div>
+            <div class="nav-item" onclick="window.location.href='list_order.html'"><i class="fas fa-file-alt"></i><br>PESANAN</div>
         </div>
     </div>
 
@@ -175,39 +89,25 @@
             document.getElementById('user-initial').innerText = namaKasir.charAt(0).toUpperCase();
             
             try {
-                // Fetch Dashboard Statistik
+                console.log("Menghubungkan ke:", `${API_URL}/dashboard`);
                 const resDash = await fetch(`${API_URL}/dashboard`);
                 const resultDash = await resDash.json();
-                if(resultDash.status === 'SUKSES') {
-                    document.getElementById('dash-pendapatan').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(resultDash.data.pendapatan || 0);
-                    document.getElementById('dash-proses').innerText = resultDash.data.proses || 0;
-                    document.getElementById('dash-selesai').innerText = resultDash.data.selesai || 0;
-                    document.getElementById('dash-pelanggan').innerText = resultDash.data.pelanggan || 0;
-                }
-
-                // Fetch Pesanan Terbaru
-                const resOrder = await fetch(`${API_URL}/pesanan`);
-                const resultOrder = await resOrder.json();
-                const container = document.getElementById('recent-orders-container');
                 
-                if(resultOrder.status === 'SUKSES' && resultOrder.data.length > 0) {
-                    container.innerHTML = resultOrder.data.slice(0, 3).map(p => `
-                        <div class="recent-item ${p.status_pesanan === 'Diproses' ? 'proses' : 'selesai'}">
-                            <div class="ri-left">
-                                <div class="ri-icon"><i class="fas fa-tshirt"></i></div>
-                                <div class="ri-text">
-                                    <h4>${p.nama_pelanggan}</h4>
-                                    <p>${p.nomor_nota || 'Nota #' + p.id}</p>
-                                </div>
-                            </div>
-                            <div class="ri-right">
-                                <div class="ri-price">Rp ${new Intl.NumberFormat('id-ID').format(p.total_harga)}</div>
-                                <div class="ri-status ${p.status_pesanan === 'Diproses' ? 'proses' : 'selesai'}">${p.status_pesanan}</div>
-                            </div>
-                        </div>
-                    `).join('');
+                console.log("Data Backend:", resultDash); // <--- INI UNTUK DEBUGGING
+
+                if(resultDash.status === 'SUKSES') {
+                    const data = resultDash.data;
+                    document.getElementById('dash-pendapatan').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(data.pendapatan || 0);
+                    document.getElementById('dash-proses').innerText = data.proses || 0;
+                    document.getElementById('dash-selesai').innerText = data.selesai || 0;
+                    document.getElementById('dash-pelanggan').innerText = data.pelanggan || 0;
+                } else {
+                    console.error("Status Backend bukan SUKSES");
                 }
-            } catch(e) { console.error(e); }
+            } catch(e) { 
+                console.error("Gagal koneksi ke API:", e); 
+                alert("Gagal koneksi ke server. Cek console (F12) untuk detail.");
+            }
         };
     </script>
 </body>
