@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spincycle - Premium Dashboard</title>
+    <title>Spincycle - Beranda</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* CSS Tema Spincycle Ultimate */
@@ -88,171 +88,88 @@
         .nav-item i { font-size: 20px; }
         .nav-item.active { color: var(--dark-blue); font-weight: 700; transform: translateY(-2px); }
     </style>
+</style>
 </head>
 <body>
-
     <div class="mobile-screen">
-        
         <div class="header">
-            <div class="user-info">
-                <div class="avatar" id="user-initial">A</div>
-                <div class="greet">
-                    <p>Halo, Selamat Bekerja!</p>
-                    <h2 id="greet-name">Memuat...</h2>
-                </div>
+            <div>
+                <p style="font-size: 10px; color: var(--text-sub);">Halo, Selamat Bekerja!</p>
+                <h2 id="user-name">Memuat...</h2>
             </div>
-            <button class="btn-notif">
-                <i class="fas fa-bell"></i>
-                <div class="notif-dot"></div>
-            </button>
+            <i class="fas fa-bell"></i>
         </div>
 
         <div class="scrollable-content">
-            
-            <div class="revenue-card">
-                <div class="rev-header">
-                    <p>Omset Hari Ini</p>
-                    <div class="rev-badge">IDR</div>
-                </div>
-                <h1 id="dash-pendapatan">Rp 0</h1>
+            <div class="omset-card">
+                <h4>OMSET HARI INI</h4>
+                <h2 id="omset-val">Rp 0</h2>
             </div>
 
-            <div class="quick-actions">
-                <a href="transaksi_baru.html" class="action-btn">
-                    <div class="action-icon blue"><i class="fas fa-plus"></i></div>
-                    <span>Order Baru</span>
-                </a>
-                <a href="pelanggan_tambah.html" class="action-btn">
-                    <div class="action-icon green"><i class="fas fa-user-plus"></i></div>
-                    <span>Pelanggan</span>
-                </a>
-                <a href="layanan.html" class="action-btn">
-                    <div class="action-icon orange"><i class="fas fa-tags"></i></div>
-                    <span>Layanan</span>
-                </a>
-                <a href="list_order.html" class="action-btn">
-                    <div class="action-icon purple"><i class="fas fa-search-dollar"></i></div>
-                    <span>Cek Nota</span>
-                </a>
+            <div class="grid-summary">
+                <div class="card-summary"><p>Diproses</p><h3 id="proses-val">0</h3></div>
+                <div class="card-summary"><p>Selesai</p><h3 id="selesai-val">0</h3></div>
+                <div class="card-summary" style="grid-column: span 2;"><p>Total Pelanggan</p><h3 id="pelanggan-val">0</h3></div>
             </div>
 
-            <div class="section-header">
-                <h3 class="section-title">Ringkasan Operasional</h3>
-            </div>
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon warning"><i class="fas fa-clock"></i></div>
-                    <div class="stat-info">
-                        <h3 id="dash-proses">0</h3>
-                        <p>DIPROSES</p>
-                    </div>
+            <div class="section-title">Pesanan Terbaru</div>
+            <div id="list-pesanan-terbaru">
                 </div>
-                <div class="stat-card">
-                    <div class="stat-icon success"><i class="fas fa-check-double"></i></div>
-                    <div class="stat-info">
-                        <h3 id="dash-selesai">0</h3>
-                        <p>SELESAI</p>
-                    </div>
-                </div>
-                <div class="stat-card" style="grid-column: span 2;">
-                    <div class="stat-icon primary"><i class="fas fa-users"></i></div>
-                    <div class="stat-info">
-                        <h3 id="dash-pelanggan">0</h3>
-                        <p>TOTAL PELANGGAN TERDAFTAR</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="section-header">
-                <h3 class="section-title">Pesanan Terbaru</h3>
-                <a href="list_order.html" class="section-link">Lihat Semua <i class="fas fa-chevron-right" style="font-size: 9px;"></i></a>
-            </div>
-            <div class="recent-list" id="recent-orders-container">
-                <div class="loader-text"><i class="fas fa-spinner fa-spin"></i> Menarik data riwayat...</div>
-                </div>
-
-        </div> 
+        </div>
 
         <div class="bottom-nav">
-            <div class="nav-item active" onclick="window.location.href='dashboard.html'"><i class="fas fa-home"></i><span>BERANDA</span></div>
+            <div class="nav-item active"><i class="fas fa-home"></i><span>BERANDA</span></div>
             <div class="nav-item" onclick="window.location.href='list_order.html'"><i class="fas fa-file-alt"></i><span>PESANAN</span></div>
             <div class="nav-item" onclick="window.location.href='pelanggan_tambah.html'"><i class="fas fa-users"></i><span>CUSTOMERS</span></div>
-            <div class="nav-item" onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>PROFILE</span></div>
+            <div class="nav-item" onclick="window.location.href='profile.html'"><i class="fas fa-user-circle"></i><span>PROFILE</span></div>
         </div>
     </div>
 
     <script>
-        // 1. Set Profil User
-        const namaKasir = localStorage.getItem('nama_kasir');
-        if(!namaKasir) {
-            window.location.href = 'login.html';
-        } else {
-            const namaDepan = namaKasir.split(' ')[0];
-            document.getElementById('greet-name').innerText = namaDepan;
-            document.getElementById('user-initial').innerText = namaDepan.charAt(0).toUpperCase();
-        }
+        const API_URL = 'https://laundry-backend-api-production.up.railway.app/api';
 
-        // 2. Main Function: Ambil Statistik & Pesanan Terbaru
-        async function muatDataDashboard() {
+        window.onload = () => {
+            // 1. Tampilkan Nama User
+            document.getElementById('user-name').innerText = localStorage.getItem('nama_kasir') || 'Kasir';
+            
+            // 2. Fetch Dashboard & Pesanan
+            fetchDashboard();
+            fetchRecentOrders();
+        };
+
+        async function fetchDashboard() {
             try {
-                // A. Tarik Data Statistik (API Dashboard)
-                const resDash = await fetch('https://laundry-backend-api-production.up.railway.app/api/dashboard');
-                const resultDash = await resDash.json();
-
-                if (resultDash.status === 'SUKSES') {
-                    const data = resultDash.data;
-                    document.getElementById('dash-pendapatan').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(data.pendapatan);
-                    document.getElementById('dash-proses').innerText = data.proses;
-                    document.getElementById('dash-selesai').innerText = data.selesai;
-                    document.getElementById('dash-pelanggan').innerText = data.pelanggan;
+                const res = await fetch(`${API_URL}/dashboard`);
+                const result = await res.json();
+                if(result.status === 'SUKSES') {
+                    document.getElementById('omset-val').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(result.data.pendapatan);
+                    document.getElementById('proses-val').innerText = result.data.proses;
+                    document.getElementById('selesai-val').innerText = result.data.selesai;
+                    document.getElementById('pelanggan-val').innerText = result.data.pelanggan;
                 }
-
-                // B. Tarik Data Pesanan Terbaru (API Pesanan yang sudah ada)
-                const resOrder = await fetch('https://laundry-backend-api-production.up.railway.app/api/pesanan');
-                const resultOrder = await resOrder.json();
-                
-                const containerRecent = document.getElementById('recent-orders-container');
-                containerRecent.innerHTML = '';
-
-                if (resultOrder.status === 'SUKSES' && resultOrder.data.length > 0) {
-                    // Ambil maksimal 3 pesanan teratas (terbaru)
-                    const pesananTerbaru = resultOrder.data.slice(0, 3);
-                    
-                    pesananTerbaru.forEach(order => {
-                        const totalRp = new Intl.NumberFormat('id-ID').format(order.total_tagihan);
-                        const isProses = order.status === 'Proses';
-                        const statusClass = isProses ? 'proses' : 'selesai';
-                        const iconHtml = isProses ? '<i class="fas fa-tshirt"></i>' : '<i class="fas fa-box-open"></i>';
-
-                        containerRecent.innerHTML += `
-                            <div class="recent-item ${statusClass}">
-                                <div class="ri-left">
-                                    <div class="ri-icon">${iconHtml}</div>
-                                    <div class="ri-text">
-                                        <h4>${order.nama_pelanggan}</h4>
-                                        <p>${order.nomor_nota}</p>
-                                    </div>
-                                </div>
-                                <div class="ri-right">
-                                    <div class="ri-price">Rp ${totalRp}</div>
-                                    <div class="ri-status ${statusClass}">${order.status}</div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                } else {
-                    containerRecent.innerHTML = '<div class="loader-text">Belum ada transaksi hari ini.</div>';
-                }
-
-            } catch (error) {
-                console.error("Error:", error);
-                document.getElementById('dash-pendapatan').innerText = 'Error Koneksi';
-                document.getElementById('recent-orders-container').innerHTML = '<div class="loader-text" style="color:red;">Gagal memuat data. Server mati?</div>';
-            }
+            } catch (e) { console.error("Gagal load dashboard"); }
         }
 
-        // Eksekusi saat layar dirender
-        window.onload = muatDataDashboard;
+        async function fetchRecentOrders() {
+            try {
+                const res = await fetch(`${API_URL}/pesanan`);
+                const result = await res.json();
+                const container = document.getElementById('list-pesanan-terbaru');
+                
+                if(result.status === 'SUKSES' && result.data.length > 0) {
+                    // Tampilkan 3 transaksi terbaru saja
+                    container.innerHTML = result.data.slice(0, 3).map(p => `
+                        <div class="service-card" style="margin-bottom: 10px;">
+                            <div class="service-info">
+                                <h4>${p.nama_pelanggan}</h4>
+                                <p>${p.nomor_nota}</p>
+                            </div>
+                            <div class="item-price">Rp ${new Intl.NumberFormat('id-ID').format(p.total_tagihan)}</div>
+                        </div>
+                    `).join('');
+                }
+            } catch (e) { console.error("Gagal load pesanan"); }
+        }
     </script>
 </body>
 </html>
