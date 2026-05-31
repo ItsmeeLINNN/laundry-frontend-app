@@ -11,6 +11,7 @@
             --dark-blue: #15428F; --light-blue: #9BB8EA;
             --text-main: #333333; --text-sub: #757575;
             --input-bg: #F5F5F5; --danger: #e74c3c;
+            --warning: #f39c12;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
@@ -35,7 +36,7 @@
         .form-group label { display: block; font-size: 10px; font-weight: bold; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; }
         .input-wrapper { position: relative; display: flex; align-items: center; }
         .input-wrapper i { position: absolute; left: 15px; color: #bdbdbd; font-size: 13px; }
-        .input-wrapper input { width: 100%; background-color: var(--input-bg); border: 1px solid #eee; border-radius: 10px; padding: 12px 12px 12px 40px; font-size: 13px; color: var(--text-main); outline: none; }
+        .input-wrapper input, .input-wrapper select { width: 100%; background-color: var(--input-bg); border: 1px solid #eee; border-radius: 10px; padding: 12px 12px 12px 40px; font-size: 13px; color: var(--text-main); outline: none; appearance: none; }
         .input-wrapper input:disabled { background-color: #e9ecef; color: #888; }
 
         /* MENU ROW KHUSUS ADMIN */
@@ -46,7 +47,19 @@
         .menu-text h4 { font-size: 13px; color: var(--dark-blue); margin-bottom: 2px; font-weight: bold; }
         .menu-text p { font-size: 10px; color: var(--text-sub); }
 
+        /* BUTTONS */
         .btn-logout { width: 100%; background-color: #fff0f0; color: var(--danger); border: 1px solid #fadbd8; border-radius: 10px; padding: 14px; font-size: 13px; font-weight: bold; cursor: pointer; margin-top: 10px; margin-bottom: 20px; }
+        .btn-primary { width: 100%; background-color: var(--dark-blue); color: white; border: none; border-radius: 10px; padding: 14px; font-size: 13px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .btn-primary:active { background-color: #0c2b61; }
+
+        /* KARYAWAN LIST ITEM */
+        .karyawan-item { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
+        .karyawan-item:last-child { border-bottom: none; }
+        .karyawan-info h4 { font-size: 13px; color: var(--dark-blue); margin-bottom: 2px; }
+        .karyawan-info p { font-size: 11px; color: var(--text-sub); }
+        .karyawan-status { font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 6px; }
+        .status-aktif { background-color: #d4edda; color: #155724; }
+        .status-nonaktif { background-color: #f8d7da; color: #721c24; }
 
         .bottom-nav { background-color: white; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #eee; z-index: 10; }
         .nav-item { text-align: center; color: #94a3b8; font-size: 9px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; align-items: center; }
@@ -71,23 +84,6 @@
                 <p id="display-role">Memuat akses...</p>
             </div>
 
-            <div class="form-card" id="admin-menu" style="display: none; border-top-color: var(--warning);">
-                <div style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase;">
-                    <i class="fas fa-tools" style="margin-right: 5px;"></i> Pengaturan Toko
-                </div>
-                
-                <div class="menu-row" onclick="window.location.href='layanan.html'">
-                    <div class="menu-info">
-                        <i class="fas fa-tags"></i>
-                        <div class="menu-text">
-                            <h4>Manajemen Layanan & Harga</h4>
-                            <p>Tambah/Hapus katalog harga laundry</p>
-                        </div>
-                    </div>
-                    <i class="fas fa-chevron-right" style="color:#ccc; font-size:14px;"></i>
-                </div>
-            </div>
-
             <div class="form-card">
                 <div class="form-group">
                     <label>Fullname</label>
@@ -105,7 +101,91 @@
                 </div>
             </div>
 
-            <button class="btn-logout" onclick="logoutSistem()">
+            <div id="admin-menu" style="display: none;">
+                
+                <div class="form-card" style="border-top-color: var(--warning);">
+                    <div style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase;">
+                        <i class="fas fa-tools" style="margin-right: 5px;"></i> Pengaturan Toko
+                    </div>
+                    <div class="menu-row" onclick="window.location.href='layanan.html'">
+                        <div class="menu-info">
+                            <i class="fas fa-tags"></i>
+                            <div class="menu-text">
+                                <h4>Manajemen Layanan & Harga</h4>
+                                <p>Tambah/Hapus katalog harga laundry</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color:#ccc; font-size:14px;"></i>
+                    </div>
+                </div>
+
+                <div class="form-card">
+                    <div style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase;">
+                        <i class="fas fa-user-plus" style="margin-right: 5px;"></i> Tambah Karyawan Baru
+                    </div>
+                    <form id="formKaryawan">
+                        <div class="form-group">
+                            <label>Nama Lengkap</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="nama" placeholder="Masukkan nama..." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Username</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-at"></i>
+                                <input type="text" id="username" placeholder="Username untuk login..." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Password</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="password" placeholder="Minimal 6 karakter..." required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Jabatan</label>
+                            <div class="input-wrapper">
+                                <i class="fas fa-briefcase"></i>
+                                <select id="jabatan">
+                                    <option value="Kasir">Kasir</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Kurir">Kurir</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <div class="form-group" style="width: 50%;">
+                                <label>Jam Masuk</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-clock"></i>
+                                    <input type="time" id="jam_masuk">
+                                </div>
+                            </div>
+                            <div class="form-group" style="width: 50%;">
+                                <label>Jam Pulang</label>
+                                <div class="input-wrapper">
+                                    <i class="fas fa-clock"></i>
+                                    <input type="time" id="jam_pulang">
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-primary">Simpan Data Karyawan</button>
+                    </form>
+                </div>
+
+                <div class="form-card">
+                    <div style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase;">
+                        <i class="fas fa-users" style="margin-right: 5px;"></i> Daftar Karyawan Aktif
+                    </div>
+                    <div id="tabelKaryawan">
+                        <div style="text-align: center; font-size: 12px; color: #888; padding: 10px;">Memuat data karyawan...</div>
+                    </div>
+                </div>
+
+            </div> <button class="btn-logout" onclick="logoutSistem()">
                 <i class="fas fa-sign-out-alt" style="margin-right: 6px;"></i> Keluar Akun
             </button>
 
@@ -121,29 +201,105 @@
     </div>
 
     <script>
-        window.onload = function() {
-            // Ambil data user yang sedang login dari memori browser
-            const nama = localStorage.getItem('nama_kasir') || 'Pengguna Tidak Dikenal';
-            const role = localStorage.getItem('role_kasir') || 'Karyawan';
+        const API_URL = 'https://laundry-backend-api-production.up.railway.app/api/karyawan';
 
-            // Setel Tampilan Profil
+        window.onload = function() {
+            // Ambil data user yang sedang login
+            // (Untuk saat pengujian, ganti 'Admin' agar form muncul)
+            const nama = localStorage.getItem('nama_kasir') || 'Andra'; 
+            const role = localStorage.getItem('role_kasir') || 'Admin'; 
+
+            // Setel Tampilan Profil Utama
             document.getElementById('display-name').innerText = nama;
             document.getElementById('display-role').innerText = role === 'Admin' ? 'Pemilik (Admin)' : 'Kasir (Karyawan)';
             document.getElementById('avatar-inisial').innerText = nama.charAt(0).toUpperCase();
-
-            // Setel Form Input (Read-Only)
             document.getElementById('input-fullname').value = nama;
             document.getElementById('input-role').value = role;
 
-            // Logika RBAC Visual: Munculkan menu pengaturan Layanan JIKA Admin
+            // Jika role adalah Admin, tampilkan menu pengaturan & fetch data karyawan
             if(role === 'Admin') {
                 document.getElementById('admin-menu').style.display = 'block';
+                loadDataKaryawan(); // Jalankan fetch data
             }
         };
 
+        // Fungsi Mengambil Data (GET)
+        async function loadDataKaryawan() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                const container = document.getElementById('tabelKaryawan');
+                container.innerHTML = ''; 
+
+                if(data.length === 0) {
+                    container.innerHTML = '<div style="text-align: center; font-size: 12px; color: #888; padding: 10px;">Belum ada karyawan terdaftar</div>';
+                    return;
+                }
+
+                data.forEach(karyawan => {
+                    const statusClass = karyawan.status_aktif ? 'status-aktif' : 'status-nonaktif';
+                    const statusText = karyawan.status_aktif ? 'Aktif' : 'Nonaktif';
+                    const jamKerja = (karyawan.jam_masuk && karyawan.jam_pulang) ? `${karyawan.jam_masuk.slice(0,5)} - ${karyawan.jam_pulang.slice(0,5)}` : 'Shift belum diatur';
+
+                    container.innerHTML += `
+                        <div class="karyawan-item">
+                            <div class="karyawan-info">
+                                <h4>${karyawan.nama}</h4>
+                                <p><i class="fas fa-briefcase" style="margin-right:4px;"></i> ${karyawan.jabatan} | <i class="fas fa-clock" style="margin-right:4px; margin-left:4px;"></i> ${jamKerja}</p>
+                            </div>
+                            <div class="karyawan-status ${statusClass}">
+                                ${statusText}
+                            </div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                document.getElementById('tabelKaryawan').innerHTML = '<div style="color:red; text-align:center; font-size:12px;">Gagal memuat data dari server</div>';
+            }
+        }
+
+        // Fungsi Menyimpan Data (POST)
+        document.getElementById('formKaryawan').addEventListener('submit', async function(e) {
+            e.preventDefault(); 
+            const tombol = this.querySelector('button[type="submit"]');
+            tombol.innerText = 'Menyimpan...'; // Efek loading
+            tombol.disabled = true;
+
+            const dataBaru = {
+                nama: document.getElementById('nama').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                jabatan: document.getElementById('jabatan').value,
+                jam_masuk: document.getElementById('jam_masuk').value,
+                jam_pulang: document.getElementById('jam_pulang').value
+            };
+
+            try {
+                const response = await fetch(API_URL + '/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(dataBaru)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    alert("Karyawan berhasil didaftarkan!");
+                    document.getElementById('formKaryawan').reset();
+                    loadDataKaryawan(); // Refresh daftar otomatis
+                } else {
+                    alert("Gagal: " + (result.error || "Terjadi kesalahan"));
+                }
+            } catch (error) {
+                alert("Error jaringan. Pastikan backend Railway menyala.");
+            } finally {
+                tombol.innerText = 'Simpan Data Karyawan'; // Kembalikan tombol
+                tombol.disabled = false;
+            }
+        });
+
         function logoutSistem() {
             if(confirm("Apakah Anda yakin ingin keluar dari aplikasi?")) {
-                // Hapus sesi login
                 localStorage.removeItem('nama_kasir');
                 localStorage.removeItem('role_kasir');
                 window.location.href = 'login.html';
