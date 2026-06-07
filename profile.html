@@ -4,80 +4,524 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spincycle Laundry - Profil Pengguna</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
-        /* CSS Tema Gradasi Biru-Putih Spincycle */
         :root {
-            --dark-blue: #15428F; --light-blue: #9BB8EA;
-            --text-main: #333333; --text-sub: #757575;
-            --input-bg: #F5F5F5; --danger: #e74c3c;
+            --dark-blue: #15428F;
+            --light-blue: #9BB8EA;
+            --text-main: #333333;
+            --text-sub: #757575;
+            --input-bg: #F5F5F5;
+            --danger: #e74c3c;
             --warning: #f39c12;
+            --success: #10B981;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-        body { background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .mobile-screen { background: linear-gradient(180deg, #ffffff 0%, #e6f0fa 100%); width: 375px; height: 750px; border-radius: 30px; box-shadow: 0 15px 45px rgba(21, 66, 143, 0.15); border: 10px solid #333; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-        .header { padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .header i { font-size: 18px; color: var(--dark-blue); cursor: pointer; }
-        .header h2 { font-size: 18px; color: var(--dark-blue); font-weight: bold; }
-        .header .ghost-icon { width: 18px; }
+        body {
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-        .scrollable-content { flex: 1; overflow-y: auto; padding: 0 20px 20px 20px; scrollbar-width: none; }
-        .scrollable-content::-webkit-scrollbar { display: none; }
+        .mobile-screen {
+            background: linear-gradient(180deg, #ffffff 0%, #e6f0fa 100%);
+            width: 375px;
+            height: 750px;
+            border-radius: 30px;
+            box-shadow: 0 15px 45px rgba(21, 66, 143, 0.15);
+            border: 10px solid #333;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-        .profile-header { display: flex; flex-direction: column; align-items: center; margin-bottom: 25px; margin-top: 10px; }
-        .avatar-container { width: 90px; height: 90px; border-radius: 50%; background-color: var(--light-blue); color: var(--dark-blue); display: flex; justify-content: center; align-items: center; font-size: 35px; font-weight: bold; margin-bottom: 10px; border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; }
-        .profile-header h3 { font-size: 18px; color: var(--dark-blue); margin-bottom: 2px; }
-        .profile-header p { font-size: 12px; color: var(--text-sub); font-weight: bold; }
+        .header {
+            padding: 25px 20px 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-        .form-card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.02); margin-bottom: 15px; border-top: 4px solid var(--dark-blue); }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 10px; font-weight: bold; color: var(--text-sub); margin-bottom: 6px; text-transform: uppercase; }
-        .input-wrapper { position: relative; display: flex; align-items: center; }
-        .input-wrapper i { position: absolute; left: 15px; color: #bdbdbd; font-size: 13px; }
-        .input-wrapper input, .input-wrapper select { width: 100%; background-color: var(--input-bg); border: 1px solid #eee; border-radius: 10px; padding: 12px 12px 12px 40px; font-size: 13px; color: var(--text-main); outline: none; appearance: none; }
-        .input-wrapper input:disabled { background-color: #e9ecef; color: #888; }
+        .header i {
+            font-size: 18px;
+            color: var(--dark-blue);
+            cursor: pointer;
+        }
 
-        /* MENU ROW KHUSUS ADMIN */
-        .menu-row { display: flex; align-items: center; justify-content: space-between; padding: 15px; background: var(--input-bg); border-radius: 12px; cursor: pointer; transition: 0.2s; border: 1px solid #eee; }
-        .menu-row:active { background: #e0e0e0; }
-        .menu-info { display: flex; align-items: center; gap: 15px; }
-        .menu-info i { color: var(--dark-blue); font-size: 18px; width: 20px; text-align: center; }
-        .menu-text h4 { font-size: 13px; color: var(--dark-blue); margin-bottom: 2px; font-weight: bold; }
-        .menu-text p { font-size: 10px; color: var(--text-sub); }
+        .header h2 {
+            font-size: 18px;
+            color: var(--dark-blue);
+            font-weight: bold;
+        }
 
-        /* BUTTONS */
-        .btn-logout { width: 100%; background-color: #fff0f0; color: var(--danger); border: 1px solid #fadbd8; border-radius: 10px; padding: 14px; font-size: 13px; font-weight: bold; cursor: pointer; margin-top: 10px; margin-bottom: 20px; }
-        .btn-primary { width: 100%; background-color: var(--dark-blue); color: white; border: none; border-radius: 10px; padding: 14px; font-size: 13px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        .btn-primary:active { background-color: #0c2b61; }
+        .header-actions {
+            width: 34px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
 
-        /* KARYAWAN LIST ITEM */
-        .karyawan-item { padding: 12px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; align-items: center; }
-        .karyawan-item:last-child { border-bottom: none; }
-        .karyawan-info h4 { font-size: 13px; color: var(--dark-blue); margin-bottom: 2px; }
-        .karyawan-info p { font-size: 11px; color: var(--text-sub); }
-        .karyawan-status { font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 6px; }
-        .status-aktif { background-color: #d4edda; color: #155724; }
-        .status-nonaktif { background-color: #f8d7da; color: #721c24; }
+        .settings-button {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            border: none;
+            background: rgba(21, 66, 143, 0.08);
+            color: var(--dark-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(21, 66, 143, 0.08);
+            transition: 0.2s;
+        }
 
-        .bottom-nav { background-color: white; height: 65px; display: flex; justify-content: space-around; align-items: center; border-top: 1px solid #eee; z-index: 10; }
-        .nav-item { text-align: center; color: #94a3b8; font-size: 9px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; align-items: center; }
-        .nav-item i { font-size: 18px; }
-        .nav-item.active { color: var(--dark-blue); font-weight: bold; }
+        .settings-button i {
+            font-size: 16px;
+        }
+
+        .settings-button:active {
+            transform: scale(0.94);
+            background: rgba(21, 66, 143, 0.15);
+        }
+
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 20px 20px 20px;
+            scrollbar-width: none;
+        }
+
+        .scrollable-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+            margin-top: 10px;
+        }
+
+        .avatar-container {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background-color: var(--light-blue);
+            color: var(--dark-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 35px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .profile-header h3 {
+            font-size: 18px;
+            color: var(--dark-blue);
+            margin-bottom: 2px;
+        }
+
+        .profile-header p {
+            font-size: 12px;
+            color: var(--text-sub);
+            font-weight: bold;
+        }
+
+        .form-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            margin-bottom: 15px;
+            border-top: 4px solid var(--dark-blue);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            color: #bdbdbd;
+            font-size: 13px;
+            z-index: 1;
+        }
+
+        .input-wrapper input,
+        .input-wrapper select {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 12px 12px 12px 40px;
+            font-size: 13px;
+            color: var(--text-main);
+            outline: none;
+            appearance: none;
+        }
+
+        .input-wrapper input:focus,
+        .input-wrapper select:focus {
+            border-color: var(--light-blue);
+            background: white;
+        }
+
+        .input-wrapper input:disabled,
+        .input-wrapper select:disabled {
+            background-color: #e9ecef;
+            color: #777;
+            cursor: not-allowed;
+        }
+
+        .error-text {
+            display: none;
+            color: var(--danger);
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        .menu-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: var(--input-bg);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid #eee;
+        }
+
+        .menu-row:active {
+            background: #e0e0e0;
+        }
+
+        .menu-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .menu-info i {
+            color: var(--dark-blue);
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .menu-text h4 {
+            font-size: 13px;
+            color: var(--dark-blue);
+            margin-bottom: 2px;
+            font-weight: bold;
+        }
+
+        .menu-text p {
+            font-size: 10px;
+            color: var(--text-sub);
+        }
+
+        .btn-logout {
+            width: 100%;
+            background-color: #fff0f0;
+            color: var(--danger);
+            border: 1px solid #fadbd8;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        .btn-primary:active {
+            background-color: #0c2b61;
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            width: 100%;
+            background-color: white;
+            color: var(--dark-blue);
+            border: 1px solid #d8e3f7;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .karyawan-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .karyawan-item:last-child {
+            border-bottom: none;
+        }
+
+        .karyawan-info h4 {
+            font-size: 13px;
+            color: var(--dark-blue);
+            margin-bottom: 2px;
+        }
+
+        .karyawan-info p {
+            font-size: 11px;
+            color: var(--text-sub);
+        }
+
+        .karyawan-status {
+            font-size: 10px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 6px;
+            white-space: nowrap;
+        }
+
+        .status-aktif {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-nonaktif {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .bottom-nav {
+            background-color: white;
+            height: 65px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #eee;
+            z-index: 10;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 9px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+        }
+
+        .nav-item.active {
+            color: var(--dark-blue);
+            font-weight: bold;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-card {
+            width: 100%;
+            background: white;
+            border-radius: 22px;
+            padding: 18px;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.22);
+            animation: modalUp 0.25s ease;
+            border-top: 5px solid var(--dark-blue);
+        }
+
+        @keyframes modalUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eef1f5;
+        }
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-title-icon {
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            background: rgba(21, 66, 143, 0.08);
+            color: var(--dark-blue);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-title h3 {
+            font-size: 16px;
+            color: var(--dark-blue);
+            line-height: 1.2;
+        }
+
+        .modal-title p {
+            font-size: 10px;
+            color: var(--text-sub);
+            margin-top: 2px;
+        }
+
+        .modal-close {
+            border: none;
+            background: #f1f5f9;
+            color: var(--text-sub);
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        .readonly-banner {
+            display: none;
+            background: #fff7ed;
+            color: #c2410c;
+            border: 1px solid #fed7aa;
+            border-radius: 12px;
+            padding: 10px;
+            font-size: 11px;
+            line-height: 1.4;
+            margin-bottom: 12px;
+        }
+
+        .version-box {
+            background: #f8fbff;
+            border: 1px solid #e6efff;
+            border-radius: 12px;
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .version-box span {
+            font-size: 11px;
+            color: var(--text-sub);
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .version-box strong {
+            font-size: 13px;
+            color: var(--dark-blue);
+        }
+
+        .message {
+            text-align: center;
+            font-size: 12px;
+            color: #888;
+            padding: 10px;
+        }
+
+        .message.error {
+            color: var(--danger);
+        }
     </style>
 </head>
-<body>
 
+<body>
     <div class="mobile-screen">
         <div class="header">
             <i class="fas fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
+
             <h2>User Profile</h2>
-            <div class="ghost-icon"></div> 
+
+            <div class="header-actions">
+                <button class="settings-button" type="button" onclick="bukaSettings()" title="Settings">
+                    <i class="fas fa-cog"></i>
+                </button>
+            </div>
         </div>
 
         <div class="scrollable-content">
-            
             <div class="profile-header">
                 <div class="avatar-container" id="avatar-inisial">U</div>
                 <h3 id="display-name">Memuat nama...</h3>
@@ -92,6 +536,7 @@
                         <input type="text" id="input-fullname" disabled>
                     </div>
                 </div>
+
                 <div class="form-group">
                     <label>Hak Akses (Role)</label>
                     <div class="input-wrapper">
@@ -102,11 +547,11 @@
             </div>
 
             <div id="admin-menu" style="display: none;">
-                
                 <div class="form-card" style="border-top-color: var(--warning);">
                     <div style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase;">
                         <i class="fas fa-tools" style="margin-right: 5px;"></i> Pengaturan Toko
                     </div>
+
                     <div class="menu-row" onclick="window.location.href='layanan.html'">
                         <div class="menu-info">
                             <i class="fas fa-tags"></i>
@@ -115,6 +560,7 @@
                                 <p>Tambah/Hapus katalog harga laundry</p>
                             </div>
                         </div>
+
                         <i class="fas fa-chevron-right" style="color:#ccc; font-size:14px;"></i>
                     </div>
                 </div>
@@ -123,39 +569,79 @@
                     <div style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase;">
                         <i class="fas fa-user-plus" style="margin-right: 5px;"></i> Tambah Karyawan Baru
                     </div>
-                    <form id="formKaryawan">
+
+                    <form id="formKaryawan" novalidate>
                         <div class="form-group">
                             <label>Nama Lengkap</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-user"></i>
-                                <input type="text" id="nama" placeholder="Masukkan nama..." pattern="[A-Za-z\s]+" title="Hanya huruf dan spasi yang diperbolehkan" required>
+                                <input
+                                    type="text"
+                                    id="nama"
+                                    placeholder="Masukkan nama..."
+                                    minlength="3"
+                                    maxlength="50"
+                                    pattern="[A-Za-zÀ-ÿ ]+"
+                                    title="Hanya huruf dan spasi yang diperbolehkan"
+                                    required
+                                >
                             </div>
+                            <small class="error-text" id="nama-error">
+                                Nama hanya boleh huruf dan spasi, minimal 3 karakter.
+                            </small>
                         </div>
+
                         <div class="form-group">
                             <label>Username</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-at"></i>
-                                <input type="text" id="username" placeholder="Username untuk login..." pattern="^[a-zA-Z0-9_]{3,20}$" title="Hanya huruf, angka, dan underscore yang diperbolehkan (3-20 karakter)" required>
+                                <input
+                                    type="text"
+                                    id="username"
+                                    placeholder="Username untuk login..."
+                                    minlength="3"
+                                    maxlength="20"
+                                    pattern="[A-Za-z0-9_]+"
+                                    title="Hanya huruf, angka, dan underscore"
+                                    required
+                                >
                             </div>
+                            <small class="error-text" id="username-error">
+                                Username hanya boleh huruf, angka, dan underscore, 3-20 karakter.
+                            </small>
                         </div>
+
                         <div class="form-group">
                             <label>Password</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-lock"></i>
-                                <input type="password" id="password" placeholder="Minimal 6 karakter..." pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{6,}$" title="Password harus mengandung minimal 6 karakter, termasuk huruf besar, huruf kecil, dan angka" required>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    placeholder="Minimal 8 karakter..."
+                                    minlength="8"
+                                    maxlength="72"
+                                    title="Password minimal 8 karakter"
+                                    required
+                                >
                             </div>
+                            <small class="error-text" id="password-error">
+                                Password minimal 8 karakter.
+                            </small>
                         </div>
+
                         <div class="form-group">
                             <label>Jabatan</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-briefcase"></i>
-                                <select id="jabatan">
+                                <select id="jabatan" required>
                                     <option value="Kasir">Kasir</option>
                                     <option value="Admin">Admin</option>
                                     <option value="Kurir">Kurir</option>
                                 </select>
                             </div>
                         </div>
+
                         <div style="display: flex; gap: 10px;">
                             <div class="form-group" style="width: 50%;">
                                 <label>Jam Masuk</label>
@@ -164,6 +650,7 @@
                                     <input type="time" id="jam_masuk">
                                 </div>
                             </div>
+
                             <div class="form-group" style="width: 50%;">
                                 <label>Jam Pulang</label>
                                 <div class="input-wrapper">
@@ -172,7 +659,10 @@
                                 </div>
                             </div>
                         </div>
-                        <button type="submit" class="btn-primary">Simpan Data Karyawan</button>
+
+                        <button type="submit" class="btn-primary" id="btn-simpan-karyawan">
+                            Simpan Data Karyawan
+                        </button>
                     </form>
                 </div>
 
@@ -180,94 +670,484 @@
                     <div style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase;">
                         <i class="fas fa-users" style="margin-right: 5px;"></i> Daftar Karyawan Aktif
                     </div>
+
                     <div id="tabelKaryawan">
-                        <div style="text-align: center; font-size: 12px; color: #888; padding: 10px;">Memuat data karyawan...</div>
+                        <div class="message">Memuat data karyawan...</div>
                     </div>
                 </div>
+            </div>
 
-            </div> <button class="btn-logout" onclick="logoutSistem()">
+            <button class="btn-logout" onclick="logoutSistem()">
                 <i class="fas fa-sign-out-alt" style="margin-right: 6px;"></i> Keluar Akun
             </button>
-
-        </div> 
-
-        <div class="bottom-nav">
-            <div class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fas fa-home"></i><span>BERANDA</span></div>
-            <div class="nav-item" onclick="window.location.href='list_order.html'"><i class="fas fa-file-alt"></i><span>PESANAN</span></div>
-            <div class="nav-item" onclick="window.location.href='pelanggan_tambah.html'"><i class="fas fa-users"></i><span>CUSTOMERS</span></div>
-            <div class="nav-item active" onclick="window.location.href='profile.html'"><i class="fas fa-user-circle"></i><span>PROFILE</span></div>
         </div>
 
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="window.location.href='dashboard.html'">
+                <i class="fas fa-home"></i>
+                <span>BERANDA</span>
+            </div>
+
+            <div class="nav-item" onclick="window.location.href='list_order.html'">
+                <i class="fas fa-file-alt"></i>
+                <span>PESANAN</span>
+            </div>
+
+            <div class="nav-item" onclick="window.location.href='pelanggan_tambah.html'">
+                <i class="fas fa-users"></i>
+                <span>CUSTOMERS</span>
+            </div>
+
+            <div class="nav-item active" onclick="window.location.href='profile.html'">
+                <i class="fas fa-user-circle"></i>
+                <span>PROFILE</span>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="settings-modal">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <div class="modal-title">
+                        <div class="modal-title-icon">
+                            <i class="fas fa-sliders-h"></i>
+                        </div>
+
+                        <div>
+                            <h3>Settings</h3>
+                            <p id="settings-subtitle">Informasi aplikasi laundry</p>
+                        </div>
+                    </div>
+
+                    <button class="modal-close" type="button" onclick="tutupSettings()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="readonly-banner" id="readonly-banner">
+                    <i class="fas fa-lock" style="margin-right: 5px;"></i>
+                    Mode lihat saja. Karyawan dapat melihat settings, tetapi tidak dapat mengubah data.
+                </div>
+
+                <form id="formSettings" novalidate>
+                    <div class="form-group">
+                        <label>Nama Laundry</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-store"></i>
+                            <input
+                                type="text"
+                                id="setting-nama"
+                                placeholder="Contoh: Spincycle Laundry"
+                                minlength="3"
+                                maxlength="50"
+                                pattern="[A-Za-zÀ-ÿ0-9 ]+"
+                                required
+                            >
+                        </div>
+                        <small class="error-text" id="setting-nama-error">
+                            Nama laundry hanya boleh huruf, angka, dan spasi.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Alamat Laundry</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input
+                                type="text"
+                                id="setting-alamat"
+                                placeholder="Contoh: Jalan Sudirman No 10"
+                                minlength="3"
+                                maxlength="100"
+                                pattern="[A-Za-zÀ-ÿ0-9 ]+"
+                                required
+                            >
+                        </div>
+                        <small class="error-text" id="setting-alamat-error">
+                            Alamat hanya boleh huruf, angka, dan spasi.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Nomor Telepon Laundry</label>
+                        <div class="input-wrapper">
+                            <i class="fas fa-phone"></i>
+                            <input
+                                type="tel"
+                                id="setting-telepon"
+                                placeholder="Contoh: 08123456789"
+                                inputmode="numeric"
+                                minlength="10"
+                                maxlength="13"
+                                pattern="[0-9]+"
+                                required
+                            >
+                        </div>
+                        <small class="error-text" id="setting-telepon-error">
+                            Nomor telepon hanya boleh angka, 10-13 digit.
+                        </small>
+                    </div>
+
+                    <div class="version-box">
+                        <span>App Version</span>
+                        <strong id="setting-version">v1.0.0</strong>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="btn-save-settings">
+                        Simpan Settings
+                    </button>
+
+                    <button type="button" class="btn-secondary" onclick="tutupSettings()">
+                        Tutup
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
 
     <script>
         const API_URL = 'https://laundry-backend-api-production.up.railway.app/api/karyawan';
+        const SETTINGS_API_URL = 'https://laundry-backend-api-production.up.railway.app/api/settings';
+
+        const APP_VERSION = 'v1.0.0';
+
+        const defaultSettings = {
+            nama_laundry: 'Spincycle Laundry',
+            alamat: 'Alamat belum diatur',
+            telepon: '08123456789',
+            app_version: APP_VERSION
+        };
+
+        function getRole() {
+            return localStorage.getItem('role_kasir') || 'Karyawan';
+        }
+
+        function bolehEditSettings() {
+            const role = getRole();
+            return role === 'Admin' || role === 'Admin Besar';
+        }
+
+        function onlyLetters(value) {
+            return value
+                .replace(/[^A-Za-zÀ-ÿ ]/g, '')
+                .replace(/\s+/g, ' ')
+                .trimStart();
+        }
+
+        function onlyUsername(value) {
+            return value.replace(/[^A-Za-z0-9_]/g, '');
+        }
+
+        function onlySettingText(value) {
+            return value
+                .replace(/[^A-Za-zÀ-ÿ0-9 ]/g, '')
+                .replace(/\s+/g, ' ')
+                .trimStart();
+        }
+
+        function onlyNumber(value) {
+            return value.replace(/[^0-9]/g, '');
+        }
+
+        document.getElementById('nama').addEventListener('input', function () {
+            this.value = onlyLetters(this.value);
+        });
+
+        document.getElementById('username').addEventListener('input', function () {
+            this.value = onlyUsername(this.value);
+        });
+
+        document.getElementById('setting-nama').addEventListener('input', function () {
+            if (bolehEditSettings()) {
+                this.value = onlySettingText(this.value);
+            }
+        });
+
+        document.getElementById('setting-alamat').addEventListener('input', function () {
+            if (bolehEditSettings()) {
+                this.value = onlySettingText(this.value);
+            }
+        });
+
+        document.getElementById('setting-telepon').addEventListener('input', function () {
+            if (bolehEditSettings()) {
+                this.value = onlyNumber(this.value);
+            }
+        });
 
         window.onload = function() {
-            // Ambil data user yang sedang login
-            // (Untuk saat pengujian, ganti 'Admin' agar form muncul)
-            const nama = localStorage.getItem('nama_kasir') || 'Andra'; 
-            const role = localStorage.getItem('role_kasir') || 'Admin'; 
+            const nama = localStorage.getItem('nama_kasir') || 'Andra';
+            const role = getRole();
 
-            // Setel Tampilan Profil Utama
             document.getElementById('display-name').innerText = nama;
-            document.getElementById('display-role').innerText = role === 'Admin' ? 'Pemilik (Admin)' : 'Kasir (Karyawan)';
+            document.getElementById('display-role').innerText = role === 'Admin' || role === 'Admin Besar'
+                ? 'Pemilik (Admin)'
+                : 'Kasir (Karyawan)';
+
             document.getElementById('avatar-inisial').innerText = nama.charAt(0).toUpperCase();
             document.getElementById('input-fullname').value = nama;
             document.getElementById('input-role').value = role;
 
-            // Jika role adalah Admin, tampilkan menu pengaturan & fetch data karyawan
-            if(role === 'Admin') {
+            if(role === 'Admin' || role === 'Admin Besar') {
                 document.getElementById('admin-menu').style.display = 'block';
-                loadDataKaryawan(); // Jalankan fetch data
+                loadDataKaryawan();
             }
+
+            muatSettingsLocal();
         };
 
-        // Fungsi Mengambil Data (GET)
+        function muatSettingsLocal() {
+            const savedSettings = localStorage.getItem('laundry_settings');
+
+            let settings = defaultSettings;
+
+            if (savedSettings) {
+                try {
+                    settings = {
+                        ...defaultSettings,
+                        ...JSON.parse(savedSettings)
+                    };
+                } catch (error) {
+                    settings = defaultSettings;
+                }
+            }
+
+            document.getElementById('setting-nama').value = settings.nama_laundry;
+            document.getElementById('setting-alamat').value = settings.alamat;
+            document.getElementById('setting-telepon').value = settings.telepon;
+            document.getElementById('setting-version').innerText = settings.app_version || APP_VERSION;
+        }
+
+        function aturModeSettings() {
+            const canEdit = bolehEditSettings();
+
+            document.getElementById('setting-nama').disabled = !canEdit;
+            document.getElementById('setting-alamat').disabled = !canEdit;
+            document.getElementById('setting-telepon').disabled = !canEdit;
+
+            document.getElementById('btn-save-settings').style.display = canEdit ? 'block' : 'none';
+            document.getElementById('readonly-banner').style.display = canEdit ? 'none' : 'block';
+
+            document.getElementById('settings-subtitle').innerText = canEdit
+                ? 'Admin dapat mengubah informasi laundry'
+                : 'Informasi laundry hanya dapat dilihat';
+        }
+
+        function bukaSettings() {
+            muatSettingsLocal();
+            aturModeSettings();
+            document.getElementById('settings-modal').style.display = 'flex';
+        }
+
+        function tutupSettings() {
+            document.getElementById('settings-modal').style.display = 'none';
+        }
+
+        document.getElementById('settings-modal').addEventListener('click', function (event) {
+            if (event.target === this) {
+                tutupSettings();
+            }
+        });
+
+        function validasiSettings() {
+            const nama = document.getElementById('setting-nama').value.trim();
+            const alamat = document.getElementById('setting-alamat').value.trim();
+            const telepon = document.getElementById('setting-telepon').value.trim();
+
+            const validNama = /^[A-Za-zÀ-ÿ0-9 ]{3,50}$/.test(nama);
+            const validAlamat = /^[A-Za-zÀ-ÿ0-9 ]{3,100}$/.test(alamat);
+            const validTelepon = /^[0-9]{10,13}$/.test(telepon);
+
+            document.getElementById('setting-nama-error').style.display = validNama ? 'none' : 'block';
+            document.getElementById('setting-alamat-error').style.display = validAlamat ? 'none' : 'block';
+            document.getElementById('setting-telepon-error').style.display = validTelepon ? 'none' : 'block';
+
+            return validNama && validAlamat && validTelepon;
+        }
+
+        document.getElementById('formSettings').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            if (!bolehEditSettings()) {
+                alert('Akses ditolak. Karyawan hanya dapat melihat settings.');
+                return;
+            }
+
+            const btn = document.getElementById('btn-save-settings');
+
+            const namaLaundry = onlySettingText(document.getElementById('setting-nama').value).trim();
+            const alamatLaundry = onlySettingText(document.getElementById('setting-alamat').value).trim();
+            const teleponLaundry = onlyNumber(document.getElementById('setting-telepon').value).trim();
+
+            document.getElementById('setting-nama').value = namaLaundry;
+            document.getElementById('setting-alamat').value = alamatLaundry;
+            document.getElementById('setting-telepon').value = teleponLaundry;
+
+            if (!validasiSettings()) {
+                alert('Periksa kembali data settings.');
+                return;
+            }
+
+            const payload = {
+                nama_laundry: namaLaundry,
+                alamat: alamatLaundry,
+                telepon: teleponLaundry,
+                app_version: APP_VERSION
+            };
+
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+                const response = await fetch(SETTINGS_API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        nama_laundry: payload.nama_laundry,
+                        alamat: payload.alamat,
+                        telepon: payload.telepon
+                    })
+                });
+
+                const text = await response.text();
+
+                let result = {};
+
+                try {
+                    result = text ? JSON.parse(text) : {};
+                } catch (error) {
+                    throw new Error('Server tidak mengembalikan JSON. Cek route /api/settings di backend.');
+                }
+
+                if (!response.ok) {
+                    throw new Error(result.pesan || result.message || 'Settings gagal disimpan ke server.');
+                }
+
+                localStorage.setItem('laundry_settings', JSON.stringify(payload));
+
+                alert(result.message || 'Settings berhasil disimpan.');
+                tutupSettings();
+            } catch (error) {
+                console.error(error);
+
+                const simpanLocal = confirm(
+                    'Settings gagal disimpan ke server. Simpan sementara di perangkat ini saja?'
+                );
+
+                if (simpanLocal) {
+                    localStorage.setItem('laundry_settings', JSON.stringify(payload));
+                    alert('Settings berhasil disimpan sementara di perangkat ini.');
+                    tutupSettings();
+                }
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Simpan Settings';
+            }
+        });
+
         async function loadDataKaryawan() {
             try {
-                const response = await fetch(API_URL);
+                const response = await fetch(API_URL, {
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
                 const data = await response.json();
                 const container = document.getElementById('tabelKaryawan');
-                container.innerHTML = ''; 
 
-                if(data.length === 0) {
-                    container.innerHTML = '<div style="text-align: center; font-size: 12px; color: #888; padding: 10px;">Belum ada karyawan terdaftar</div>';
+                container.innerHTML = '';
+
+                if (!Array.isArray(data) || data.length === 0) {
+                    container.innerHTML = '<div class="message">Belum ada karyawan terdaftar</div>';
                     return;
                 }
 
-                data.forEach(karyawan => {
-                    const statusClass = karyawan.status_aktif ? 'status-aktif' : 'status-nonaktif';
-                    const statusText = karyawan.status_aktif ? 'Aktif' : 'Nonaktif';
-                    const jamKerja = (karyawan.jam_masuk && karyawan.jam_pulang) ? `${karyawan.jam_masuk.slice(0,5)} - ${karyawan.jam_pulang.slice(0,5)}` : 'Shift belum diatur';
-
-                    container.innerHTML += `
-                        <div class="karyawan-item">
-                            <div class="karyawan-info">
-                                <h4>${karyawan.nama}</h4>
-                                <p><i class="fas fa-briefcase" style="margin-right:4px;"></i> ${karyawan.jabatan} | <i class="fas fa-clock" style="margin-right:4px; margin-left:4px;"></i> ${jamKerja}</p>
-                            </div>
-                            <div class="karyawan-status ${statusClass}">
-                                ${statusText}
-                            </div>
-                        </div>
-                    `;
+                data.forEach(function (karyawan) {
+                    container.appendChild(buatItemKaryawan(karyawan));
                 });
             } catch (error) {
-                document.getElementById('tabelKaryawan').innerHTML = '<div style="color:red; text-align:center; font-size:12px;">Gagal memuat data dari server</div>';
+                document.getElementById('tabelKaryawan').innerHTML = '<div class="message error">Gagal memuat data dari server</div>';
             }
         }
 
-        // Fungsi Menyimpan Data (POST)
+        function buatItemKaryawan(karyawan) {
+            const item = document.createElement('div');
+            item.className = 'karyawan-item';
+
+            const info = document.createElement('div');
+            info.className = 'karyawan-info';
+
+            const nama = document.createElement('h4');
+            nama.textContent = karyawan.nama || '-';
+
+            const detail = document.createElement('p');
+            const jamKerja = (karyawan.jam_masuk && karyawan.jam_pulang)
+                ? `${String(karyawan.jam_masuk).slice(0,5)} - ${String(karyawan.jam_pulang).slice(0,5)}`
+                : 'Shift belum diatur';
+
+            detail.innerHTML = '<i class="fas fa-briefcase" style="margin-right:4px;"></i> ';
+            detail.appendChild(document.createTextNode(`${karyawan.jabatan || '-'} | `));
+
+            const clockIcon = document.createElement('i');
+            clockIcon.className = 'fas fa-clock';
+            clockIcon.style.marginRight = '4px';
+            clockIcon.style.marginLeft = '4px';
+
+            detail.appendChild(clockIcon);
+            detail.appendChild(document.createTextNode(jamKerja));
+
+            info.appendChild(nama);
+            info.appendChild(detail);
+
+            const status = document.createElement('div');
+            status.className = 'karyawan-status ' + (karyawan.status_aktif ? 'status-aktif' : 'status-nonaktif');
+            status.textContent = karyawan.status_aktif ? 'Aktif' : 'Nonaktif';
+
+            item.appendChild(info);
+            item.appendChild(status);
+
+            return item;
+        }
+
+        function validasiKaryawan() {
+            const nama = document.getElementById('nama').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const jamMasuk = document.getElementById('jam_masuk').value;
+            const jamPulang = document.getElementById('jam_pulang').value;
+
+            const validNama = /^[A-Za-zÀ-ÿ ]{3,50}$/.test(nama);
+            const validUsername = /^[A-Za-z0-9_]{3,20}$/.test(username);
+            const validPassword = password.length >= 8;
+            const validJam = !jamMasuk || !jamPulang || jamMasuk < jamPulang;
+
+            document.getElementById('nama-error').style.display = validNama ? 'none' : 'block';
+            document.getElementById('username-error').style.display = validUsername ? 'none' : 'block';
+            document.getElementById('password-error').style.display = validPassword ? 'none' : 'block';
+
+            if (!validJam) {
+                alert('Jam pulang harus lebih besar dari jam masuk.');
+            }
+
+            return validNama && validUsername && validPassword && validJam;
+        }
+
         document.getElementById('formKaryawan').addEventListener('submit', async function(e) {
-            e.preventDefault(); 
-            const tombol = this.querySelector('button[type="submit"]');
-            tombol.innerText = 'Menyimpan...'; // Efek loading
-            tombol.disabled = true;
+            e.preventDefault();
+
+            if (!validasiKaryawan()) {
+                alert('Periksa kembali data karyawan.');
+                return;
+            }
+
+            const tombol = document.getElementById('btn-simpan-karyawan');
 
             const dataBaru = {
-                nama: document.getElementById('nama').value,
-                username: document.getElementById('username').value,
+                nama: document.getElementById('nama').value.trim(),
+                username: document.getElementById('username').value.trim(),
                 password: document.getElementById('password').value,
                 jabatan: document.getElementById('jabatan').value,
                 jam_masuk: document.getElementById('jam_masuk').value,
@@ -275,9 +1155,15 @@
             };
 
             try {
+                tombol.innerText = 'Menyimpan...';
+                tombol.disabled = true;
+
                 const response = await fetch(API_URL + '/register', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
                     body: JSON.stringify(dataBaru)
                 });
 
@@ -286,14 +1172,14 @@
                 if (response.ok) {
                     alert("Karyawan berhasil didaftarkan!");
                     document.getElementById('formKaryawan').reset();
-                    loadDataKaryawan(); // Refresh daftar otomatis
+                    loadDataKaryawan();
                 } else {
-                    alert("Gagal: " + (result.error || "Terjadi kesalahan"));
+                    alert("Gagal: " + (result.error || result.message || "Terjadi kesalahan"));
                 }
             } catch (error) {
                 alert("Error jaringan. Pastikan backend Railway menyala.");
             } finally {
-                tombol.innerText = 'Simpan Data Karyawan'; // Kembalikan tombol
+                tombol.innerText = 'Simpan Data Karyawan';
                 tombol.disabled = false;
             }
         });
