@@ -24,50 +24,116 @@
     
     <div style="background: #f9f9f9; padding: 20px; border-radius: 5px;">
         <h3>Tambah Karyawan Baru</h3>
-        <form id="formKaryawan">
+        <form id="formKaryawan" novalidate>
             <div class="form-group">
-                <label>Nama Lengkap:</label>
-                <input type="text" id="nama" required>
+                <label for="nama">Nama Lengkap:</label>
+                <input
+                    type="text"
+                    id="nama"
+                    required
+                    minlength="3"
+                    maxlength="50"
+                    pattern="[A-Za-zÀ-ÿ ]+"
+                    title="Nama hanya huruf dan spasi"
+                >
+                <div class="error-text" id="nama-error">
+                    Nama hanya boleh huruf dan spasi, minimal 3 karakter.
+                </div>
             </div>
+
             <div class="form-group">
-                <label>Username:</label>
-                <input type="text" id="username" required>
+                <label for="username">Username:</label>
+                <input
+                    type="text"
+                    id="username"
+                    required
+                    minlength="4"
+                    maxlength="20"
+                    pattern="[A-Za-z0-9]+"
+                    title="Username hanya huruf dan angka"
+                >
+                <div class="error-text" id="username-error">
+                    Username hanya boleh huruf dan angka, 4-20 karakter.
+                </div>
             </div>
+
             <div class="form-group">
-                <label>Password:</label>
-                <input type="password" id="password" required>
+                <label for="password">Password:</label>
+                <input
+                    type="password"
+                    id="password"
+                    required
+                    minlength="8"
+                    maxlength="72"
+                    title="Password minimal 8 karakter"
+                >
+                <div class="hint">
+                    Password minimal 8 karakter. Password sengaja tidak dibatasi huruf/angka saja agar tetap kuat.
+                </div>
+                <div class="error-text" id="password-error">
+                    Password minimal 8 karakter.
+                </div>
             </div>
+
             <div class="form-group">
-                <label>Nomor Telepon:</label>
-                <input type="text" id="no_telepon">
+                <label for="no_telepon">Nomor Telepon:</label>
+                <input
+                    type="tel"
+                    id="no_telepon"
+                    inputmode="numeric"
+                    minlength="10"
+                    maxlength="13"
+                    pattern="[0-9]{10,13}"
+                    title="Nomor telepon hanya angka 10-13 digit"
+                >
+                <div class="error-text" id="telepon-error">
+                    Nomor telepon harus angka 10-13 digit.
+                </div>
             </div>
+
             <div class="form-group">
-                <label>Jabatan:</label>
-                <select id="jabatan">
+                <label for="jabatan">Jabatan:</label>
+                <select id="jabatan" required>
                     <option value="Kasir">Kasir</option>
                     <option value="Admin">Admin</option>
                     <option value="Kurir">Kurir</option>
                 </select>
             </div>
+
             <div class="form-group">
-                <label>Hari Kerja (contoh: Senin-Sabtu):</label>
-                <input type="text" id="hari_kerja">
+                <label for="hari_kerja">Hari Kerja:</label>
+                <input
+                    type="text"
+                    id="hari_kerja"
+                    maxlength="30"
+                    placeholder="Contoh: Senin Sabtu"
+                    pattern="[A-Za-zÀ-ÿ ]*"
+                    title="Hari kerja hanya huruf dan spasi"
+                >
+                <div class="error-text" id="hari-error">
+                    Hari kerja hanya boleh huruf dan spasi.
+                </div>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <div class="form-group" style="width: 50%;">
-                    <label>Jam Masuk:</label>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="jam_masuk">Jam Masuk:</label>
                     <input type="time" id="jam_masuk">
                 </div>
-                <div class="form-group" style="width: 50%;">
-                    <label>Jam Pulang:</label>
+
+                <div class="form-group">
+                    <label for="jam_pulang">Jam Pulang:</label>
                     <input type="time" id="jam_pulang">
                 </div>
             </div>
-            <button type="submit">Simpan Karyawan</button>
+
+            <button type="submit" id="btnSimpan">
+                Simpan Karyawan
+            </button>
         </form>
     </div>
 
-    <hr style="margin: 30px 0;">
+    <hr style="margin:30px 0">
 
     <h3>Daftar & Jadwal Karyawan</h3>
     <table>
