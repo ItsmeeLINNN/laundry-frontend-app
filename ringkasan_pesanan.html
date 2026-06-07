@@ -127,29 +127,38 @@
         window.onload = function() {
             // Mengambil data yang disimpan oleh halaman transaksi_baru.html
             const dataOrder = {
-                nama: localStorage.getItem('trx_pelanggan_nama') || 'Pelanggan Walk-in',
+                namaLengkap: localStorage.getItem('trx_pelanggan_nama') || 'Pelanggan Walk-in',
                 paket: localStorage.getItem('trx_paket_nama') || 'Paket Reguler',
                 berat: parseFloat(localStorage.getItem('trx_berat')) || 0,
                 harga_per_kg: parseFloat(localStorage.getItem('trx_harga_per_kg')) || 0,
                 metode: localStorage.getItem('trx_metode') || 'Ambil Sendiri',
                 ongkir: parseFloat(localStorage.getItem('trx_ongkir')) || 0,
                 catatan: localStorage.getItem('trx_catatan') || 'Tidak ada catatan.',
-                estimasi_hari: parseInt(localStorage.getItem('trx_estimasi_hari')) || 1
+                estimasi_jam: parseInt(localStorage.getItem('trx_estimasi_jam')) || 24 
             };
 
-            // 1. Set Profil Pelanggan
-            const namaSaja = dataOrder.nama.split(' (')[0];
+            // 1. Ekstrak Nama dan Nomor HP
+            const namaSaja = dataOrder.namaLengkap.split(' (')[0];
+            const noHpMatch = dataOrder.namaLengkap.match(/\(([^)]+)\)/); // Ambil teks dalam kurung
+            const noHp = noHpMatch ? noHpMatch[1] : '-';
+
             document.getElementById('cust-name').innerText = namaSaja;
+            document.getElementById('cust-phone').innerText = noHp;
             document.getElementById('cust-initial').innerText = namaSaja.charAt(0).toUpperCase();
 
-            // 2. Set Tanggal Masuk & Selesai
+            // 2. Set Tanggal Masuk & Selesai (Beserta Jam)
             const tglMasuk = new Date();
-            const tglSelesai = new Date();
-            tglSelesai.setDate(tglMasuk.getDate() + dataOrder.estimasi_hari);
+            const tglSelesai = new Date(tglMasuk.getTime() + (dataOrder.estimasi_jam * 60 * 60 * 1000));
 
-            const options = { day: 'numeric', month: 'short', year: 'numeric' };
-            document.getElementById('tgl-masuk').innerText = tglMasuk.toLocaleDateString('id-ID', options);
-            document.getElementById('tgl-selesai').innerText = tglSelesai.toLocaleDateString('id-ID', options);
+            const formatWaktu = (date) => {
+                const opsiTanggal = { day: 'numeric', month: 'short', year: 'numeric' };
+                const tgl = date.toLocaleDateString('id-ID', opsiTanggal);
+                const jam = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                return `${tgl}<br><span style="color:#666; font-size:10px; display:inline-block; margin-top:2px;">Jam ${jam} WIB</span>`;
+            };
+
+            document.getElementById('tgl-masuk').innerHTML = formatWaktu(tglMasuk);
+            document.getElementById('tgl-selesai').innerHTML = formatWaktu(tglSelesai);
 
             // 3. Set Detail Cucian & Catatan
             document.getElementById('paket-nama').innerText = dataOrder.paket;
