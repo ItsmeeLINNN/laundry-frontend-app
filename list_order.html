@@ -21,7 +21,7 @@
         .search-box input { border: none; background: transparent; outline: none; width: 100%; font-size: 12px; color: var(--text-main); }
         .search-box i { color: var(--text-sub); font-size: 12px; }
         
-        .filter-bar { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; }
+        .filter-bar { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 5px; }
         .filter-bar::-webkit-scrollbar { display: none; }
         .filter-btn { padding: 6px 14px; border-radius: 20px; font-size: 11px; font-weight: 700; border: 1px solid #e2e8f0; background: white; color: var(--text-sub); cursor: pointer; white-space: nowrap; transition: 0.2s; }
         .filter-btn.active { background: var(--dark-blue); color: white; border-color: var(--dark-blue); }
@@ -31,11 +31,8 @@
         
         .order-card { background: white; border-radius: 16px; padding: 15px; margin-bottom: 15px; box-shadow: var(--card-shadow); border-left: 4px solid var(--dark-blue); }
         .order-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed #eef1f5; }
-        
-        /* Modifikasi Nota Badge agar terlihat bisa diklik */
         .nota-badge { font-size: 12px; font-weight: 800; color: var(--dark-blue); cursor: pointer; text-decoration: underline; display: flex; align-items: center; gap: 5px; }
         .nota-badge:active { opacity: 0.7; }
-        
         .date-text { font-size: 10px; color: var(--text-sub); }
         
         .order-body { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 15px; }
@@ -46,7 +43,11 @@
         .status-badge { font-size: 10px; font-weight: 800; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; }
         .status-badge.belum-lunas { background: #fee2e2; color: #dc2626; }
         .status-badge.lunas { background: #d1fae5; color: #059669; }
+        
+        /* Pewarnaan Status Cucian Berjenjang */
         .status-badge.diproses { background: #fef3c7; color: #d97706; }
+        .status-badge.selesai { background: #e0eafc; color: #15428F; } /* Biru Muda */
+        .status-badge.diambil { background: #d1fae5; color: #059669; } /* Hijau */
 
         .action-buttons { display: flex; gap: 10px; }
         .btn-action { flex: 1; padding: 10px; border-radius: 10px; border: none; font-size: 11px; font-weight: 800; cursor: pointer; text-align: center; }
@@ -70,6 +71,7 @@
         .modal-row:last-child { border-bottom: none; padding-bottom: 0; }
         .modal-row span { color: var(--text-sub); }
         .modal-row strong { color: var(--text-main); text-align: right; }
+        .wa-btn { width: 100%; margin-top: 15px; background: #25D366; color: white; border: none; padding: 12px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; }
     </style>
 </head>
 <body>
@@ -95,8 +97,9 @@
             <div class="filter-bar">
                 <button class="filter-btn active" onclick="setFilter('Semua', this)">Semua</button>
                 <button class="filter-btn" onclick="setFilter('Belum Lunas', this)">Belum Lunas</button>
-                <button class="filter-btn" onclick="setFilter('Lunas', this)">Lunas</button>
                 <button class="filter-btn" onclick="setFilter('Diproses', this)">Diproses</button>
+                <button class="filter-btn" onclick="setFilter('Selesai', this)">Selesai</button>
+                <button class="filter-btn" onclick="setFilter('Diambil', this)">Diambil</button>
             </div>
         </div>
 
@@ -158,26 +161,21 @@
         function renderOrders() {
             const container = document.getElementById('order-list-container');
             const keyword = document.getElementById('searchInput').value.toLowerCase();
-            const dateKeyword = document.getElementById('dateInput').value; // Format: YYYY-MM-DD
+            const dateKeyword = document.getElementById('dateInput').value;
 
             const filteredOrders = allOrders.filter(order => {
                 const matchName = (order.nama_pelanggan || '').toLowerCase().includes(keyword);
                 
-                // Cek Filter Status
                 let matchFilter = true;
                 if (currentFilter === 'Belum Lunas') matchFilter = order.status_pembayaran === 'Belum Lunas';
-                if (currentFilter === 'Lunas') matchFilter = order.status_pembayaran === 'Lunas';
                 if (currentFilter === 'Diproses') matchFilter = order.status_pesanan === 'Diproses';
+                if (currentFilter === 'Selesai') matchFilter = order.status_pesanan === 'Selesai';
+                if (currentFilter === 'Diambil') matchFilter = order.status_pesanan === 'Diambil';
 
-                // Cek Filter Tanggal
                 let matchDate = true;
                 if (dateKeyword) {
-                    // Konversi ISO date dari DB ke format lokal YYYY-MM-DD agar sinkron dengan input date
                     const d = new Date(order.tanggal_masuk);
-                    const year = d.getFullYear();
-                    const month = String(d.getMonth() + 1).padStart(2, '0');
-                    const day = String(d.getDate()).padStart(2, '0');
-                    const orderDateStr = `${year}-${month}-${day}`;
+                    const orderDateStr = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
                     matchDate = (orderDateStr === dateKeyword);
                 }
 
@@ -191,17 +189,28 @@
 
             container.innerHTML = filteredOrders.map(p => {
                 const tgl = new Date(p.tanggal_masuk).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-                
                 const isLunas = p.status_pembayaran === 'Lunas';
-                const isSelesai = p.status_pesanan === 'Selesai';
+                
+                // Styling Status Pesanan
+                let classProses = 'diproses';
+                if(p.status_pesanan === 'Selesai') classProses = 'selesai';
+                if(p.status_pesanan === 'Diambil') classProses = 'diambil';
 
+                // Logika Tombol Bayar
                 const btnPayHTML = !isLunas 
                     ? `<button class="btn-action btn-pay" onclick="bukaHalamanPembayaran(${p.id}, ${p.total_harga}, '${p.status_pesanan}')"><i class="fas fa-money-bill-wave"></i> Bayar</button>`
                     : `<button class="btn-action btn-disabled" disabled><i class="fas fa-check"></i> Lunas</button>`;
 
-                const btnDoneHTML = !isSelesai
-                    ? `<button class="btn-action btn-done" onclick="updateStatus(${p.id}, 'Selesai', '${p.status_pembayaran}')"><i class="fas fa-box"></i> Selesaikan</button>`
-                    : `<button class="btn-action btn-disabled" disabled><i class="fas fa-check-double"></i> Selesai</button>`;
+                // Logika Berjenjang Tombol Aksi (Diproses -> Selesai -> Diambil)
+                let btnActionHTML = '';
+                if (p.status_pesanan === 'Diproses' || !p.status_pesanan) {
+                    btnActionHTML = `<button class="btn-action btn-done" onclick="updateStatus(${p.id}, 'Selesai', '${p.status_pembayaran}')"><i class="fas fa-tshirt"></i> Selesaikan</button>`;
+                } else if (p.status_pesanan === 'Selesai') {
+                    // Tombol berubah jadi Serahkan jika sudah selesai
+                    btnActionHTML = `<button class="btn-action btn-done" style="background:#059669;" onclick="updateStatus(${p.id}, 'Diambil', '${p.status_pembayaran}')"><i class="fas fa-hand-holding"></i> Serahkan</button>`;
+                } else if (p.status_pesanan === 'Diambil') {
+                    btnActionHTML = `<button class="btn-action btn-disabled" disabled><i class="fas fa-check-double"></i> Sudah Diambil</button>`;
+                }
 
                 return `
                     <div class="order-card">
@@ -218,19 +227,18 @@
                             </div>
                             <div class="status-container">
                                 <span class="status-badge ${isLunas ? 'lunas' : 'belum-lunas'}">${p.status_pembayaran || 'Belum Lunas'}</span>
-                                <span class="status-badge ${isSelesai ? 'lunas' : 'diproses'}">${p.status_pesanan || 'Diproses'}</span>
+                                <span class="status-badge ${classProses}">${p.status_pesanan || 'Diproses'}</span>
                             </div>
                         </div>
                         <div class="action-buttons">
                             ${btnPayHTML}
-                            ${btnDoneHTML}
+                            ${btnActionHTML}
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // FUNGSI MODAL DETAIL PESANAN
         function bukaModalDetail(id) {
             const order = allOrders.find(o => o.id === id);
             if(!order) return;
@@ -238,9 +246,24 @@
             document.getElementById('modal-nota-title').innerText = `Detail ORD-${order.id}`;
             const tglMasuk = new Date(order.tanggal_masuk).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             
+            // Antisipasi jika backend belum mengirim c.phone (menampilkan '-' sebagai default)
+            const noHp = order.no_hp || order.phone || '-';
+            
+            let waButtonHTML = '';
+            if (noHp !== '-') {
+                // Menghapus 0 di depan dan mengganti dengan 62 untuk format WA Internasional
+                let formattedHp = noHp.startsWith('0') ? '62' + noHp.substring(1) : noHp;
+                const waText = `Halo ${order.nama_pelanggan}, cucian Anda (Nota: ORD-${order.id}) sudah selesai dan siap diambil. Total tagihan: Rp ${new Intl.NumberFormat('id-ID').format(order.total_harga)}. Terima kasih!`;
+                waButtonHTML = `
+                    <button class="wa-btn" onclick="window.open('https://wa.me/${formattedHp}?text=${encodeURIComponent(waText)}')">
+                        <i class="fab fa-whatsapp" style="font-size:16px;"></i> Hubungi Pelanggan via WA
+                    </button>
+                `;
+            }
+
             const htmlDetail = `
                 <div class="modal-row"><span>Nama Pelanggan</span><strong>${order.nama_pelanggan || '-'}</strong></div>
-                <div class="modal-row"><span>No HP</span><strong>${order.no_hp || '-'}</strong></div>
+                <div class="modal-row"><span>No HP</span><strong>${noHp}</strong></div>
                 <div class="modal-row"><span>Tgl Masuk</span><strong>${tglMasuk}</strong></div>
                 <div class="modal-row"><span>Pembayaran</span><strong>${order.status_pembayaran}</strong></div>
                 <div class="modal-row"><span>Status Cucian</span><strong>${order.status_pesanan}</strong></div>
@@ -248,6 +271,7 @@
                     <span style="font-size:14px; font-weight:800; color:var(--dark-blue);">TOTAL</span>
                     <strong style="font-size:16px; color:var(--success);">Rp ${new Intl.NumberFormat('id-ID').format(order.total_harga || 0)}</strong>
                 </div>
+                ${waButtonHTML}
             `;
 
             document.getElementById('modal-body-content').innerHTML = htmlDetail;
@@ -265,13 +289,18 @@
             window.location.href = 'pembayaran.html';
         }
 
-        async function updateStatus(id, statusPesanan, statusPembayaran) {
-            if(!confirm(`Yakin ingin memproses/menyelesaikan nota ORD-${id}?`)) return;
+        async function updateStatus(id, statusPesananBaru, statusPembayaran) {
+            const pesan = statusPesananBaru === 'Selesai' 
+                ? `Tandai cucian ORD-${id} selesai dicuci?` 
+                : `Tandai cucian ORD-${id} telah diambil oleh pelanggan?`;
+                
+            if(!confirm(pesan)) return;
+            
             try {
                 await fetch(`${API_URL}/pesanan/${id}/status`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status_pesanan: statusPesanan, status_pembayaran: statusPembayaran })
+                    body: JSON.stringify({ status_pesanan: statusPesananBaru, status_pembayaran: statusPembayaran })
                 });
                 fetchOrders(); 
             } catch (e) {
