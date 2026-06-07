@@ -338,6 +338,37 @@
             white-space: nowrap;
         }
 
+        .karyawan-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .karyawan-actions {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-mini {
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .btn-mini-edit {
+            background: #fff7ed;
+            color: var(--warning);
+        }
+
+        .btn-mini-delete {
+            background: #fff0f0;
+            color: var(--danger);
+        }
+
         .status-aktif {
             background-color: #d4edda;
             color: #155724;
@@ -567,10 +598,13 @@
 
                 <div class="form-card">
                     <div style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase;">
-                        <i class="fas fa-user-plus" style="margin-right: 5px;"></i> Tambah Karyawan Baru
+                        <i class="fas fa-user-plus" style="margin-right: 5px;"></i>
+                        <span id="judul-form-karyawan">Tambah Karyawan Baru</span>
                     </div>
 
                     <form id="formKaryawan" novalidate>
+                        <input type="hidden" id="edit-karyawan-id" value="">
+
                         <div class="form-group">
                             <label>Nama Lengkap</label>
                             <div class="input-wrapper">
@@ -662,6 +696,10 @@
 
                         <button type="submit" class="btn-primary" id="btn-simpan-karyawan">
                             Simpan Data Karyawan
+                        </button>
+
+                        <button type="button" class="btn-secondary" id="btn-batal-edit" style="display:none;" onclick="batalEditKaryawan()">
+                            Batal Edit
                         </button>
                     </form>
                 </div>
@@ -874,20 +912,22 @@
             }
         });
 
-        window.onload = function() {
+        window.onload = function () {
             const nama = localStorage.getItem('nama_kasir') || 'Andra';
             const role = getRole();
 
             document.getElementById('display-name').innerText = nama;
-            document.getElementById('display-role').innerText = role === 'Admin' || role === 'Admin Besar'
-                ? 'Pemilik (Admin)'
-                : 'Kasir (Karyawan)';
+
+            document.getElementById('display-role').innerText =
+                role === 'Admin' || role === 'Admin Besar'
+                    ? 'Pemilik (Admin)'
+                    : 'Kasir (Karyawan)';
 
             document.getElementById('avatar-inisial').innerText = nama.charAt(0).toUpperCase();
             document.getElementById('input-fullname').value = nama;
             document.getElementById('input-role').value = role;
 
-            if(role === 'Admin' || role === 'Admin Besar') {
+            if (role === 'Admin' || role === 'Admin Besar') {
                 document.getElementById('admin-menu').style.display = 'block';
                 loadDataKaryawan();
             }
@@ -1069,7 +1109,8 @@
                     container.appendChild(buatItemKaryawan(karyawan));
                 });
             } catch (error) {
-                document.getElementById('tabelKaryawan').innerHTML = '<div class="message error">Gagal memuat data dari server</div>';
+                document.getElementById('tabelKaryawan').innerHTML =
+                    '<div class="message error">Gagal memuat data dari server</div>';
             }
         }
 
@@ -1084,8 +1125,9 @@
             nama.textContent = karyawan.nama || '-';
 
             const detail = document.createElement('p');
+
             const jamKerja = (karyawan.jam_masuk && karyawan.jam_pulang)
-                ? `${String(karyawan.jam_masuk).slice(0,5)} - ${String(karyawan.jam_pulang).slice(0,5)}`
+                ? `${String(karyawan.jam_masuk).slice(0, 5)} - ${String(karyawan.jam_pulang).slice(0, 5)}`
                 : 'Shift belum diatur';
 
             detail.innerHTML = '<i class="fas fa-briefcase" style="margin-right:4px;"></i> ';
@@ -1102,17 +1144,95 @@
             info.appendChild(nama);
             info.appendChild(detail);
 
+            const rightSide = document.createElement('div');
+            rightSide.className = 'karyawan-right';
+
             const status = document.createElement('div');
             status.className = 'karyawan-status ' + (karyawan.status_aktif ? 'status-aktif' : 'status-nonaktif');
             status.textContent = karyawan.status_aktif ? 'Aktif' : 'Nonaktif';
 
+            const actions = document.createElement('div');
+            actions.className = 'karyawan-actions';
+
+            const editButton = document.createElement('button');
+            editButton.type = 'button';
+            editButton.className = 'btn-mini btn-mini-edit';
+            editButton.title = 'Edit Karyawan';
+            editButton.innerHTML = '<i class="fas fa-edit"></i>';
+            editButton.addEventListener('click', function () {
+                editKaryawan(karyawan);
+            });
+
+            const deleteButton = document.createElement('button');
+            deleteButton.type = 'button';
+            deleteButton.className = 'btn-mini btn-mini-delete';
+            deleteButton.title = 'Hapus Karyawan';
+            deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteButton.addEventListener('click', function () {
+                hapusKaryawan(karyawan.id, karyawan.nama || 'Karyawan');
+            });
+
+            actions.appendChild(editButton);
+            actions.appendChild(deleteButton);
+
+            rightSide.appendChild(status);
+            rightSide.appendChild(actions);
+
             item.appendChild(info);
-            item.appendChild(status);
+            item.appendChild(rightSide);
 
             return item;
         }
 
+        function editKaryawan(karyawan) {
+            document.getElementById('edit-karyawan-id').value = karyawan.id || '';
+            document.getElementById('nama').value = karyawan.nama || '';
+            document.getElementById('username').value = karyawan.username || '';
+            document.getElementById('password').value = '';
+            document.getElementById('jabatan').value = karyawan.jabatan || 'Kasir';
+            document.getElementById('jam_masuk').value = karyawan.jam_masuk
+                ? String(karyawan.jam_masuk).slice(0, 5)
+                : '';
+            document.getElementById('jam_pulang').value = karyawan.jam_pulang
+                ? String(karyawan.jam_pulang).slice(0, 5)
+                : '';
+
+            document.getElementById('password').required = false;
+            document.getElementById('password').placeholder = 'Kosongkan jika tidak ingin mengubah password';
+
+            document.getElementById('judul-form-karyawan').innerText = 'Edit Data Karyawan';
+            document.getElementById('btn-simpan-karyawan').innerText = 'Update Data Karyawan';
+            document.getElementById('btn-batal-edit').style.display = 'block';
+
+            document.querySelector('.scrollable-content').scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        function batalEditKaryawan() {
+            resetFormKaryawan();
+        }
+
+        function resetFormKaryawan() {
+            document.getElementById('formKaryawan').reset();
+            document.getElementById('edit-karyawan-id').value = '';
+
+            document.getElementById('password').required = true;
+            document.getElementById('password').placeholder = 'Minimal 8 karakter...';
+
+            document.getElementById('judul-form-karyawan').innerText = 'Tambah Karyawan Baru';
+            document.getElementById('btn-simpan-karyawan').innerText = 'Simpan Data Karyawan';
+            document.getElementById('btn-batal-edit').style.display = 'none';
+
+            document.getElementById('nama-error').style.display = 'none';
+            document.getElementById('username-error').style.display = 'none';
+            document.getElementById('password-error').style.display = 'none';
+        }
+
         function validasiKaryawan() {
+            const editId = document.getElementById('edit-karyawan-id').value;
+
             const nama = document.getElementById('nama').value.trim();
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
@@ -1121,7 +1241,7 @@
 
             const validNama = /^[A-Za-zÀ-ÿ ]{3,50}$/.test(nama);
             const validUsername = /^[A-Za-z0-9_]{3,20}$/.test(username);
-            const validPassword = password.length >= 8;
+            const validPassword = editId ? (password === '' || password.length >= 8) : password.length >= 8;
             const validJam = !jamMasuk || !jamPulang || jamMasuk < jamPulang;
 
             document.getElementById('nama-error').style.display = validNama ? 'none' : 'block';
@@ -1135,8 +1255,15 @@
             return validNama && validUsername && validPassword && validJam;
         }
 
-        document.getElementById('formKaryawan').addEventListener('submit', async function(e) {
+        document.getElementById('formKaryawan').addEventListener('submit', async function (e) {
             e.preventDefault();
+
+            const role = getRole();
+
+            if (role !== 'Admin' && role !== 'Admin Besar') {
+                alert('Akses ditolak. Hanya Admin yang dapat mengelola karyawan.');
+                return;
+            }
 
             if (!validasiKaryawan()) {
                 alert('Periksa kembali data karyawan.');
@@ -1144,6 +1271,7 @@
             }
 
             const tombol = document.getElementById('btn-simpan-karyawan');
+            const editId = document.getElementById('edit-karyawan-id').value;
 
             const dataBaru = {
                 nama: document.getElementById('nama').value.trim(),
@@ -1151,15 +1279,19 @@
                 password: document.getElementById('password').value,
                 jabatan: document.getElementById('jabatan').value,
                 jam_masuk: document.getElementById('jam_masuk').value,
-                jam_pulang: document.getElementById('jam_pulang').value
+                jam_pulang: document.getElementById('jam_pulang').value,
+                status_aktif: true
             };
 
+            const url = editId ? `${API_URL}/${editId}` : API_URL + '/register';
+            const method = editId ? 'PUT' : 'POST';
+
             try {
-                tombol.innerText = 'Menyimpan...';
+                tombol.innerText = editId ? 'Mengupdate...' : 'Menyimpan...';
                 tombol.disabled = true;
 
-                const response = await fetch(API_URL + '/register', {
-                    method: 'POST',
+                const response = await fetch(url, {
+                    method: method,
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json'
@@ -1169,23 +1301,62 @@
 
                 const result = await response.json();
 
-                if (response.ok) {
-                    alert("Karyawan berhasil didaftarkan!");
-                    document.getElementById('formKaryawan').reset();
-                    loadDataKaryawan();
-                } else {
-                    alert("Gagal: " + (result.error || result.message || "Terjadi kesalahan"));
+                if (!response.ok) {
+                    throw new Error(result.error || result.message || 'Terjadi kesalahan');
                 }
+
+                alert(editId ? 'Data karyawan berhasil diperbarui!' : 'Karyawan berhasil didaftarkan!');
+
+                resetFormKaryawan();
+                loadDataKaryawan();
             } catch (error) {
-                alert("Error jaringan. Pastikan backend Railway menyala.");
+                alert('Gagal: ' + (error.message || 'Error jaringan. Pastikan backend Railway menyala.'));
             } finally {
-                tombol.innerText = 'Simpan Data Karyawan';
+                tombol.innerText = document.getElementById('edit-karyawan-id').value
+                    ? 'Update Data Karyawan'
+                    : 'Simpan Data Karyawan';
+
                 tombol.disabled = false;
             }
         });
 
+        async function hapusKaryawan(id, nama) {
+            const role = getRole();
+
+            if (role !== 'Admin' && role !== 'Admin Besar') {
+                alert('Akses ditolak. Hanya Admin yang dapat menghapus karyawan.');
+                return;
+            }
+
+            const yakin = confirm(`Yakin ingin menghapus karyawan "${nama}"?`);
+
+            if (!yakin) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || result.pesan || 'Gagal menghapus karyawan.');
+                }
+
+                alert(result.message || 'Karyawan berhasil dihapus.');
+                loadDataKaryawan();
+            } catch (error) {
+                alert(error.message || 'Gagal menghapus karyawan.');
+            }
+        }
+
         function logoutSistem() {
-            if(confirm("Apakah Anda yakin ingin keluar dari aplikasi?")) {
+            if (confirm("Apakah Anda yakin ingin keluar dari aplikasi?")) {
                 localStorage.removeItem('nama_kasir');
                 localStorage.removeItem('role_kasir');
                 window.location.href = 'login.html';
