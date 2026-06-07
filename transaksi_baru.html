@@ -155,7 +155,7 @@
             btnLanjut.disabled = !(pelangganId && paketDropdown.value && berat > 0);
         }
 
-        // PERBAIKAN: Simpan ke LocalStorage, JANGAN FETCH POST DULU
+        // Simpan ke LocalStorage dan Pindah Halaman
         function lanjutKeRingkasan() {
             const selectPelanggan = document.getElementById('pilih-pelanggan');
             const selectPaket = document.getElementById('paket_id');
@@ -166,10 +166,10 @@
             const namaPaket = selectPaket.options[selectPaket.selectedIndex].text;
             const hargaPerKg = selectPaket.options[selectPaket.selectedIndex].getAttribute('data-harga');
             
-            // Tentukan Estimasi Hari
-            let estimasiHari = 1;
-            if (selectPaket.value === '1') estimasiHari = 3;
-            if (selectPaket.value === '3') estimasiHari = 0;
+            // Tentukan Estimasi Jam
+            let estimasiJam = 24; // Default Reguler 1 Hari
+            if (selectPaket.value === '1') estimasiJam = 72; // Hemat 3 Hari
+            if (selectPaket.value === '3') estimasiJam = 6;  // Express 6 Jam
 
             // Tentukan teks metode
             const teksMetode = metodeVal === 'antar' ? 'Antar ke Alamat' : 'Pelanggan Ambil Sendiri';
@@ -181,10 +181,10 @@
             localStorage.setItem('trx_paket_id', selectPaket.value);
             localStorage.setItem('trx_paket_nama', namaPaket);
             localStorage.setItem('trx_harga_per_kg', hargaPerKg);
-            localStorage.setItem('trx_estimasi_hari', estimasiHari);
+            localStorage.setItem('trx_estimasi_jam', estimasiJam); // Perbaikan: Simpan dalam JAM
             localStorage.setItem('trx_berat', document.getElementById('berat').value);
-            localStorage.setItem('trx_metode_asli', metodeVal); // 'antar' atau 'ambil_sendiri' untuk backend
-            localStorage.setItem('trx_metode', teksMetode); // Untuk UI
+            localStorage.setItem('trx_metode_asli', metodeVal);
+            localStorage.setItem('trx_metode', teksMetode);
             localStorage.setItem('trx_jarak_km', jarakVal);
             localStorage.setItem('trx_ongkir', ongkir);
             localStorage.setItem('trx_catatan', document.getElementById('catatan').value || 'Tidak ada catatan');
