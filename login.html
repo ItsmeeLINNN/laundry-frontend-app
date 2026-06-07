@@ -4,24 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spincycle Laundry - Login</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
-        /* =========================================
-           CSS Murni: Replikasi UI Login/Register
-        ========================================= */
+        :root {
+            --dark-blue: #15428F;
+            --light-blue: #9BB8EA;
+            --text-main: #1f2d3d;
+            --text-sub: #6b7280;
+            --input-bg: #f4f7fb;
+            --danger: #e74c3c;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
         }
 
         body {
-            background-color: #eaeaea; 
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
             padding: 20px;
         }
 
@@ -29,203 +35,368 @@
             width: 375px;
             height: 750px;
             border-radius: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            border: 10px solid #333;
             overflow: hidden;
-            border: 10px solid #333; 
+            background: linear-gradient(180deg, #ffffff 0%, #7db3e8 100%);
+            box-shadow: 0 15px 45px rgba(21, 66, 143, 0.18);
             position: relative;
-            background: linear-gradient(180deg, #ffffff 22%, #2f5d96 45%, #8cbceb 100%);
-        }
-
-        .content-wrapper {
-            width: 100%;
-            height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 40px 30px;
-            overflow-y: auto;
         }
 
-        .header-top {
+        .top-area {
+            background: white;
+            padding: 45px 30px 25px;
             text-align: center;
-            margin-bottom: 30px;
+            border-bottom-left-radius: 35px;
+            border-bottom-right-radius: 35px;
         }
-        
-        .welcome-text {
-            color: #2f5d96;
-            font-size: 14px;
+
+        .logo-box {
+            width: 105px;
+            height: 90px;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .brand-title {
+            color: var(--dark-blue);
+            font-size: 15px;
+            font-weight: 800;
             line-height: 1.4;
-            font-weight: bold;
             text-transform: uppercase;
         }
 
-        .mid-text {
+        .login-area {
+            flex: 1;
+            padding: 35px 30px 30px;
+        }
+
+        .login-area h1 {
+            font-size: 22px;
             color: white;
-            margin-bottom: 25px;
+            margin-bottom: 6px;
+            font-weight: 800;
         }
-        .mid-text h2 {
-            font-size: 20px;
-            margin-bottom: 5px;
-            font-weight: 700;
-        }
-        .mid-text p {
+
+        .login-area p {
             font-size: 12px;
-            opacity: 0.9;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 28px;
         }
 
-        .form-section {
-            width: 100%;
-            animation: fadeIn 0.4s ease-in-out;
+        .form-group {
+            margin-bottom: 16px;
         }
-        .input-group {
-            margin-bottom: 15px;
-        }
-        .input-group input {
+
+        .input-field {
             width: 100%;
-            padding: 15px 20px;
             border: none;
-            border-radius: 10px;
-            font-size: 13px;
-            color: #333;
             outline: none;
-            background-color: rgba(255, 255, 255, 0.95);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .input-group input::placeholder {
-            color: #aaa;
+            border-radius: 10px;
+            padding: 17px 20px;
+            font-size: 14px;
+            color: var(--text-main);
+            background: rgba(255,255,255,0.9);
         }
 
-        .btn-submit {
+        .input-field:focus {
+            background: white;
+            box-shadow: 0 0 0 2px rgba(21, 66, 143, 0.15);
+        }
+
+        .btn-login {
             width: 100%;
-            background-color: #204177; 
+            background: #244b8f;
             color: white;
             border: none;
             border-radius: 10px;
-            padding: 15px;
-            font-size: 14px;
-            font-weight: bold;
+            padding: 17px;
+            font-size: 15px;
+            font-weight: 800;
             cursor: pointer;
             margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(32, 65, 119, 0.3);
-            transition: 0.3s;
+            transition: 0.2s;
         }
-        .btn-submit:hover {
-            background-color: #16305a;
+
+        .btn-login:active {
+            transform: scale(0.98);
         }
-        .btn-submit:disabled {
-            background-color: #5a739e;
+
+        .btn-login:disabled {
+            opacity: 0.7;
             cursor: not-allowed;
         }
 
-        .extra-links {
+        .login-options {
+            margin-top: 16px;
             display: flex;
             justify-content: space-between;
-            margin-top: 15px;
+            align-items: center;
             font-size: 11px;
             color: white;
         }
-        .extra-links label {
+
+        .remember-box {
             display: flex;
             align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        .extra-links a {
-            color: white;
-            text-decoration: none;
+            gap: 7px;
+            font-weight: 600;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .forgot-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .error-message {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--danger);
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            margin-bottom: 14px;
+            font-weight: 600;
+        }
+
+        .debug-note {
+            display: none;
+            margin-top: 12px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.85);
+            word-break: break-word;
+            line-height: 1.4;
         }
     </style>
 </head>
-<body>
 
+<body>
     <div class="mobile-screen">
-        <div class="content-wrapper">
-            
-            <div class="header-top">
-                <div style="margin-bottom: 15px;">
-                    <img src="Logo4.png" alt="Logo Spincycle" style="width: 100px; height: auto; border-radius: 18px; box-shadow: 0 0px 0px rgba(0,0,0,0.1);">
-                </div>
-                <div class="welcome-text">
-                    welcome to,<br>spincycle laundry
-                </div>
+        <div class="top-area">
+            <div class="logo-box">
+                <img src="assets/logo.png" alt="Spincycle Laundry" onerror="this.style.display='none'">
             </div>
 
-            <form id="formLogin" class="form-section">
-                <div class="mid-text">
-                    <h2>Langsung Login kan</h2>
-                    <p>Lengkapi data dirimu dulu ya</p>
+            <div class="brand-title">
+                WELCOME TO,<br>
+                SPINCYCLE LAUNDRY
+            </div>
+        </div>
+
+        <div class="login-area">
+            <h1>Langsung Login kan</h1>
+            <p>Lengkapi data dirimu dulu ya</p>
+
+            <div class="error-message" id="error-message"></div>
+
+            <form id="loginForm" novalidate>
+                <div class="form-group">
+                    <input
+                        type="text"
+                        id="username"
+                        class="input-field"
+                        placeholder="Username"
+                        autocomplete="username"
+                        minlength="3"
+                        maxlength="30"
+                        required
+                    >
                 </div>
 
-                <div class="input-group">
-                    <input type="text" id="username" placeholder="Username" required>
-                </div>
-                <div class="input-group">
-                    <input type="password" id="password" placeholder="Password" required>
+                <div class="form-group">
+                    <input
+                        type="password"
+                        id="password"
+                        class="input-field"
+                        placeholder="Password"
+                        autocomplete="current-password"
+                        minlength="6"
+                        maxlength="72"
+                        required
+                    >
                 </div>
 
-                <button type="submit" class="btn-submit" id="btnMasuk">Masuk</button>
+                <button type="submit" class="btn-login" id="btn-login">
+                    Masuk
+                </button>
 
-                <div class="extra-links">
-                    <label>
-                        <input type="checkbox"> Remember Me
+                <div class="login-options">
+                    <label class="remember-box">
+                        <input type="checkbox" id="rememberMe">
+                        <span>Remember Me</span>
                     </label>
-                    <a href="#">Lupa Password?</a>
+
+                    <a href="#" class="forgot-link" onclick="alert('Silakan hubungi Admin untuk reset password.'); return false;">
+                        Lupa Password?
+                    </a>
                 </div>
             </form>
 
+            <div class="debug-note" id="debug-note"></div>
         </div>
     </div>
 
-<script>
-    document.getElementById('formLogin').addEventListener('submit', async function(e) {
-        e.preventDefault(); // Mencegah halaman me-refresh
-        
-        // Ambil elemen tombol untuk efek loading
-        const btnSubmit = document.getElementById('btnMasuk');
-        const teksAsli = btnSubmit.innerText;
-        btnSubmit.innerText = "Memeriksa data...";
-        btnSubmit.disabled = true;
+    <script>
+        const API_LOGIN_URL = 'https://laundry-backend-api-production.up.railway.app/api/karyawan/login';
 
-        // Ambil data yang diketik user
-        const dataLogin = {
-            username: document.getElementById('username').value,
-            password: document.getElementById('password').value
-        };
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const rememberMeInput = document.getElementById('rememberMe');
+        const btnLogin = document.getElementById('btn-login');
+        const errorMessage = document.getElementById('error-message');
+        const debugNote = document.getElementById('debug-note');
 
-        try {
-            // Tembak API Login di Railway
-            const response = await fetch('https://laundry-backend-api-production.up.railway.app/api/karyawan/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(dataLogin)
-            });
+        window.addEventListener('load', function () {
+            const rememberedUsername = localStorage.getItem('remember_username');
 
-            const result = await response.json();
-
-            if (response.ok) {
-                // JIKA SUKSES: Simpan data ke memori HP/Browser
-                localStorage.setItem('nama_kasir', result.user.nama);
-                localStorage.setItem('role_kasir', result.user.jabatan);
-                
-                // Pindah otomatis ke halaman Beranda
-                window.location.href = 'dashboard.html';
-            } else {
-                // JIKA GAGAL (Password salah / User tidak ada)
-                alert(result.error);
-                btnSubmit.innerText = teksAsli;
-                btnSubmit.disabled = false;
+            if (rememberedUsername) {
+                usernameInput.value = rememberedUsername;
+                rememberMeInput.checked = true;
             }
-        } catch (error) {
-            alert("Gagal terhubung ke server. Pastikan internet lancar.");
-            btnSubmit.innerText = teksAsli;
-            btnSubmit.disabled = false;
+        });
+
+        function showError(message) {
+            errorMessage.style.display = 'block';
+            errorMessage.textContent = message;
         }
-    });
-</script>
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+            errorMessage.textContent = '';
+        }
+
+        function setLoading(status) {
+            btnLogin.disabled = status;
+            btnLogin.textContent = status ? 'Memeriksa data...' : 'Masuk';
+        }
+
+        function cleanUsername(value) {
+            return String(value || '')
+                .replace(/[^A-Za-z0-9_]/g, '')
+                .trim();
+        }
+
+        function getUserFromResponse(result) {
+            if (!result || typeof result !== 'object') {
+                return null;
+            }
+
+            return result.data || result.user || result.karyawan || result.result || result;
+        }
+
+        function getRoleFromUser(user) {
+            return user.role || user.jabatan || user.hak_akses || user.level || 'Karyawan';
+        }
+
+        function getNameFromUser(user, fallbackUsername) {
+            return user.nama || user.name || user.fullname || user.username || fallbackUsername;
+        }
+
+        usernameInput.addEventListener('input', function () {
+            this.value = cleanUsername(this.value);
+        });
+
+        loginForm.addEventListener('submit', async function (event) {
+            event.preventDefault();
+            hideError();
+
+            const username = cleanUsername(usernameInput.value);
+            const password = passwordInput.value;
+
+            usernameInput.value = username;
+
+            if (!username || !password) {
+                showError('Username dan password wajib diisi.');
+                return;
+            }
+
+            if (username.length < 3) {
+                showError('Username minimal 3 karakter.');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('Password minimal 6 karakter.');
+                return;
+            }
+
+            try {
+                setLoading(true);
+
+                const response = await fetch(API_LOGIN_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: username,
+                        password: password
+                    })
+                });
+
+                const text = await response.text();
+
+                let result = {};
+
+                try {
+                    result = text ? JSON.parse(text) : {};
+                } catch (error) {
+                    console.error('Response bukan JSON:', text);
+
+                    showError('Server tidak mengembalikan JSON. Cek backend Railway.');
+                    return;
+                }
+
+                console.log('LOGIN RESPONSE:', result);
+
+                if (!response.ok) {
+                    showError(result.message || result.pesan || result.error || 'Login gagal. Periksa username dan password.');
+                    return;
+                }
+
+                const user = getUserFromResponse(result);
+
+                if (!user || typeof user !== 'object') {
+                    console.error('Data user tidak ditemukan:', result);
+                    showError('Response login tidak valid. Data user tidak ditemukan.');
+                    return;
+                }
+
+                const role = getRoleFromUser(user);
+                const nama = getNameFromUser(user, username);
+
+                localStorage.setItem('id_kasir', user.id || '');
+                localStorage.setItem('nama_kasir', nama);
+                localStorage.setItem('username_kasir', user.username || username);
+                localStorage.setItem('role_kasir', role);
+
+                if (rememberMeInput.checked) {
+                    localStorage.setItem('remember_username', username);
+                } else {
+                    localStorage.removeItem('remember_username');
+                }
+
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('Error login:', error);
+
+                showError('Gagal terhubung ke server. Pastikan backend Railway aktif dan internet lancar.');
+            } finally {
+                setLoading(false);
+            }
+        });
+    </script>
 </body>
 </html>
