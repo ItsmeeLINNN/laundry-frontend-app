@@ -126,7 +126,7 @@
             const container = document.getElementById('order-list-container');
             const keyword = document.getElementById('searchInput').value.toLowerCase();
 
-            // Filter data
+            // Filter data berdasarkan input search dan filter status
             const filteredOrders = allOrders.filter(order => {
                 const matchName = (order.nama_pelanggan || '').toLowerCase().includes(keyword);
                 let matchFilter = true;
@@ -149,10 +149,12 @@
                 const isLunas = p.status_pembayaran === 'Lunas';
                 const isSelesai = p.status_pesanan === 'Selesai';
 
+                // Tombol Bayar (Hanya aktif jika belum lunas)
                 const btnPayHTML = !isLunas 
-                    ? `<button class="btn-action btn-pay" onclick="updateStatus(${p.id}, '${p.status_pesanan}', 'Lunas')"><i class="fas fa-money-bill-wave"></i> Bayar</button>`
+                    ? `<button class="btn-action btn-pay" onclick="bukaHalamanPembayaran(${p.id}, ${p.total_harga}, '${p.status_pesanan}')"><i class="fas fa-money-bill-wave"></i> Bayar</button>`
                     : `<button class="btn-action btn-disabled" disabled><i class="fas fa-check"></i> Lunas</button>`;
 
+                // Tombol Selesaikan (Hanya aktif jika belum selesai)
                 const btnDoneHTML = !isSelesai
                     ? `<button class="btn-action btn-done" onclick="updateStatus(${p.id}, 'Selesai', '${p.status_pembayaran}')"><i class="fas fa-box"></i> Selesaikan</button>`
                     : `<button class="btn-action btn-disabled" disabled><i class="fas fa-check-double"></i> Selesai</button>`;
@@ -160,7 +162,7 @@
                 return `
                     <div class="order-card">
                         <div class="order-header">
-                            <span class="nota-badge">Nota #${p.id}</span>
+                            <span class="nota-badge">Nota ORD-${p.id}</span>
                             <span class="date-text">${tgl}</span>
                         </div>
                         <div class="order-body">
@@ -182,8 +184,17 @@
             }).join('');
         }
 
+        // FUNGSI BARU: Melempar data ke halaman Pembayaran
+        function bukaHalamanPembayaran(id, total, statusPesanan) {
+            localStorage.setItem('bayar_order_id', id);
+            localStorage.setItem('bayar_total', total);
+            localStorage.setItem('bayar_status_pesanan', statusPesanan);
+            window.location.href = 'pembayaran.html';
+        }
+
+        // FUNGSI LAMA: Mengubah status menjadi selesai (Tanpa masuk halaman pembayaran)
         async function updateStatus(id, statusPesanan, statusPembayaran) {
-            if(!confirm(`Yakin ingin memproses nota #${id}?`)) return;
+            if(!confirm(`Yakin ingin memproses/menyelesaikan nota ORD-${id}?`)) return;
             
             try {
                 await fetch(`${API_URL}/pesanan/${id}/status`, {
@@ -191,7 +202,7 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status_pesanan: statusPesanan, status_pembayaran: statusPembayaran })
                 });
-                fetchOrders(); // Tarik ulang data terbaru dari server
+                fetchOrders(); // Refresh layar setelah update
             } catch (e) {
                 alert("Gagal memproses. Periksa koneksi.");
             }
