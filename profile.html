@@ -128,21 +128,21 @@
                             <label>Nama Lengkap</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-user"></i>
-                                <input type="text" id="nama" placeholder="Masukkan nama..." required>
+                                <input type="text" id="nama" placeholder="Masukkan nama..." pattern="[A-Za-z\s]+" title="Hanya huruf dan spasi yang diperbolehkan" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Username</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-at"></i>
-                                <input type="text" id="username" placeholder="Username untuk login..." required>
+                                <input type="text" id="username" placeholder="Username untuk login..." pattern="^[a-zA-Z0-9_]{3,20}$" title="Hanya huruf, angka, dan underscore yang diperbolehkan (3-20 karakter)" required>
                             </div>
                         </div>
                         <div class="form-group">
                             <label>Password</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-lock"></i>
-                                <input type="password" id="password" placeholder="Minimal 6 karakter..." required>
+                                <input type="password" id="password" placeholder="Minimal 6 karakter..." pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{6,}$" title="Password harus mengandung minimal 6 karakter, termasuk huruf besar, huruf kecil, dan angka" required>
                             </div>
                         </div>
                         <div class="form-group">

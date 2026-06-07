@@ -112,21 +112,21 @@
                     <label>Nama Lengkap</label>
                     <div class="input-wrapper">
                         <i class="fas fa-user"></i>
-                        <input type="text" id="cust-name" placeholder="Contoh: Justin Dean">
+                        <input type="text" id="cust-name" placeholder="Contoh: Justin Dean" pattern="[A-Za-z\s]+" title="Hanya huruf dan spasi yang diperbolehkan" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Nomor WhatsApp</label>
                     <div class="input-wrapper">
                         <i class="fab fa-whatsapp"></i>
-                        <input type="tel" id="cust-phone" placeholder="Contoh: 08123456789">
+                        <input type="tel" id="cust-phone" placeholder="Contoh: 08123456789" pattern="^\d{10,13}$" title="Hanya angka yang diperbolehkan (10-13 digit)" required>
                     </div>
                 </div>
                 <div class="form-group">
                     <label>Alamat (Opsional)</label>
                     <div class="input-wrapper">
                         <i class="fas fa-map-marker-alt"></i>
-                        <input type="text" id="cust-address" placeholder="Contoh: Jl. Sudirman No. 10">
+                        <input type="text" id="cust-address" placeholder="Contoh: Jl. Sudirman No. 10" pattern="[A-Za-z0-9\s.,-]+" title="Hanya huruf, angka, spasi, koma, titik, dan tanda hubung yang diperbolehkan">
                     </div>
                 </div>
                 

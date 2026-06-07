@@ -70,7 +70,7 @@
                 <div class="form-card">
                     <div class="form-group">
                         <label>Nama Layanan</label>
-                        <div class="input-wrapper"><input type="text" id="srv-name" placeholder="Contoh: Cuci Karpet"></div>
+                        <div class="input-wrapper"><input type="text" id="srv-name" placeholder="Contoh: Cuci Karpet" pattern="[A-Za-z\s]+" title="Hanya huruf dan spasi yang diperbolehkan" required></div>
                     </div>
                     <div style="display: flex; gap: 10px;">
                         <div class="form-group" style="flex: 1;">
@@ -84,12 +84,12 @@
                         </div>
                         <div class="form-group" style="flex: 1;">
                             <label>Unit (Satuan)</label>
-                            <div class="input-wrapper"><input type="text" id="srv-unit" placeholder="Kg / Pcs / Meter"></div>
+                            <div class="input-wrapper"><input type="text" id="srv-unit" placeholder="Kg / Pcs / Meter" pattern="[A-Za-z\s]+" title="Hanya huruf dan spasi yang diperbolehkan" required></div>
                         </div>
                     </div>
                     <div class="form-group">
                         <label>Harga (Rp)</label>
-                        <div class="input-wrapper"><input type="number" id="srv-price" placeholder="Contoh: 15000"></div>
+                        <div class="input-wrapper"><input type="number" id="srv-price" placeholder="Contoh: 15000" min="0" required></div>
                     </div>
                     <button class="btn-save" id="btn-submit" onclick="simpanLayanan()">Tambah Layanan</button>
                 </div>
