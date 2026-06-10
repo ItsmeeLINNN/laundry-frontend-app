@@ -131,7 +131,7 @@
                 <form id="formPengeluaran" onsubmit="simpanPengeluaran(event)">
                     <div class="form-group">
                         <label>Keterangan / Keperluan</label>
-                        <input type="text" id="exp_keterangan" class="form-input" placeholder="Contoh: Beli Deterjen 5L, Plastik Packing" required>
+                        <input type="text" id="exp_keterangan" class="form-input" placeholder="Contoh: Beli Deterjen, Plastik Packing" required>
                     </div>
                     <div class="form-group">
                         <label>Nominal Pengeluaran (Rp)</label>
@@ -156,36 +156,39 @@
         let listPengeluaran = [];
 
         window.onload = () => {
-            // Set default date input form ke tanggal hari ini
             document.getElementById('exp_tanggal').value = new Date().toISOString().split('T')[0];
             ambilDataSistem();
         };
 
         async function ambilDataSistem() {
             try {
-                // 1. Ambil Data Pemasukan (Dari Pesanan Cucian)
+                // 1. Ambil Data Pemasukan (Dari Pesanan Cucian yang Lunas)
                 const resPesanan = await fetch(`${API_URL}/pesanan`);
                 const dataPesanan = await resPesanan.json();
                 if(Array.isArray(dataPesanan)) {
                     listPesananLunas = dataPesanan.filter(p => p.status_pembayaran === 'Lunas');
                 }
 
-                // 2. Ambil Data Pengeluaran dari API Backend
+                // 2. Ambil Data Pengeluaran (PERBAIKAN FALLBACK JIKA SERVER 404/500)
                 try {
                     const resPengeluaran = await fetch(`${API_URL}/pengeluaran`);
                     if(resPengeluaran.ok) {
-                        listPengeluaran = await resPengeluaran.json();
+                        const serverData = await resPengeluaran.json();
+                        listPengeluaran = Array.isArray(serverData) ? serverData : [];
+                    } else {
+                        // Jalankan jika rute belum ada (404/500)
+                        listPengeluaran = JSON.parse(localStorage.getItem('laundry_pengeluaran_backup')) || [];
                     }
                 } catch(errExp) {
-                    console.warn("Endpoint /pengeluaran belum siap, menggunakan database lokal browser.");
-                    // Fallback to local storage if custom backend route doesn't exist yet
                     listPengeluaran = JSON.parse(localStorage.getItem('laundry_pengeluaran_backup')) || [];
                 }
 
                 prosesDataRealtime();
             } catch(e) {
                 console.error(e);
-                document.getElementById('transaction-container').innerHTML = '<div style="color:red; text-align:center; font-size:12px;">Gagal terhubung ke database.</div>';
+                // Tetap render dari local storage jika koneksi internet utama down
+                listPengeluaran = JSON.parse(localStorage.getItem('laundry_pengeluaran_backup')) || [];
+                prosesDataRealtime();
             }
         }
 
@@ -202,54 +205,55 @@
             const periode = document.getElementById('filter-periode').value;
             const hariIni = new Date();
 
-            // Ambil filter tanggal batas awal
             let batasTanggal = new Date();
             if (periode === 'harian') batasTanggal.setHours(0,0,0,0);
             if (periode === 'mingguan') batasTanggal.setDate(hariIni.getDate() - 7);
             if (periode === 'bulanan') batasTanggal.setMonth(hariIni.getMonth(), 1);
             if (periode === 'tahunan') batasTanggal.setMonth(0, 1);
 
-            // Filter Pemasukan Berdasarkan Rentang Waktu
             const filteredPemasukan = listPesananLunas.filter(p => new Date(p.tanggal_masuk || p.tanggal_order) >= batasTanggal);
-            // Filter Pengeluaran Berdasarkan Rentang Waktu
             const filteredPengeluaran = listPengeluaran.filter(p => new Date(p.tanggal) >= batasTanggal);
 
-            // Hitung Total Finansial
             const totalMasuk = filteredPemasukan.reduce((acc, curr) => acc + (parseFloat(curr.total_harga || curr.total_tagihan) || 0), 0);
             const totalKeluar = filteredPengeluaran.reduce((acc, curr) => acc + (parseFloat(curr.nominal) || 0), 0);
             const labaBersih = totalMasuk - totalKeluar;
 
-            // Update UI Nominal Card
             document.getElementById('val-masuk').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalMasuk);
             document.getElementById('val-keluar').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalKeluar);
             document.getElementById('val-laba').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(labaBersih);
 
-            // Update Grafik & List Sejarah Finansial
-            updateChartRealtime(filteredPemasukan, filteredPengeluaran, periode);
+            updateChartRealtime(filteredPemasukan, filteredPengeluaran);
             renderListRealtime(isTabPemasukan() ? filteredPemasukan : filteredPengeluaran);
         }
 
         function isTabPemasukan() { return currentTab === 'pemasukan'; }
 
-        function updateChartRealtime(pemasukanArr, pengeluaranArr, periode) {
+        // PERBAIKAN GRAFIK: Menggunakan pencocokan string YYYY-MM-DD agar sinkron
+        function updateChartRealtime(pemasukanArr, pengeluaranArr) {
             const ctx = document.getElementById('financialChart').getContext('2d');
-            let labels = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
-            let dataPoints = [0, 0, 0, 0, 0, 0, 0];
+            let labels = [];
+            let dataPoints = [];
 
-            // Mengisi data poin grafik secara dinamis berdasarkan hari dalam 1 minggu terakhir
-            const hariMundur = 7;
-            for(let i=0; i<hariMundur; i++) {
+            const formatYMD = (date) => {
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            };
+
+            // Loop 7 Hari Terakhir Mundur
+            for(let i = 0; i < 7; i++) {
                 let d = new Date();
-                d.setDate(d.getDate() - (hariMundur - 1 - i));
+                d.setDate(d.getDate() - (6 - i));
                 labels[i] = d.toLocaleDateString('id-ID', { weekday: 'short' });
 
-                let tglString = d.toDateString();
+                let targetDateStr = formatYMD(d);
                 
                 if (isTabPemasukan()) {
-                    dataPoints[i] = pemasukanArr.filter(p => new Date(p.tanggal_masuk || p.tanggal_order).toDateString() === tglString)
+                    dataPoints[i] = pemasukanArr.filter(p => formatYMD(new Date(p.tanggal_masuk || p.tanggal_order)) === targetDateStr)
                                                 .reduce((a, b) => a + (parseFloat(b.total_harga || b.total_tagihan) || 0), 0);
                 } else {
-                    dataPoints[i] = pengeluaranArr.filter(p => new Date(p.tanggal).toDateString() === tglString)
+                    dataPoints[i] = pengeluaranArr.filter(p => formatYMD(new Date(p.tanggal)) === targetDateStr)
                                                  .reduce((a, b) => a + (parseFloat(b.nominal) || 0), 0);
                 }
             }
@@ -297,7 +301,7 @@
             container.innerHTML = arrayData.slice(0, 10).map(item => {
                 const isPem = isTabPemasukan();
                 const title = isPem ? `Cucian - ${item.nama_pelanggan || 'Pelanggan Walk-In'}` : item.keterangan;
-                const code = isPem ? `ORD-${item.id}` : `EXP-${item.id || 'N/A'}`;
+                const code = isPem ? `ORD-${item.id}` : `EXP-${item.id || 'LOCAL'}`;
                 const dateRaw = isPem ? (item.tanggal_masuk || item.tanggal_order) : item.tanggal;
                 const formatTgl = new Date(dateRaw).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
                 const nominal = isPem ? (item.total_harga || item.total_tagihan) : item.nominal;
@@ -314,11 +318,9 @@
             }).join('');
         }
 
-        // FUNGSI MODAL DIALOG PENGELUARAN
         function bukaModalExpense() { document.getElementById('expenseModal').style.display = 'flex'; }
         function tutupModalExpense() { document.getElementById('expenseModal').style.display = 'none'; document.getElementById('formPengeluaran').reset(); }
 
-        // FUNGSI POST PENGELUARAN BARU KE BACKEND
         async function simpanPengeluaran(e) {
             e.preventDefault();
             const btnSubmit = document.getElementById('btn-submit-exp');
@@ -331,6 +333,12 @@
 
             const payload = { keterangan: ket, nominal: nom, tanggal: tgl };
 
+            // Selalu simpan ke local storage backup terlebih dahulu agar instan (real-time)
+            let localArr = JSON.parse(localStorage.getItem('laundry_pengeluaran_backup')) || [];
+            const localDataBaru = { id: Date.now(), ...payload }; // gunakan timestamp sebagai ID unik sementara
+            localArr.unshift(localDataBaru);
+            localStorage.setItem('laundry_pengeluaran_backup', JSON.stringify(localArr));
+
             try {
                 const response = await fetch(`${API_URL}/pengeluaran`, {
                     method: 'POST',
@@ -339,20 +347,19 @@
                 });
 
                 if (response.ok) {
-                    alert('Pengeluaran operasional berhasil dicatat!');
+                    alert('Pengeluaran operasional berhasil dicatat di cloud database!');
+                    // Jika sukses ke cloud, hapus salinan lokal terakhir agar tidak double saat fetch ulang
+                    localArr.shift();
+                    localStorage.setItem('laundry_pengeluaran_backup', JSON.stringify(localArr));
                 } else {
-                    throw new Error("Gagal kirim ke server.");
+                    alert('Pengeluaran berhasil disimpan secara lokal di sistem kasir.');
                 }
             } catch(err) {
-                // Fallback otomatis jika endpoint backend belum terbuat / di-deploy
-                let localArr = JSON.parse(localStorage.getItem('laundry_pengeluaran_backup')) || [];
-                localArr.unshift({ id: localArr.length + 1, ...payload });
-                localStorage.setItem('laundry_pengeluaran_backup', JSON.stringify(localArr));
                 alert('Pengeluaran berhasil disimpan secara lokal di sistem kasir.');
             }
 
             tutupModalExpense();
-            ambilDataSistem(); // Refresh data secara real-time
+            ambilDataSistem(); // REFRESH DATA INSTAN SECARA REAL-TIME
             btnSubmit.disabled = false;
             btnSubmit.innerText = 'Simpan Pengeluaran';
         }
