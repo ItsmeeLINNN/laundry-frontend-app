@@ -97,27 +97,42 @@
             font-weight: 800;
         }
 
-        .btn-notif {
+        /* LONCENG NOTIFIKASI BARU */
+        .notification-wrapper {
+            position: relative;
+            cursor: pointer;
             background: white;
-            border: none;
             width: 38px;
             height: 38px;
             border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(21, 66, 143, 0.08);
+            transition: 0.2s;
+        }
+        
+        .notification-wrapper:active {
+            transform: scale(0.95);
+        }
+        
+        .notification-wrapper i {
             color: var(--dark-blue);
             font-size: 16px;
-            cursor: pointer;
-            position: relative;
-            box-shadow: 0 4px 12px rgba(21, 66, 143, 0.08);
         }
-
-        .notif-dot {
+        
+        .badge-merah {
             position: absolute;
-            top: 8px;
-            right: 10px;
-            width: 8px;
-            height: 8px;
+            top: -2px;
+            right: -2px;
             background: var(--danger);
-            border-radius: 50%;
+            color: white;
+            font-size: 9px;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 10px;
+            border: 2px solid white;
+            display: none;
         }
 
         /* Content */
@@ -363,6 +378,78 @@
             color: var(--dark-blue);
             font-weight: 800;
         }
+
+        /* MODAL NOTIFIKASI BOTTOM SHEET */
+        .modal-overlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            justify-content: center;
+            align-items: flex-end; /* Memastikan modal muncul dari bawah layar */
+        }
+        
+        .notif-card {
+            background: white;
+            width: 100%;
+            border-radius: 25px 25px 0 0;
+            padding: 25px 20px 40px 20px;
+            animation: slideUpNotif 0.3s ease;
+            border-top: 5px solid var(--warning);
+        }
+        
+        @keyframes slideUpNotif {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .notif-item {
+            padding: 15px;
+            border: 1px solid #eef1f5;
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            cursor: pointer;
+            transition: 0.2s;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .notif-item:active {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .notif-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .notif-text h4 {
+            font-size: 13px;
+            color: var(--text-main);
+            margin-bottom: 4px;
+            font-weight: 800;
+        }
+
+        .notif-text p {
+            font-size: 11px;
+            color: var(--text-sub);
+            line-height: 1.4;
+        }
+
+        .notif-text b {
+            color: var(--dark-blue);
+        }
     </style>
 </head>
 <body>
@@ -375,7 +462,10 @@
                     <h2 id="greet-name">Memuat...</h2>
                 </div>
             </div>
-            <button class="btn-notif"><i class="fas fa-bell"></i><div class="notif-dot"></div></button>
+            <div class="notification-wrapper" onclick="bukaNotifikasi()">
+                <i class="fas fa-bell"></i>
+                <span class="badge-merah" id="notif-badge">0</span>
+            </div>
         </div>
 
         <div class="scrollable-content">
@@ -413,6 +503,22 @@
             </div>
         </div>
 
+        <div class="modal-overlay" id="notifModal" onclick="tutupNotifikasiOverlay(event)">
+            <div class="notif-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="font-size: 16px; color: var(--dark-blue); font-weight: 800;">
+                        <i class="fas fa-bell" style="color: var(--warning); margin-right: 5px;"></i> Notifikasi Sistem
+                    </h3>
+                    <i class="fas fa-times-circle" style="font-size: 20px; color: var(--text-sub); cursor: pointer;" onclick="tutupNotifikasi()"></i>
+                </div>
+                <div id="notif-content" style="max-height: 400px; overflow-y: auto; scrollbar-width: none;">
+                    <div style="text-align:center; padding:20px; color:#888; font-size:12px;">
+                        <i class="fas fa-spinner fa-spin"></i> Menghitung notifikasi...
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="bottom-nav">
             <div class="nav-item active"><i class="fas fa-home"></i><span>BERANDA</span></div>
             <div class="nav-item" onclick="window.location.href='list_order.html'"><i class="fas fa-file-alt"></i><span>PESANAN</span></div>
@@ -441,12 +547,16 @@
                     document.getElementById('dash-pelanggan').innerText = resultDash.data.pelanggan || 0;
                 }
 
-                // Fetch Pesanan Terbaru (PERBAIKAN ARRAY DI SINI)
+                // Fetch Pesanan Terbaru
                 const resOrder = await fetch(`${API_URL}/pesanan`);
                 const resultOrder = await resOrder.json();
                 const container = document.getElementById('recent-orders-container');
 
                 if (Array.isArray(resultOrder) && resultOrder.length > 0) {
+                    // Panggil fungsi notifikasi menggunakan data pesanan yang baru saja difetch
+                    prosesNotifikasi(resultOrder);
+
+                    // Render list terbaru
                     container.innerHTML = resultOrder.slice(0, 3).map(p => {
                         const statusColor = p.status_pesanan === 'Selesai' ? '#10B981' : '#f59e0b';
                         return `
@@ -467,12 +577,97 @@
                     }).join('');
                 } else {
                     container.innerHTML = '<div class="empty-state">Belum ada pesanan.</div>';
+                    prosesNotifikasi([]); // Render notif kosong
                 }
             } catch (e) {
                 console.error(e);
                 document.getElementById('recent-orders-container').innerHTML = '<div class="empty-state" style="color:red;">Gagal terhubung ke database.</div>';
             }
         };
+
+        // FUNGSI LOGIKA NOTIFIKASI
+        function prosesNotifikasi(dataArray) {
+            let notifHTML = '';
+            let notifCount = 0;
+            const waktuSekarang = new Date();
+
+            // 1. LOGIKA BELUM LUNAS
+            const belumLunas = dataArray.filter(p => p.status_pembayaran === 'Belum Lunas');
+            if (belumLunas.length > 0) {
+                notifCount++;
+                notifHTML += `
+                <div class="notif-item" onclick="window.location.href='list_order.html'">
+                    <div class="notif-icon" style="background:#fee2e2; color:#dc2626;"><i class="fas fa-file-invoice-dollar"></i></div>
+                    <div class="notif-text">
+                        <h4>Tagihan Menunggu Pembayaran</h4>
+                        <p>Terdapat <b>${belumLunas.length} pesanan</b> yang belum dibayar. Pastikan menagih saat pelanggan datang.</p>
+                    </div>
+                </div>`;
+            }
+
+            // 2. LOGIKA SELESAI TAPI BELUM DIAMBIL
+            const belumDiambil = dataArray.filter(p => p.status_pesanan === 'Selesai');
+            if (belumDiambil.length > 0) {
+                notifCount++;
+                notifHTML += `
+                <div class="notif-item" onclick="window.location.href='list_order.html'">
+                    <div class="notif-icon" style="background:#d1fae5; color:#059669;"><i class="fas fa-box-open"></i></div>
+                    <div class="notif-text">
+                        <h4>Cucian Siap Diambil</h4>
+                        <p>Rak mulai penuh! Ada <b>${belumDiambil.length} pesanan</b> selesai. Klik untuk mengirim pesan WA.</p>
+                    </div>
+                </div>`;
+            }
+
+            // 3. LOGIKA KETERLAMBATAN (Diproses > 24 Jam)
+            const telat = dataArray.filter(p => {
+                if (p.status_pesanan !== 'Diproses') return false;
+                const tglMasuk = new Date(p.tanggal_masuk || p.tanggal_order);
+                const selisihJam = (waktuSekarang - tglMasuk) / (1000 * 60 * 60);
+                return selisihJam > 24; 
+            });
+            
+            if (telat.length > 0) {
+                notifCount++;
+                notifHTML += `
+                <div class="notif-item" onclick="window.location.href='list_order.html'">
+                    <div class="notif-icon" style="background:#fef3c7; color:#d97706;"><i class="fas fa-clock"></i></div>
+                    <div class="notif-text">
+                        <h4>Peringatan Keterlambatan!</h4>
+                        <p>Ada <b>${telat.length} pesanan</b> yang diproses lebih dari 24 jam. Segera selesaikan agar pelanggan tidak kecewa.</p>
+                    </div>
+                </div>`;
+            }
+
+            // Render UI Badge
+            const badge = document.getElementById('notif-badge');
+            if (notifCount > 0) {
+                badge.innerText = notifCount;
+                badge.style.display = 'block';
+                document.getElementById('notif-content').innerHTML = notifHTML;
+            } else {
+                badge.style.display = 'none';
+                document.getElementById('notif-content').innerHTML = `
+                    <div style="text-align:center; padding:30px; color:#a0aec0; font-size:12px;">
+                        <i class="fas fa-check-circle" style="font-size:40px; color:#cbd5e1; margin-bottom:15px; display:block;"></i>
+                        Kerja bagus! Semua urusan operasional laundry aman terkendali.
+                    </div>`;
+            }
+        }
+
+        // KENDALI INTERAKSI MODAL
+        function bukaNotifikasi() {
+            document.getElementById('notifModal').style.display = 'flex';
+            document.getElementById('notif-badge').style.display = 'none'; // Hilangkan titik merah setelah diklik
+        }
+
+        function tutupNotifikasi() {
+            document.getElementById('notifModal').style.display = 'none';
+        }
+
+        function tutupNotifikasiOverlay(event) {
+            if (event.target.id === 'notifModal') tutupNotifikasi();
+        }
     </script>
 </body>
 </html>
