@@ -491,16 +491,45 @@
       btnSimpan.disabled = true;
       btnSimpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
 
-      // Payload untuk Backend dengan tambahan layanan_id
+      // Ambil nilai dari localStorage cache
+      const pelangganId = localStorage.getItem('trx_pelanggan_id');
+      const paketId = localStorage.getItem('trx_kecepatan_val');
+      const totalHarga = localStorage.getItem('trx_total_tagihan');
+      let layananId = localStorage.getItem('trx_layanan_id');
+      let beratVal = localStorage.getItem('trx_berat');
+
+      // 🔴 BARU (SMART FALLBACK): Jika layananId / berat kosong akibat cache halaman transaksi lama, 
+      // kita bongkar data array keranjang secara otomatis demi menjamin sistem anti-error!
+      if (!layananId || layananId === 'null') {
+          const dataKeranjangRaw = localStorage.getItem('trx_keranjang');
+          if (dataKeranjangRaw) {
+              const keranjangData = JSON.parse(dataKeranjangRaw);
+              if (keranjangData && keranjangData.length > 0) {
+                  layananId = keranjangData[0].id;
+                  beratVal = keranjangData[0].qty;
+                  localStorage.setItem('trx_layanan_id', layananId);
+                  localStorage.setItem('trx_berat', beratVal);
+              }
+          }
+      }
+
       const payload = {
-        pelanggan_id: localStorage.getItem('trx_pelanggan_id'),
-        paket_id: localStorage.getItem('trx_kecepatan_val'), 
-        berat: localStorage.getItem('trx_berat') || 1, 
+        pelanggan_id: pelangganId ? parseInt(pelangganId) : null,
+        paket_id: paketId ? parseInt(paketId) : null, 
+        berat: beratVal ? parseFloat(beratVal) : 1, 
         metode_pengambilan: 'ambil_sendiri',
         jarak_km: 0,
-        total_harga: localStorage.getItem('trx_total_tagihan'),
-        layanan_id: localStorage.getItem('trx_layanan_id') // Mengirimkan ID layanan asli
+        total_harga: totalHarga ? parseInt(totalHarga) : null,
+        layanan_id: layananId ? parseInt(layananId) : null
       };
+
+      // Validasi ketat di sisi client untuk menghindari HTTP 400 Bad Request
+      if (!payload.pelanggan_id || !payload.paket_id || !payload.total_harga || !payload.layanan_id) {
+          alert(`Gagal memproses! Data transaksi di penampungan browser Anda tidak lengkap.\n\nSilakan kembali ke halaman "Transaksi Baru", lakukan Hard Refresh (Ctrl + F5), lalu ulangi pembuatan pesanan.`);
+          btnSimpan.disabled = false;
+          btnSimpan.innerHTML = originalText;
+          return;
+      }
 
       try {
         const response = await fetch('https://laundry-backend-api-production.up.railway.app/api/pesanan', {

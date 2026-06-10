@@ -459,7 +459,6 @@
             const container = document.getElementById('katalog-container');
             container.innerHTML = dataLayanan.map((item) => {
                 const badgeClass = item.category === 'Kiloan' ? 'label-kiloan' : 'label-express';
-                const multiplier = item.category === 'Kiloan' ? 'Kiloan' : item.category;
                 return `
                     <article class="card">
                         <div class="card-header">
@@ -508,6 +507,10 @@
             const itemTerpilih = Object.values(keranjang).filter((item) => item.qty > 0);
 
             if (itemTerpilih.length === 0) return;
+
+            // PERBAIKAN: Menyimpan data layanan_id dan berat utama secara aman ke dalam localStorage cache
+            localStorage.setItem('trx_layanan_id', itemTerpilih[0].id);
+            localStorage.setItem('trx_berat', itemTerpilih[0].qty);
 
             localStorage.setItem('trx_pelanggan_id', pelangganSelect.value);
             localStorage.setItem('trx_pelanggan_nama', pelangganSelect.selectedOptions[0].text);
