@@ -828,7 +828,7 @@ function bukaModalDetail(id) {
                        ` *Pelanggan:* ${order.nama_pelanggan || '-'}\n` +
                        ` *Tgl Masuk:* ${tanggalMasukInvoice}\n` +
                        ` *Jenis Cucian:* ${kategoriCucian}\n` +
-                       `${kategoriCucian === 'Kiloan' ? '✨ *Layanan:* ' + namaBarangLayanan + '\n⚖️ *Berat:* ' + order.berat + ' Kg' : '✨ *Barang:* ' + namaBarangLayanan + '\n🔢 *Jumlah:* ' + Math.round(order.berat) + ' Pcs'}\n` +
+                       `${kategoriCucian === 'Kiloan' ? ' *Layanan:* ' + namaBarangLayanan + '\n *Berat:* ' + order.berat + ' Kg' : ' *Barang:* ' + namaBarangLayanan + '\n *Jumlah:* ' + Math.round(order.berat) + ' Pcs'}\n` +
                        ` *Status Bayar:* *${statusPembayaranInvoice}*\n` +
                        ` *Status Cucian:* ${order.status_pesanan || 'Diproses'}\n` +
                        `----------------------------------------\n` +
