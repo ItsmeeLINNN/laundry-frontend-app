@@ -821,20 +821,20 @@ function bukaModalDetail(id) {
         const statusPembayaranInvoice = (order.status_pembayaran || 'Belum Lunas').toUpperCase();
         
         // SINKRONISASI DATA LAYANAN SEBENAR KE TEKS WHATSAPP
-        const waText = `*SPINCYCLE LAUNDRY* 🧺\n` +
+        const waText = `*SPINCYCLE LAUNDRY* \n` +
                        `----------------------------------------\n` +
                        `*INVOICE NOTA: ORD-${order.id}*\n` +
                        `----------------------------------------\n` +
-                       `👤 *Pelanggan:* ${order.nama_pelanggan || '-'}\n` +
-                       `📅 *Tgl Masuk:* ${tanggalMasukInvoice}\n` +
-                       `📦 *Jenis Cucian:* ${kategoriCucian}\n` +
+                       ` *Pelanggan:* ${order.nama_pelanggan || '-'}\n` +
+                       ` *Tgl Masuk:* ${tanggalMasukInvoice}\n` +
+                       ` *Jenis Cucian:* ${kategoriCucian}\n` +
                        `${kategoriCucian === 'Kiloan' ? '✨ *Layanan:* ' + namaBarangLayanan + '\n⚖️ *Berat:* ' + order.berat + ' Kg' : '✨ *Barang:* ' + namaBarangLayanan + '\n🔢 *Jumlah:* ' + Math.round(order.berat) + ' Pcs'}\n` +
-                       `💳 *Status Bayar:* *${statusPembayaranInvoice}*\n` +
-                       `👕 *Status Cucian:* ${order.status_pesanan || 'Diproses'}\n` +
+                       ` *Status Bayar:* *${statusPembayaranInvoice}*\n` +
+                       ` *Status Cucian:* ${order.status_pesanan || 'Diproses'}\n` +
                        `----------------------------------------\n` +
-                       `💰 *TOTAL TAGIHAN:* *Rp ${formatRp(order.total_harga)}*\n` +
+                       ` *TOTAL TAGIHAN:* *Rp ${formatRp(order.total_harga)}*\n` +
                        `----------------------------------------\n` +
-                       `Terima kasih telah memercayakan cucian Anda kepada kami! 🙏✨`;
+                       `Terima kasih telah memercayakan cucian Anda kepada kami! `;
 
         const waButton = document.createElement('button');
         waButton.className = 'wa-btn';
