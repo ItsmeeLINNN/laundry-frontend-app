@@ -82,7 +82,7 @@
 
         .input-group {
             margin-bottom: 15px;
-            position: relative; /* PERBAIKAN: Untuk penempatan absolute tombol mata */
+            position: relative;
         }
 
         .input-group input {
@@ -97,12 +97,10 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
-        /* PERBAIKAN: Beri padding kanan khusus input password agar teks tidak tertutup ikon */
         #password {
             padding-right: 50px;
         }
 
-        /* BARU: Styling Ikon Mata */
         .toggle-password {
             position: absolute;
             right: 18px;
@@ -148,24 +146,17 @@
         }
 
         .extra-links {
-            display: flex;
-            justify-content: space-between;
             margin-top: 15px;
             font-size: 11px;
             color: white;
         }
 
         .extra-links label {
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 5px;
             cursor: pointer;
             font-weight: bold;
-        }
-
-        .extra-links a {
-            color: white;
-            text-decoration: none;
         }
 
         @keyframes fadeIn {
@@ -233,7 +224,6 @@
                     <label>
                         <input type="checkbox" id="rememberMe"> Remember Me
                     </label>
-                    <a href="#" onclick="alert('Silakan hubungi Admin untuk reset password.'); return false;">Lupa Password?</a>
                 </div>
             </form>
 
@@ -248,7 +238,7 @@
     const inputPassword = document.getElementById('password');
     const rememberMe = document.getElementById('rememberMe');
     const btnSubmit = document.getElementById('btnMasuk');
-    const btnTogglePassword = document.getElementById('btnTogglePassword'); // BARU
+    const btnTogglePassword = document.getElementById('btnTogglePassword');
 
     window.addEventListener('load', function () {
         const savedUsername = localStorage.getItem('remember_username');
@@ -259,7 +249,6 @@
         }
     });
 
-    // BARU: Logika Interaksi Show / Hide Password Murni Real-time
     btnTogglePassword.addEventListener('click', function () {
         const typeCurrent = inputPassword.getAttribute('type');
         
