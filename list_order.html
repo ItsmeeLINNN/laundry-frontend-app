@@ -806,11 +806,27 @@ function bukaModalDetail(id) {
             ? `62${phone.substring(1)}`
             : phone;
 
-        const waText = `Halo ${order.nama_pelanggan || 'Pelanggan'}, cucian Anda (Nota: ORD-${order.id}) sudah selesai dan siap diambil. Total tagihan: Rp ${formatRp(order.total_harga)}. Terima kasih!`;
+        // PEMBARUAN: Format teks invoice yang lebih detail, rapi, dan profesional
+        const tanggalMasukInvoice = order.tanggal_masuk ? new Date(order.tanggal_masuk).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
+        const statusPembayaranInvoice = (order.status_pembayaran || 'Belum Lunas').toUpperCase();
+        
+        const waText = `*SPINCYCLE LAUNDRY* 🧺\n` +
+                       `----------------------------------------\n` +
+                       `*INVOICE NOTA: ORD-${order.id}*\n` +
+                       `----------------------------------------\n` +
+                       `👤 *Pelanggan:* ${order.nama_pelanggan || '-'}\n` +
+                       `📅 *Tgl Masuk:* ${tanggalMasukInvoice}\n` +
+                       `💳 *Status Bayar:* *${statusPembayaranInvoice}*\n` +
+                       `👕 *Status Cucian:* ${order.status_pesanan || 'Diproses'}\n` +
+                       `----------------------------------------\n` +
+                       `💰 *TOTAL TAGIHAN:* *Rp ${formatRp(order.total_harga)}*\n` +
+                       `----------------------------------------\n` +
+                       `Terima kasih telah memercayakan cucian Anda kepada kami! 🙏✨`;
 
         const waButton = document.createElement('button');
         waButton.className = 'wa-btn';
-        waButton.innerHTML = '<i class="fab fa-whatsapp" style="font-size:16px;"></i> Hubungi Pelanggan via WA';
+        // PEMBARUAN: Mengubah Teks Tombol
+        waButton.innerHTML = '<i class="fab fa-whatsapp" style="font-size:16px;"></i> Kirim Invoice via WA';
 
         waButton.addEventListener('click', function () {
             window.open(
