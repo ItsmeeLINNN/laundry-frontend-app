@@ -491,21 +491,15 @@
       btnSimpan.disabled = true;
       btnSimpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
 
-      const dataOrderRaw = localStorage.getItem(keranjangLokalKey);
-      const keranjangLokal = dataOrderRaw ? JSON.parse(dataOrderRaw) : [];
-      const totalBeratKiloan = keranjangLokal
-        .filter(item => item.category === 'Kiloan')
-        .reduce((total, item) => total + item.qty, 0);
-
-      // Payload untuk Backend
+      // Payload untuk Backend dengan tambahan layanan_id
       const payload = {
         pelanggan_id: localStorage.getItem('trx_pelanggan_id'),
         paket_id: localStorage.getItem('trx_kecepatan_val'), 
-        berat: totalBeratKiloan > 0 ? totalBeratKiloan : 1, 
+        berat: localStorage.getItem('trx_berat') || 1, 
         metode_pengambilan: 'ambil_sendiri',
         jarak_km: 0,
-        // INI YANG BARU: Kirimkan total harga final ke backend
-        total_harga: localStorage.getItem('trx_total_tagihan') 
+        total_harga: localStorage.getItem('trx_total_tagihan'),
+        layanan_id: localStorage.getItem('trx_layanan_id') // Mengirimkan ID layanan asli
       };
 
       try {

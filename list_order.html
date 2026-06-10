@@ -770,36 +770,19 @@ function bukaModalDetail(id) {
 
     const noHp = order.no_hp || order.phone || '-';
 
-    // 1. LOGIKA DETEKSI OTOMATIS KILOAN VS SATUAN
-    const isKiloan = (Number(order.berat) % 1 !== 0) || Number(order.berat) === 0;
-    const labelKuantitas = isKiloan ? 'Berat Cucian' : 'Jumlah Satuan';
-    const nilaiKuantitas = isKiloan ? `${order.berat} Kg` : `${Math.round(order.berat)} Pcs`;
+    // REAL-TIME DATA: Diambil langsung dari properti hasil JOIN di backend
+    const kategoriCucian = order.category || 'Kiloan'; 
+    const namaBarangLayanan = order.service_name || 'Pakaian Satuan';
+    const unitSistem = order.unit || (kategoriCucian === 'Kiloan' ? 'Kg' : 'Pcs');
 
-    // 2. HITUNG ESTIMASI HARGA DASAR GUNA MENDAPATKAN NAMA LAYANAN / BARANG ASLI
-    let speedMultiplier = 1;
-    if (String(order.paket_id) === '2') speedMultiplier = 1.2;
-    if (String(order.paket_id) === '3') speedMultiplier = 2;
-    
-    let beratVal = Number(order.berat) || 1;
-    let basePricePerUnit = Math.round((Number(order.total_harga) / speedMultiplier) / beratVal);
-    
-    // Pemilihan nama layanan/barang otomatis berdasarkan kecocokan harga dasar di katalog
-    let namaLayananBarang = order.service_name || order.nama_layanan || order.nama_barang;
-    if (!namaLayananBarang) {
-        if (isKiloan) {
-            namaLayananBarang = (basePricePerUnit <= 5500) ? 'Cuci Kering + Lipat' : 'Cuci Setrika';
-        } else {
-            if (basePricePerUnit >= 9000) namaLayananBarang = 'Tas';
-            else if (basePricePerUnit >= 6500) namaLayananBarang = 'Selimut / Sprei';
-            else namaLayananBarang = 'Pakaian Satuan';
-        }
-    }
+    const labelKuantitas = kategoriCucian === 'Kiloan' ? 'Berat Cucian' : 'Jumlah Satuan';
+    const nilaiKuantitas = kategoriCucian === 'Kiloan' ? `${order.berat} Kg` : `${Math.round(order.berat)} ${unitSistem}`;
 
     const rows = [
         ['Nama Pelanggan', order.nama_pelanggan || '-'],
         ['No HP', noHp],
-        ['Jenis Cucian', isKiloan ? 'Kiloan (Kg)' : 'Satuan (Pcs)'],
-        [isKiloan ? 'Nama Layanan' : 'Nama Barang', namaLayananBarang], // BARU: Tampilkan Nama Layanan/Barang Satuan
+        ['Jenis Cucian', kategoriCucian === 'Kiloan' ? 'Kiloan (Kg)' : 'Satuan (Pcs)'],
+        [kategoriCucian === 'Kiloan' ? 'Nama Layanan' : 'Nama Barang', namaBarangLayanan], 
         [labelKuantitas, nilaiKuantitas],
         [
             'Tgl Masuk',
@@ -837,15 +820,15 @@ function bukaModalDetail(id) {
         const tanggalMasukInvoice = order.tanggal_masuk ? new Date(order.tanggal_masuk).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
         const statusPembayaranInvoice = (order.status_pembayaran || 'Belum Lunas').toUpperCase();
         
-        // SINKRONISASI TOTAL DETAIL KE INVOICE WHATSAPP
+        // SINKRONISASI DATA LAYANAN SEBENAR KE TEKS WHATSAPP
         const waText = `*SPINCYCLE LAUNDRY* 🧺\n` +
                        `----------------------------------------\n` +
                        `*INVOICE NOTA: ORD-${order.id}*\n` +
                        `----------------------------------------\n` +
                        `👤 *Pelanggan:* ${order.nama_pelanggan || '-'}\n` +
                        `📅 *Tgl Masuk:* ${tanggalMasukInvoice}\n` +
-                       `📦 *Jenis Cucian:* ${isKiloan ? 'Kiloan' : 'Satuan'}\n` +
-                       `${isKiloan ? '✨ *Layanan:* ' + namaLayananBarang + '\n⚖️ *Berat:* ' + order.berat + ' Kg' : '✨ *Barang:* ' + namaLayananBarang + '\n🔢 *Jumlah:* ' + Math.round(order.berat) + ' Pcs'}\n` + // BARU: Teks WA Dinamis
+                       `📦 *Jenis Cucian:* ${kategoriCucian}\n` +
+                       `${kategoriCucian === 'Kiloan' ? '✨ *Layanan:* ' + namaBarangLayanan + '\n⚖️ *Berat:* ' + order.berat + ' Kg' : '✨ *Barang:* ' + namaBarangLayanan + '\n🔢 *Jumlah:* ' + Math.round(order.berat) + ' Pcs'}\n` +
                        `💳 *Status Bayar:* *${statusPembayaranInvoice}*\n` +
                        `👕 *Status Cucian:* ${order.status_pesanan || 'Diproses'}\n` +
                        `----------------------------------------\n` +

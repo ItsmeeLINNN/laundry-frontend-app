@@ -205,6 +205,12 @@
             const namaPelanggan = selectPelanggan.options[selectPelanggan.selectedIndex].text;
             const itemTerpilih = Object.values(keranjang).filter(item => item.qty > 0);
 
+            // Simpan ID layanan dan kuantitas item pertama yang dipilih ke localStorage
+            if (itemTerpilih.length > 0) {
+                localStorage.setItem('trx_layanan_id', itemTerpilih[0].id);
+                localStorage.setItem('trx_berat', itemTerpilih[0].qty);
+            }
+
             localStorage.setItem('trx_pelanggan_id', selectPelanggan.value);
             localStorage.setItem('trx_pelanggan_nama', namaPelanggan);
             localStorage.setItem('trx_keranjang', JSON.stringify(itemTerpilih)); 
