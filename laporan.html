@@ -3,279 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spincycle Laundry - Laporan Keuangan</title>
+    <title>Spincycle - Laporan Keuangan</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        /* =========================================
-           CSS: Tema Gradasi Biru-Putih Spincycle
-        ========================================= */
-        :root {
-            --dark-blue: #15428F;
-            --light-blue: #9BB8EA;
-            --text-main: #333333;
-            --text-sub: #666666;
-            --card-gray: #E5E7EB;
-            --green-accent: #10B981;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
-
-        body {
-            background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); 
-            display: flex; justify-content: center; align-items: center;
-            min-height: 100vh; padding: 20px;
-        }
-
-        .mobile-screen {
-            background: linear-gradient(180deg, #ffffff 0%, #e6f0fa 100%);
-            width: 375px; height: 750px; border-radius: 30px;
-            box-shadow: 0 15px 45px rgba(21, 66, 143, 0.15); 
-            border: 10px solid #333; position: relative; display: flex; flex-direction: column; overflow: hidden;
-        }
-
-        /* HEADER */
-        .header { padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+        :root { --dark-blue: #15428F; --light-blue: #9BB8EA; --bg-main: #f4f8ff; --text-main: #1f2d3d; --text-sub: #8a97a8; --success: #10B981; --danger: #e53e3e; --card-shadow: 0 6px 18px rgba(21, 66, 143, 0.06); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+        body { background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .mobile-screen { background: var(--bg-main); width: 375px; height: 750px; border-radius: 30px; box-shadow: 0 15px 45px rgba(21, 66, 143, 0.15); border: 8px solid #333; position: relative; overflow: hidden; display: flex; flex-direction: column; }
+        
+        .header { background: white; padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: center; z-index: 10; border-bottom: 1px solid #eef1f5; }
         .header i { font-size: 18px; color: var(--dark-blue); cursor: pointer; }
-        .header h2 { font-size: 18px; color: var(--dark-blue); font-weight: bold; }
-        .header img { width: 35px; height: 35px; border-radius: 50%; }
+        .header h2 { font-size: 18px; color: var(--dark-blue); font-weight: 800; }
 
-        /* SCROLLABLE AREA */
-        .scrollable-content { flex: 1; overflow-y: auto; padding: 0 20px 20px 20px; scrollbar-width: none; }
+        .tab-container { display: flex; background: white; padding: 0 20px; border-bottom: 1px solid #eef1f5; }
+        .tab-btn { flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 800; color: var(--text-sub); cursor: pointer; border-bottom: 3px solid transparent; transition: 0.3s; }
+        .tab-btn.active { color: var(--dark-blue); border-bottom-color: var(--dark-blue); }
+
+        .scrollable-content { flex: 1; overflow-y: auto; padding: 20px; scrollbar-width: none; }
         .scrollable-content::-webkit-scrollbar { display: none; }
+
+        .filter-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .filter-select { padding: 8px 12px; border-radius: 10px; border: 1px solid #e2e8f0; background: white; font-size: 12px; font-weight: 700; color: var(--dark-blue); outline: none; cursor: pointer;}
         
-        .title-area { margin-bottom: 15px; }
-        .title-area h1 { font-size: 24px; color: var(--dark-blue); margin-bottom: 4px; }
-        .title-area p { font-size: 11px; color: var(--dark-blue); opacity: 0.8; }
+        /* Summary Cards */
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .summary-card { background: white; border-radius: 16px; padding: 15px; box-shadow: var(--card-shadow); }
+        .summary-card.full { grid-column: span 2; background: linear-gradient(135deg, var(--dark-blue) 0%, #2a5eb5 100%); color: white; }
+        .summary-title { font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 5px; opacity: 0.8; }
+        .summary-value { font-size: 18px; font-weight: 800; }
+        .summary-card.full .summary-value { font-size: 24px; color: #10B981; }
 
-        /* FILTER TYPE (MINGGUAN / BULANAN) */
-        .report-filter {
-            background: white; padding: 12px; border-radius: 12px;
-            display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-        }
-        .filter-row { display: flex; gap: 10px; }
-        .filter-item { flex: 1; display: flex; flex-direction: column; gap: 4px; }
-        .filter-item label { font-size: 9px; font-weight: bold; color: var(--dark-blue); text-transform: uppercase; }
-        .filter-item select {
-            width: 100%; padding: 8px 10px; border-radius: 8px;
-            border: 1px solid #ddd; background-color: #f9f9f9;
-            font-size: 11px; color: var(--text-main); outline: none; cursor: pointer;
-        }
+        .summary-card .icon-up { color: var(--success); }
+        .summary-card .icon-down { color: var(--danger); }
 
-        /* PERIODE TEXT SUMMARY BOX */
-        .date-badge-box {
-            background-color: var(--light-blue); padding: 10px 12px; border-radius: 8px;
-            font-size: 11px; color: var(--dark-blue); font-weight: bold;
-            display: flex; align-items: center; gap: 8px; margin-bottom: 20px;
-        }
-
-        /* METRICS GRID (TOTAL PENDAPATAN & PESANAN) */
-        .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .metric-card {
-            background: white; padding: 15px; border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02); position: relative;
-            border-top: 4px solid var(--dark-blue);
-        }
-        .metric-card.income { border-top-color: var(--green-accent); }
-        .metric-card i { font-size: 16px; position: absolute; right: 15px; top: 15px; color: #ccc; }
-        .metric-card p { font-size: 10px; color: var(--text-sub); font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
-        .metric-card h3 { font-size: 18px; color: var(--dark-blue); font-weight: bold; }
-
-        /* EXTRA VISUAL 1: PROGRESS BAR LAYANAN LARIS */
-        .chart-card { background: white; padding: 15px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin-bottom: 15px; }
-        .chart-title { font-size: 12px; color: var(--dark-blue); font-weight: bold; margin-bottom: 12px; text-transform: uppercase; }
+        /* Chart Container */
+        .chart-container { background: white; border-radius: 16px; padding: 15px; box-shadow: var(--card-shadow); margin-bottom: 20px; height: 220px; }
         
-        .chart-row { margin-bottom: 10px; }
-        .chart-row:last-child { margin-bottom: 0; }
-        .chart-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-main); margin-bottom: 4px; }
-        .bar-container { background: #f0f0f0; height: 8px; border-radius: 4px; overflow: hidden; }
-        .bar-fill { height: 100%; background-color: var(--dark-blue); border-radius: 4px; transition: width 0.5s ease-in-out; }
-        .bar-fill.kiloan { background-color: var(--light-blue); }
-
-        /* EXTRA VISUAL 2: TARGET & STATUS */
-        .status-summary { display: flex; justify-content: space-between; align-items: center; margin-top: 5px; }
-        .status-pill { font-size: 10px; padding: 4px 8px; border-radius: 6px; font-weight: bold; }
-        .pill-done { background: #d1fae5; color: #059669; }
-        .pill-process { background: #e0e7ff; color: #4f46e5; }
-
-        /* ACTION BUTTON EXPORT */
-        .btn-export {
-            width: 100%; background-color: var(--dark-blue); color: white; border: none;
-            padding: 12px; border-radius: 10px; font-weight: bold; font-size: 12px; cursor: pointer;
-            display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 10px;
-            box-shadow: 0 4px 10px rgba(21, 66, 143, 0.15);
-        }
-
-        /* BOTTOM NAVIGATION BAR */
-        .bottom-nav {
-            background-color: white; height: 65px; display: flex; justify-content: space-around;
-            align-items: center; border-top: 1px solid #eee; z-index: 10;
-        }
-        .nav-item { text-align: center; color: #94a3b8; font-size: 9px; cursor: pointer; display: flex; flex-direction: column; gap: 4px; align-items: center; }
-        .nav-item i { font-size: 18px; }
-        .nav-item.active { color: var(--dark-blue); font-weight: bold; }
+        .section-title { font-size: 14px; font-weight: 800; color: var(--dark-blue); margin-bottom: 12px; }
+        
+        /* Transaksi Detail */
+        .transaction-list { display: flex; flex-direction: column; gap: 10px; padding-bottom: 20px; }
+        .trans-item { background: white; border-radius: 12px; padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--card-shadow); border-left: 4px solid var(--success); }
+        .trans-item.out { border-left-color: var(--danger); }
+        .trans-info h4 { font-size: 12px; color: var(--text-main); font-weight: 800; margin-bottom: 3px; }
+        .trans-info p { font-size: 10px; color: var(--text-sub); }
+        .trans-amount { font-size: 13px; font-weight: 800; color: var(--success); }
+        .trans-amount.out { color: var(--danger); }
     </style>
 </head>
 <body>
-
     <div class="mobile-screen">
-        
         <div class="header">
-            <i class="fas fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
-            <h2>Laporan Analitik</h2>
-            <img src="https://via.placeholder.com/150/ff9999/ffffff?text=U" alt="Admin">
+            <i class="fas fa-arrow-left" onclick="window.location.href='profile.html'"></i>
+            <h2>Laporan Keuangan</h2>
+            <div style="width: 18px;"></div>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-btn active" onclick="switchTab('pemasukan')">Pemasukan</div>
+            <div class="tab-btn" onclick="switchTab('pengeluaran')">Pengeluaran</div>
         </div>
 
         <div class="scrollable-content">
-            <div class="title-area">
-                <h1>Laporan Toko</h1>
-                <p>Pantau perkembangan omset laba ushamu</p>
+            
+            <div class="filter-container">
+                <div style="font-size: 13px; font-weight: 800; color: var(--text-main);">Rentang Waktu:</div>
+                <select class="filter-select" id="filter-periode" onchange="renderData()">
+                    <option value="harian" id="opt-harian">Harian (Hari Ini)</option>
+                    <option value="mingguan">Mingguan</option>
+                    <option value="bulanan" selected>Bulanan</option>
+                    <option value="tahunan">Tahunan</option>
+                </select>
             </div>
 
-            <div class="report-filter">
-                <div class="filter-row">
-                    <div class="filter-item">
-                        <label><i class="fas fa-calendar-alt"></i> Tipe Laporan</label>
-                        <select id="tipe-periode" onchange="gantiTipePeriode()">
-                            <option value="bulanan">Bulanan (Normal)</option>
-                            <option value="mingguan">Mingguan</option>
-                        </select>
-                    </div>
-                    <div class="filter-item">
-                        <label id="label-opsi"><i class="fas fa-clock"></i> Pilih Bulan</label>
-                        <select id="opsi-waktu" onchange="kalkulasiLaporan()">
-                            </select>
-                    </div>
+            <div class="summary-grid">
+                <div class="summary-card full">
+                    <div class="summary-title" style="color: white;">Laba Bersih</div>
+                    <div class="summary-value" id="val-laba">Rp 0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title" style="color: var(--text-sub);"><i class="fas fa-arrow-up icon-up"></i> Total Masuk</div>
+                    <div class="summary-value" id="val-masuk" style="color: var(--text-main);">Rp 0</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title" style="color: var(--text-sub);"><i class="fas fa-arrow-down icon-down"></i> Total Keluar</div>
+                    <div class="summary-value" id="val-keluar" style="color: var(--text-main);">Rp 0</div>
                 </div>
             </div>
 
-            <div class="date-badge-box">
-                <i class="far fa-calendar-check" style="font-size: 14px;"></i>
-                <span id="text-rentang-tanggal">Memuat jangka waktu...</span>
+            <div class="chart-container">
+                <canvas id="financialChart"></canvas>
             </div>
 
-            <div class="metrics-grid">
-                <div class="metric-card income">
-                    <i class="fas fa-wallet"></i>
-                    <p>Pendapatan</p>
-                    <h3 id="txt-pendapatan">Rp 0</h3>
-                </div>
-                <div class="metric-card">
-                    <i class="fas fa-shopping-basket"></i>
-                    <p>Total Order</p>
-                    <h3 id="txt-pesanan">0</h3>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <div class="chart-title"><i class="fas fa-chart-line" style="margin-right: 6px;"></i>Layanan Terlaris</div>
-                
-                <div class="chart-row">
-                    <div class="chart-label"><span>Layanan Kiloan (Baju/Sprei)</span><b id="pct-kiloan">0%</b></div>
-                    <div class="bar-container">
-                        <div class="bar-fill kiloan" id="bar-kiloan" style="width: 0%;"></div>
-                    </div>
+            <div class="section-title" id="list-title">Riwayat Pemasukan Terakhir</div>
+            <div class="transaction-list" id="transaction-container">
                 </div>
 
-                <div class="chart-row">
-                    <div class="chart-label"><span>Layanan Satuan (Sepatu/Tas)</span><b id="pct-satuan">0%</b></div>
-                    <div class="bar-container">
-                        <div class="bar-fill" id="bar-satuan" style="width: 0%;"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="chart-card">
-                <div class="chart-title"><i class="fas fa-tasks" style="margin-right: 6px;"></i>Status Operasional</div>
-                <div class="status-summary">
-                    <div class="status-pill pill-done"><i class="fas fa-check-circle"></i> Selesai: <span id="txt-status-selesai">0</span></div>
-                    <div class="status-pill pill-process"><i class="fas fa-sync-alt"></i> Proses: <span id="txt-status-proses">0</span></div>
-                </div>
-                <button class="btn-export" onclick="alert('Laporan berhasil diekspor ke Excel / PDF!')">
-                    <i class="fas fa-file-download"></i> Unduh Dokumen Laporan
-                </button>
-            </div>
-
-        </div> <div class="bottom-nav">
-            <div class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fas fa-home"></i><span>BERANDA</span></div>
-            <div class="nav-item" onclick="window.location.href='list_order.html'"><i class="fas fa-file-alt"></i><span>PESANAN</span></div>
-            <div class="nav-item" onclick="window.location.href='pelanggan_tambah.html'"><i class="fas fa-users"></i><span>CUSTOMERS</span></div>
-            <div class="nav-item" onclick="window.location.href='layanan.html'"><i class="fas fa-box"></i><span>LAYANAN</span></div>
         </div>
-
     </div>
 
     <script>
-        // Data internal laporan berkala dinamis
-        const dataLaporan = {
-            bulanan: {
-                "Mei 2026": { pendapatan: 450000, pesanan: 20, selesai: 8, proses: 12, kiloan: 70, satuan: 30, tglStart: "01 Mei 2026", tglEnd: "31 Mei 2026" },
-                "April 2026": { pendapatan: 680000, pesanan: 35, selesai: 35, proses: 0, kiloan: 60, satuan: 40, tglStart: "01 April 2026", tglEnd: "30 April 2026" }
-            },
-            mingguan: {
-                "Minggu Ini (W20)": { pendapatan: 144000, pesanan: 3, selesai: 1, proses: 2, kiloan: 45, satuan: 55, tglStart: "11 Mei 2026", tglEnd: "17 Mei 2026" },
-                "Minggu Lalu (W19)": { pendapatan: 210000, pesanan: 8, selesai: 8, proses: 0, kiloan: 80, satuan: 20, tglStart: "04 Mei 2026", tglEnd: "10 Mei 2026" }
+        let currentTab = 'pemasukan';
+        let myChart = null;
+
+        /* ==========================================
+           DATA DUMMY (SEMENTARA)
+           Gunakan ini sampai API Backend Laporan siap.
+        ============================================= */
+        const dummyPemasukan = [150000, 230000, 180000, 310000, 400000, 250000, 500000];
+        const dummyPengeluaran = [50000, 20000, 100000, 0, 75000, 10000, 200000];
+        const labelHari = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+
+        window.onload = () => {
+            // Proteksi Halaman (Opsional, pastikan hanya admin yang bisa buka lewat URL)
+            const role = localStorage.getItem('role_kasir') || 'Karyawan';
+            if (role !== 'Admin' && role !== 'Admin Besar') {
+                alert("Akses Ditolak! Hanya Admin yang boleh melihat laporan keuangan.");
+                window.location.href = 'profile.html';
+                return;
             }
+            renderData();
         };
 
-        // Fungsi saat dropdown tipe (Mingguan/Bulanan) diubah
-        function gantiTipePeriode() {
-            const tipe = document.getElementById('tipe-periode').value;
-            const labelOpsi = document.getElementById('label-opsi');
-            const opsiWaktu = document.getElementById('opsi-waktu');
-
-            opsiWaktu.innerHTML = '';
-
-            if (tipe === "bulanan") {
-                labelOpsi.innerHTML = '<i class="fas fa-clock"></i> Pilih Bulan';
-                for (let key in dataLaporan.bulanan) {
-                    opsiWaktu.innerHTML += `<option value="${key}">${key}</option>`;
-                }
-            } else {
-                labelOpsi.innerHTML = '<i class="fas fa-clock"></i> Pilih Minggu';
-                for (let key in dataLaporan.mingguan) {
-                    opsiWaktu.innerHTML += `<option value="${key}">${key}</option>`;
-                }
-            }
-            kalkulasiLaporan();
-        }
-
-        // Fungsi menghitung angka & merender grafik visual
-        function kalkulasiLaporan() {
-            const tipe = document.getElementById('tipe-periode').value;
-            const pilihan = document.getElementById('opsi-waktu').value;
+        function switchTab(tab) {
+            currentTab = tab;
             
-            // Ambil objek data yang sesuai
-            const db = dataLaporan[tipe][pilihan];
-            if(!db) return;
-
-            // 1. Render Teks Jangka Waktu Tanggal secara Jelas
-            if(tipe === "bulanan") {
-                document.getElementById('text-rentang-tanggal').innerHTML = 
-                    `Bulan: <b>${pilihan}</b><br>Tanggal: <b>${db.tglStart}</b> s/d <b>${db.tglEnd}</b>`;
-            } else {
-                document.getElementById('text-rentang-tanggal').innerHTML = 
-                    `Periode: <b>${pilihan}</b><br>Tanggal: <b>${db.tglStart}</b> s/d <b>${db.tglEnd}</b>`;
-            }
-
-            // 2. Render Angka Finansial Metrics
-            document.getElementById('txt-pendapatan').innerText = `Rp ${new Intl.NumberFormat('id-ID').format(db.pendapatan)}`;
-            document.getElementById('txt-pesanan').innerText = db.pesanan;
-
-            // 3. Render Status Operasional
-            document.getElementById('txt-status-selesai').innerText = db.selesainya = db.selesai;
-            document.getElementById('txt-status-proses').innerText = db.proses;
-
-            // 4. Animasi Pengisian Grafik Batang (Bar Chart) Layanan Terlaris
-            document.getElementById('pct-kiloan').innerText = db.kiloan + "%";
-            document.getElementById('bar-kiloan').style.width = db.kiloan + "%";
-
-            document.getElementById('pct-satuan').innerText = db.satuan + "%";
-            document.getElementById('bar-satuan').style.width = db.satuan + "%";
+            // Ubah class active
+            const btns = document.querySelectorAll('.tab-btn');
+            btns[0].classList.toggle('active', tab === 'pemasukan');
+            btns[1].classList.toggle('active', tab === 'pengeluaran');
+            
+            document.getElementById('list-title').innerText = tab === 'pemasukan' ? 'Riwayat Pemasukan Terakhir' : 'Riwayat Pengeluaran Terakhir';
+            
+            renderData();
         }
 
-        // Inisialisasi awal saat halaman dibuka
-        window.onload = gantiTipePeriode;
+        async function renderData() {
+            const periode = document.getElementById('filter-periode').value;
+            
+            // TODO: Nanti ganti dengan pemanggilan Fetch API ke Backend
+            // const res = await fetch(`https://backend.app/api/laporan/${currentTab}?periode=${periode}`);
+            // const data = await res.json();
+            
+            // Untuk saat ini, kita gunakan fungsi update simulasi
+            updateSummaryCards();
+            updateChart();
+            renderList();
+        }
+
+        function updateSummaryCards() {
+            // Simulasi kalkulasi data (Di realita ini dari database)
+            const totalMasuk = dummyPemasukan.reduce((a, b) => a + b, 0);
+            const totalKeluar = dummyPengeluaran.reduce((a, b) => a + b, 0);
+            const laba = totalMasuk - totalKeluar;
+
+            document.getElementById('val-masuk').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalMasuk);
+            document.getElementById('val-keluar').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalKeluar);
+            document.getElementById('val-laba').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(laba);
+        }
+
+        function updateChart() {
+            const ctx = document.getElementById('financialChart').getContext('2d');
+            
+            // Konfigurasi Warna berdasarkan Tab
+            const isPemasukan = currentTab === 'pemasukan';
+            const chartData = isPemasukan ? dummyPemasukan : dummyPengeluaran;
+            const lineColor = isPemasukan ? '#10B981' : '#e53e3e';
+            const bgColor = isPemasukan ? 'rgba(16, 185, 129, 0.2)' : 'rgba(229, 62, 62, 0.2)';
+
+            if (myChart) { myChart.destroy(); } // Hapus grafik lama sebelum render baru
+
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labelHari,
+                    datasets: [{
+                        label: isPemasukan ? 'Pemasukan (Rp)' : 'Pengeluaran (Rp)',
+                        data: chartData,
+                        borderColor: lineColor,
+                        backgroundColor: bgColor,
+                        borderWidth: 3,
+                        pointBackgroundColor: 'white',
+                        pointBorderColor: lineColor,
+                        pointRadius: 4,
+                        fill: true,
+                        tension: 0.4 // Membuat garis melengkung estetik
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { borderDash: [5, 5], color: '#f0f4f8' }, ticks: { font: { size: 10 } } },
+                        x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function renderList() {
+            const container = document.getElementById('transaction-container');
+            let html = '';
+
+            // Simulasi List Data
+            if (currentTab === 'pemasukan') {
+                html += buatListHtml('ORD-150', 'Cucian Kiloan (Budi)', 150000, 'in');
+                html += buatListHtml('ORD-149', 'Cucian Express (Siti)', 80000, 'in');
+                html += buatListHtml('ORD-148', 'Cuci Selimut (Andi)', 50000, 'in');
+            } else {
+                html += buatListHtml('PGL-01', 'Beli Deterjen 5 Liter', 75000, 'out');
+                html += buatListHtml('PGL-02', 'Bayar Listrik Bulan Ini', 200000, 'out');
+                html += buatListHtml('PGL-03', 'Plastik Packing', 20000, 'out');
+            }
+
+            container.innerHTML = html;
+        }
+
+        function buatListHtml(id, desc, amount, type) {
+            const isOut = type === 'out';
+            const colorClass = isOut ? 'out' : '';
+            const sign = isOut ? '-' : '+';
+            const date = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+
+            return `
+                <div class="trans-item ${colorClass}">
+                    <div class="trans-info">
+                        <h4>${desc}</h4>
+                        <p>${id} • ${date}</p>
+                    </div>
+                    <div class="trans-amount ${colorClass}">${sign}Rp ${new Intl.NumberFormat('id-ID').format(amount)}</div>
+                </div>
+            `;
+        }
     </script>
 </body>
 </html>

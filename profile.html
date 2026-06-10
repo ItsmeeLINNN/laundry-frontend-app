@@ -431,15 +431,8 @@
         }
 
         @keyframes modalUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
         .modal-header {
@@ -542,9 +535,7 @@
     <div class="mobile-screen">
         <div class="header">
             <i class="fas fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
-
             <h2>User Profile</h2>
-
             <div class="header-actions">
                 <button class="settings-button" type="button" onclick="bukaSettings()" title="Settings">
                     <i class="fas fa-cog"></i>
@@ -578,6 +569,23 @@
             </div>
 
             <div id="admin-menu" style="display: none;">
+                
+                <div class="form-card" style="border-top-color: var(--success);">
+                    <div style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase;">
+                        <i class="fas fa-chart-line" style="margin-right: 5px;"></i> Laporan & Keuangan
+                    </div>
+
+                    <div class="menu-row" onclick="window.location.href='laporan.html'">
+                        <div class="menu-info">
+                            <i class="fas fa-wallet" style="color: var(--success);"></i>
+                            <div class="menu-text">
+                                <h4 style="color: var(--success);">Rekap Laporan Keuangan</h4>
+                                <p>Cek Pemasukan, Pengeluaran & Laba</p>
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color:#ccc; font-size:14px;"></i>
+                    </div>
+                </div>
                 <div class="form-card" style="border-top-color: var(--warning);">
                     <div style="font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 12px; text-transform: uppercase;">
                         <i class="fas fa-tools" style="margin-right: 5px;"></i> Pengaturan Toko
@@ -591,7 +599,6 @@
                                 <p>Tambah/Hapus katalog harga laundry</p>
                             </div>
                         </div>
-
                         <i class="fas fa-chevron-right" style="color:#ccc; font-size:14px;"></i>
                     </div>
                 </div>
@@ -609,59 +616,27 @@
                             <label>Nama Lengkap</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-user"></i>
-                                <input
-                                    type="text"
-                                    id="nama"
-                                    placeholder="Masukkan nama..."
-                                    minlength="3"
-                                    maxlength="50"
-                                    pattern="[A-Za-zÀ-ÿ ]+"
-                                    title="Hanya huruf dan spasi yang diperbolehkan"
-                                    required
-                                >
+                                <input type="text" id="nama" placeholder="Masukkan nama..." minlength="3" maxlength="50" pattern="[A-Za-zÀ-ÿ ]+" title="Hanya huruf dan spasi yang diperbolehkan" required>
                             </div>
-                            <small class="error-text" id="nama-error">
-                                Nama hanya boleh huruf dan spasi, minimal 3 karakter.
-                            </small>
+                            <small class="error-text" id="nama-error">Nama hanya boleh huruf dan spasi, minimal 3 karakter.</small>
                         </div>
 
                         <div class="form-group">
                             <label>Username</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-at"></i>
-                                <input
-                                    type="text"
-                                    id="username"
-                                    placeholder="Username untuk login..."
-                                    minlength="3"
-                                    maxlength="20"
-                                    pattern="[A-Za-z0-9_]+"
-                                    title="Hanya huruf, angka, dan underscore"
-                                    required
-                                >
+                                <input type="text" id="username" placeholder="Username untuk login..." minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" title="Hanya huruf, angka, dan underscore" required>
                             </div>
-                            <small class="error-text" id="username-error">
-                                Username hanya boleh huruf, angka, dan underscore, 3-20 karakter.
-                            </small>
+                            <small class="error-text" id="username-error">Username hanya boleh huruf, angka, dan underscore, 3-20 karakter.</small>
                         </div>
 
                         <div class="form-group">
                             <label>Password</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-lock"></i>
-                                <input
-                                    type="password"
-                                    id="password"
-                                    placeholder="Minimal 8 karakter..."
-                                    minlength="8"
-                                    maxlength="72"
-                                    title="Password minimal 8 karakter"
-                                    required
-                                >
+                                <input type="password" id="password" placeholder="Minimal 8 karakter..." minlength="8" maxlength="72" title="Password minimal 8 karakter" required>
                             </div>
-                            <small class="error-text" id="password-error">
-                                Password minimal 8 karakter.
-                            </small>
+                            <small class="error-text" id="password-error">Password minimal 8 karakter.</small>
                         </div>
 
                         <div class="form-group">
@@ -694,13 +669,8 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn-primary" id="btn-simpan-karyawan">
-                            Simpan Data Karyawan
-                        </button>
-
-                        <button type="button" class="btn-secondary" id="btn-batal-edit" style="display:none;" onclick="batalEditKaryawan()">
-                            Batal Edit
-                        </button>
+                        <button type="submit" class="btn-primary" id="btn-simpan-karyawan">Simpan Data Karyawan</button>
+                        <button type="button" class="btn-secondary" id="btn-batal-edit" style="display:none;" onclick="batalEditKaryawan()">Batal Edit</button>
                     </form>
                 </div>
 
@@ -721,44 +691,23 @@
         </div>
 
         <div class="bottom-nav">
-            <div class="nav-item" onclick="window.location.href='dashboard.html'">
-                <i class="fas fa-home"></i>
-                <span>BERANDA</span>
-            </div>
-
-            <div class="nav-item" onclick="window.location.href='list_order.html'">
-                <i class="fas fa-file-alt"></i>
-                <span>PESANAN</span>
-            </div>
-
-            <div class="nav-item" onclick="window.location.href='pelanggan_tambah.html'">
-                <i class="fas fa-users"></i>
-                <span>CUSTOMERS</span>
-            </div>
-
-            <div class="nav-item active" onclick="window.location.href='profile.html'">
-                <i class="fas fa-user-circle"></i>
-                <span>PROFILE</span>
-            </div>
+            <div class="nav-item" onclick="window.location.href='dashboard.html'"><i class="fas fa-home"></i><span>BERANDA</span></div>
+            <div class="nav-item" onclick="window.location.href='list_order.html'"><i class="fas fa-file-alt"></i><span>PESANAN</span></div>
+            <div class="nav-item" onclick="window.location.href='pelanggan_tambah.html'"><i class="fas fa-users"></i><span>CUSTOMERS</span></div>
+            <div class="nav-item active" onclick="window.location.href='profile.html'"><i class="fas fa-user-circle"></i><span>PROFILE</span></div>
         </div>
 
         <div class="modal-overlay" id="settings-modal">
             <div class="modal-card">
                 <div class="modal-header">
                     <div class="modal-title">
-                        <div class="modal-title-icon">
-                            <i class="fas fa-sliders-h"></i>
-                        </div>
-
+                        <div class="modal-title-icon"><i class="fas fa-sliders-h"></i></div>
                         <div>
                             <h3>Settings</h3>
                             <p id="settings-subtitle">Informasi aplikasi laundry</p>
                         </div>
                     </div>
-
-                    <button class="modal-close" type="button" onclick="tutupSettings()">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="modal-close" type="button" onclick="tutupSettings()"><i class="fas fa-times"></i></button>
                 </div>
 
                 <div class="readonly-banner" id="readonly-banner">
@@ -771,58 +720,27 @@
                         <label>Nama Laundry</label>
                         <div class="input-wrapper">
                             <i class="fas fa-store"></i>
-                            <input
-                                type="text"
-                                id="setting-nama"
-                                placeholder="Contoh: Spincycle Laundry"
-                                minlength="3"
-                                maxlength="50"
-                                pattern="[A-Za-zÀ-ÿ0-9 ]+"
-                                required
-                            >
+                            <input type="text" id="setting-nama" placeholder="Contoh: Spincycle Laundry" minlength="3" maxlength="50" pattern="[A-Za-zÀ-ÿ0-9 ]+" required>
                         </div>
-                        <small class="error-text" id="setting-nama-error">
-                            Nama laundry hanya boleh huruf, angka, dan spasi.
-                        </small>
+                        <small class="error-text" id="setting-nama-error">Nama laundry hanya boleh huruf, angka, dan spasi.</small>
                     </div>
 
                     <div class="form-group">
                         <label>Alamat Laundry</label>
                         <div class="input-wrapper">
                             <i class="fas fa-map-marker-alt"></i>
-                            <input
-                                type="text"
-                                id="setting-alamat"
-                                placeholder="Contoh: Jalan Sudirman No 10"
-                                minlength="3"
-                                maxlength="100"
-                                pattern="[A-Za-zÀ-ÿ0-9 ]+"
-                                required
-                            >
+                            <input type="text" id="setting-alamat" placeholder="Contoh: Jalan Sudirman No 10" minlength="3" maxlength="100" pattern="[A-Za-zÀ-ÿ0-9 ]+" required>
                         </div>
-                        <small class="error-text" id="setting-alamat-error">
-                            Alamat hanya boleh huruf, angka, dan spasi.
-                        </small>
+                        <small class="error-text" id="setting-alamat-error">Alamat hanya boleh huruf, angka, dan spasi.</small>
                     </div>
 
                     <div class="form-group">
                         <label>Nomor Telepon Laundry</label>
                         <div class="input-wrapper">
                             <i class="fas fa-phone"></i>
-                            <input
-                                type="tel"
-                                id="setting-telepon"
-                                placeholder="Contoh: 08123456789"
-                                inputmode="numeric"
-                                minlength="10"
-                                maxlength="13"
-                                pattern="[0-9]+"
-                                required
-                            >
+                            <input type="tel" id="setting-telepon" placeholder="Contoh: 08123456789" inputmode="numeric" minlength="10" maxlength="13" pattern="[0-9]+" required>
                         </div>
-                        <small class="error-text" id="setting-telepon-error">
-                            Nomor telepon hanya boleh angka, 10-13 digit.
-                        </small>
+                        <small class="error-text" id="setting-telepon-error">Nomor telepon hanya boleh angka, 10-13 digit.</small>
                     </div>
 
                     <div class="version-box">
@@ -830,13 +748,8 @@
                         <strong id="setting-version">v1.0.0</strong>
                     </div>
 
-                    <button type="submit" class="btn-primary" id="btn-save-settings">
-                        Simpan Settings
-                    </button>
-
-                    <button type="button" class="btn-secondary" onclick="tutupSettings()">
-                        Tutup
-                    </button>
+                    <button type="submit" class="btn-primary" id="btn-save-settings">Simpan Settings</button>
+                    <button type="button" class="btn-secondary" onclick="tutupSettings()">Tutup</button>
                 </form>
             </div>
         </div>
@@ -845,84 +758,29 @@
     <script>
         const API_URL = 'https://laundry-backend-api-production.up.railway.app/api/karyawan';
         const SETTINGS_API_URL = 'https://laundry-backend-api-production.up.railway.app/api/settings';
-
         const APP_VERSION = 'v1.0.0';
 
-        const defaultSettings = {
-            nama_laundry: 'Spincycle Laundry',
-            alamat: 'Alamat belum diatur',
-            telepon: '08123456789',
-            app_version: APP_VERSION
-        };
+        const defaultSettings = { nama_laundry: 'Spincycle Laundry', alamat: 'Alamat belum diatur', telepon: '08123456789', app_version: APP_VERSION };
 
-        function getRole() {
-            return localStorage.getItem('role_kasir') || 'Karyawan';
-        }
+        function getRole() { return localStorage.getItem('role_kasir') || 'Karyawan'; }
+        function bolehEditSettings() { const role = getRole(); return role === 'Admin' || role === 'Admin Besar'; }
+        function onlyLetters(value) { return value.replace(/[^A-Za-zÀ-ÿ ]/g, '').replace(/\s+/g, ' ').trimStart(); }
+        function onlyUsername(value) { return value.replace(/[^A-Za-z0-9_]/g, ''); }
+        function onlySettingText(value) { return value.replace(/[^A-Za-zÀ-ÿ0-9 ]/g, '').replace(/\s+/g, ' ').trimStart(); }
+        function onlyNumber(value) { return value.replace(/[^0-9]/g, ''); }
 
-        function bolehEditSettings() {
-            const role = getRole();
-            return role === 'Admin' || role === 'Admin Besar';
-        }
-
-        function onlyLetters(value) {
-            return value
-                .replace(/[^A-Za-zÀ-ÿ ]/g, '')
-                .replace(/\s+/g, ' ')
-                .trimStart();
-        }
-
-        function onlyUsername(value) {
-            return value.replace(/[^A-Za-z0-9_]/g, '');
-        }
-
-        function onlySettingText(value) {
-            return value
-                .replace(/[^A-Za-zÀ-ÿ0-9 ]/g, '')
-                .replace(/\s+/g, ' ')
-                .trimStart();
-        }
-
-        function onlyNumber(value) {
-            return value.replace(/[^0-9]/g, '');
-        }
-
-        document.getElementById('nama').addEventListener('input', function () {
-            this.value = onlyLetters(this.value);
-        });
-
-        document.getElementById('username').addEventListener('input', function () {
-            this.value = onlyUsername(this.value);
-        });
-
-        document.getElementById('setting-nama').addEventListener('input', function () {
-            if (bolehEditSettings()) {
-                this.value = onlySettingText(this.value);
-            }
-        });
-
-        document.getElementById('setting-alamat').addEventListener('input', function () {
-            if (bolehEditSettings()) {
-                this.value = onlySettingText(this.value);
-            }
-        });
-
-        document.getElementById('setting-telepon').addEventListener('input', function () {
-            if (bolehEditSettings()) {
-                this.value = onlyNumber(this.value);
-            }
-        });
+        document.getElementById('nama').addEventListener('input', function () { this.value = onlyLetters(this.value); });
+        document.getElementById('username').addEventListener('input', function () { this.value = onlyUsername(this.value); });
+        document.getElementById('setting-nama').addEventListener('input', function () { if (bolehEditSettings()) { this.value = onlySettingText(this.value); } });
+        document.getElementById('setting-alamat').addEventListener('input', function () { if (bolehEditSettings()) { this.value = onlySettingText(this.value); } });
+        document.getElementById('setting-telepon').addEventListener('input', function () { if (bolehEditSettings()) { this.value = onlyNumber(this.value); } });
 
         window.onload = function () {
             const nama = localStorage.getItem('nama_kasir') || 'Andra';
             const role = getRole();
 
             document.getElementById('display-name').innerText = nama;
-
-            document.getElementById('display-role').innerText =
-                role === 'Admin' || role === 'Admin Besar'
-                    ? 'Pemilik (Admin)'
-                    : 'Kasir (Karyawan)';
-
+            document.getElementById('display-role').innerText = role === 'Admin' || role === 'Admin Besar' ? 'Pemilik (Admin)' : 'Kasir (Karyawan)';
             document.getElementById('avatar-inisial').innerText = nama.charAt(0).toUpperCase();
             document.getElementById('input-fullname').value = nama;
             document.getElementById('input-role').value = role;
@@ -937,20 +795,10 @@
 
         function muatSettingsLocal() {
             const savedSettings = localStorage.getItem('laundry_settings');
-
             let settings = defaultSettings;
-
             if (savedSettings) {
-                try {
-                    settings = {
-                        ...defaultSettings,
-                        ...JSON.parse(savedSettings)
-                    };
-                } catch (error) {
-                    settings = defaultSettings;
-                }
+                try { settings = { ...defaultSettings, ...JSON.parse(savedSettings) }; } catch (error) { settings = defaultSettings; }
             }
-
             document.getElementById('setting-nama').value = settings.nama_laundry;
             document.getElementById('setting-alamat').value = settings.alamat;
             document.getElementById('setting-telepon').value = settings.telepon;
@@ -959,17 +807,12 @@
 
         function aturModeSettings() {
             const canEdit = bolehEditSettings();
-
             document.getElementById('setting-nama').disabled = !canEdit;
             document.getElementById('setting-alamat').disabled = !canEdit;
             document.getElementById('setting-telepon').disabled = !canEdit;
-
             document.getElementById('btn-save-settings').style.display = canEdit ? 'block' : 'none';
             document.getElementById('readonly-banner').style.display = canEdit ? 'none' : 'block';
-
-            document.getElementById('settings-subtitle').innerText = canEdit
-                ? 'Admin dapat mengubah informasi laundry'
-                : 'Informasi laundry hanya dapat dilihat';
+            document.getElementById('settings-subtitle').innerText = canEdit ? 'Admin dapat mengubah informasi laundry' : 'Informasi laundry hanya dapat dilihat';
         }
 
         function bukaSettings() {
@@ -978,42 +821,29 @@
             document.getElementById('settings-modal').style.display = 'flex';
         }
 
-        function tutupSettings() {
-            document.getElementById('settings-modal').style.display = 'none';
-        }
+        function tutupSettings() { document.getElementById('settings-modal').style.display = 'none'; }
 
         document.getElementById('settings-modal').addEventListener('click', function (event) {
-            if (event.target === this) {
-                tutupSettings();
-            }
+            if (event.target === this) { tutupSettings(); }
         });
 
         function validasiSettings() {
             const nama = document.getElementById('setting-nama').value.trim();
             const alamat = document.getElementById('setting-alamat').value.trim();
             const telepon = document.getElementById('setting-telepon').value.trim();
-
             const validNama = /^[A-Za-zÀ-ÿ0-9 ]{3,50}$/.test(nama);
             const validAlamat = /^[A-Za-zÀ-ÿ0-9 ]{3,100}$/.test(alamat);
             const validTelepon = /^[0-9]{10,13}$/.test(telepon);
-
             document.getElementById('setting-nama-error').style.display = validNama ? 'none' : 'block';
             document.getElementById('setting-alamat-error').style.display = validAlamat ? 'none' : 'block';
             document.getElementById('setting-telepon-error').style.display = validTelepon ? 'none' : 'block';
-
             return validNama && validAlamat && validTelepon;
         }
 
         document.getElementById('formSettings').addEventListener('submit', async function (event) {
             event.preventDefault();
-
-            if (!bolehEditSettings()) {
-                alert('Akses ditolak. Karyawan hanya dapat melihat settings.');
-                return;
-            }
-
+            if (!bolehEditSettings()) { alert('Akses ditolak. Karyawan hanya dapat melihat settings.'); return; }
             const btn = document.getElementById('btn-save-settings');
-
             const namaLaundry = onlySettingText(document.getElementById('setting-nama').value).trim();
             const alamatLaundry = onlySettingText(document.getElementById('setting-alamat').value).trim();
             const teleponLaundry = onlyNumber(document.getElementById('setting-telepon').value).trim();
@@ -1022,65 +852,25 @@
             document.getElementById('setting-alamat').value = alamatLaundry;
             document.getElementById('setting-telepon').value = teleponLaundry;
 
-            if (!validasiSettings()) {
-                alert('Periksa kembali data settings.');
-                return;
-            }
+            if (!validasiSettings()) { alert('Periksa kembali data settings.'); return; }
 
-            const payload = {
-                nama_laundry: namaLaundry,
-                alamat: alamatLaundry,
-                telepon: teleponLaundry,
-                app_version: APP_VERSION
-            };
+            const payload = { nama_laundry: namaLaundry, alamat: alamatLaundry, telepon: teleponLaundry, app_version: APP_VERSION };
 
             try {
                 btn.disabled = true;
                 btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
-
-                const response = await fetch(SETTINGS_API_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        nama_laundry: payload.nama_laundry,
-                        alamat: payload.alamat,
-                        telepon: payload.telepon
-                    })
-                });
-
+                const response = await fetch(SETTINGS_API_URL, { method: 'PUT', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify({ nama_laundry: payload.nama_laundry, alamat: payload.alamat, telepon: payload.telepon }) });
                 const text = await response.text();
-
                 let result = {};
-
-                try {
-                    result = text ? JSON.parse(text) : {};
-                } catch (error) {
-                    throw new Error('Server tidak mengembalikan JSON. Cek route /api/settings di backend.');
-                }
-
-                if (!response.ok) {
-                    throw new Error(result.pesan || result.message || 'Settings gagal disimpan ke server.');
-                }
-
+                try { result = text ? JSON.parse(text) : {}; } catch (error) { throw new Error('Server tidak mengembalikan JSON. Cek route /api/settings di backend.'); }
+                if (!response.ok) { throw new Error(result.pesan || result.message || 'Settings gagal disimpan ke server.'); }
                 localStorage.setItem('laundry_settings', JSON.stringify(payload));
-
                 alert(result.message || 'Settings berhasil disimpan.');
                 tutupSettings();
             } catch (error) {
                 console.error(error);
-
-                const simpanLocal = confirm(
-                    'Settings gagal disimpan ke server. Simpan sementara di perangkat ini saja?'
-                );
-
-                if (simpanLocal) {
-                    localStorage.setItem('laundry_settings', JSON.stringify(payload));
-                    alert('Settings berhasil disimpan sementara di perangkat ini.');
-                    tutupSettings();
-                }
+                const simpanLocal = confirm('Settings gagal disimpan ke server. Simpan sementara di perangkat ini saja?');
+                if (simpanLocal) { localStorage.setItem('laundry_settings', JSON.stringify(payload)); alert('Settings berhasil disimpan sementara di perangkat ini.'); tutupSettings(); }
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'Simpan Settings';
@@ -1089,98 +879,48 @@
 
         async function loadDataKaryawan() {
             try {
-                const response = await fetch(API_URL, {
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-
+                const response = await fetch(API_URL, { headers: { 'Accept': 'application/json' } });
                 const data = await response.json();
                 const container = document.getElementById('tabelKaryawan');
-
                 container.innerHTML = '';
-
-                if (!Array.isArray(data) || data.length === 0) {
-                    container.innerHTML = '<div class="message">Belum ada karyawan terdaftar</div>';
-                    return;
-                }
-
-                data.forEach(function (karyawan) {
-                    container.appendChild(buatItemKaryawan(karyawan));
-                });
-            } catch (error) {
-                document.getElementById('tabelKaryawan').innerHTML =
-                    '<div class="message error">Gagal memuat data dari server</div>';
-            }
+                if (!Array.isArray(data) || data.length === 0) { container.innerHTML = '<div class="message">Belum ada karyawan terdaftar</div>'; return; }
+                data.forEach(function (karyawan) { container.appendChild(buatItemKaryawan(karyawan)); });
+            } catch (error) { document.getElementById('tabelKaryawan').innerHTML = '<div class="message error">Gagal memuat data dari server</div>'; }
         }
 
         function buatItemKaryawan(karyawan) {
             const item = document.createElement('div');
             item.className = 'karyawan-item';
-
             const info = document.createElement('div');
             info.className = 'karyawan-info';
-
             const nama = document.createElement('h4');
             nama.textContent = karyawan.nama || '-';
-
             const detail = document.createElement('p');
-
-            const jamKerja = (karyawan.jam_masuk && karyawan.jam_pulang)
-                ? `${String(karyawan.jam_masuk).slice(0, 5)} - ${String(karyawan.jam_pulang).slice(0, 5)}`
-                : 'Shift belum diatur';
-
+            const jamKerja = (karyawan.jam_masuk && karyawan.jam_pulang) ? `${String(karyawan.jam_masuk).slice(0, 5)} - ${String(karyawan.jam_pulang).slice(0, 5)}` : 'Shift belum diatur';
             detail.innerHTML = '<i class="fas fa-briefcase" style="margin-right:4px;"></i> ';
             detail.appendChild(document.createTextNode(`${karyawan.jabatan || '-'} | `));
-
             const clockIcon = document.createElement('i');
-            clockIcon.className = 'fas fa-clock';
-            clockIcon.style.marginRight = '4px';
-            clockIcon.style.marginLeft = '4px';
-
+            clockIcon.className = 'fas fa-clock'; clockIcon.style.marginRight = '4px'; clockIcon.style.marginLeft = '4px';
             detail.appendChild(clockIcon);
             detail.appendChild(document.createTextNode(jamKerja));
-
             info.appendChild(nama);
             info.appendChild(detail);
-
             const rightSide = document.createElement('div');
             rightSide.className = 'karyawan-right';
-
             const status = document.createElement('div');
             status.className = 'karyawan-status ' + (karyawan.status_aktif ? 'status-aktif' : 'status-nonaktif');
             status.textContent = karyawan.status_aktif ? 'Aktif' : 'Nonaktif';
-
             const actions = document.createElement('div');
             actions.className = 'karyawan-actions';
-
             const editButton = document.createElement('button');
-            editButton.type = 'button';
-            editButton.className = 'btn-mini btn-mini-edit';
-            editButton.title = 'Edit Karyawan';
-            editButton.innerHTML = '<i class="fas fa-edit"></i>';
-            editButton.addEventListener('click', function () {
-                editKaryawan(karyawan);
-            });
-
+            editButton.type = 'button'; editButton.className = 'btn-mini btn-mini-edit'; editButton.title = 'Edit Karyawan'; editButton.innerHTML = '<i class="fas fa-edit"></i>';
+            editButton.addEventListener('click', function () { editKaryawan(karyawan); });
             const deleteButton = document.createElement('button');
-            deleteButton.type = 'button';
-            deleteButton.className = 'btn-mini btn-mini-delete';
-            deleteButton.title = 'Hapus Karyawan';
-            deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
-            deleteButton.addEventListener('click', function () {
-                hapusKaryawan(karyawan.id, karyawan.nama || 'Karyawan');
-            });
-
-            actions.appendChild(editButton);
-            actions.appendChild(deleteButton);
-
-            rightSide.appendChild(status);
-            rightSide.appendChild(actions);
-
-            item.appendChild(info);
-            item.appendChild(rightSide);
-
+            deleteButton.type = 'button'; deleteButton.className = 'btn-mini btn-mini-delete'; deleteButton.title = 'Hapus Karyawan'; deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteButton.addEventListener('click', function () { hapusKaryawan(karyawan.id, karyawan.nama || 'Karyawan'); });
+            actions.appendChild(editButton); actions.appendChild(deleteButton);
+            rightSide.appendChild(status); rightSide.appendChild(actions);
+            item.appendChild(info); item.appendChild(rightSide);
             return item;
         }
 
@@ -1190,41 +930,26 @@
             document.getElementById('username').value = karyawan.username || '';
             document.getElementById('password').value = '';
             document.getElementById('jabatan').value = karyawan.jabatan || 'Kasir';
-            document.getElementById('jam_masuk').value = karyawan.jam_masuk
-                ? String(karyawan.jam_masuk).slice(0, 5)
-                : '';
-            document.getElementById('jam_pulang').value = karyawan.jam_pulang
-                ? String(karyawan.jam_pulang).slice(0, 5)
-                : '';
-
+            document.getElementById('jam_masuk').value = karyawan.jam_masuk ? String(karyawan.jam_masuk).slice(0, 5) : '';
+            document.getElementById('jam_pulang').value = karyawan.jam_pulang ? String(karyawan.jam_pulang).slice(0, 5) : '';
             document.getElementById('password').required = false;
-            document.getElementById('password').placeholder = 'Kosongkan jika tidak ingin mengubah password';
-
+            document.getElementById('password').placeholder = 'Kosongkan jika tidak mengubah password';
             document.getElementById('judul-form-karyawan').innerText = 'Edit Data Karyawan';
             document.getElementById('btn-simpan-karyawan').innerText = 'Update Data Karyawan';
             document.getElementById('btn-batal-edit').style.display = 'block';
-
-            document.querySelector('.scrollable-content').scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            document.querySelector('.scrollable-content').scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function batalEditKaryawan() {
-            resetFormKaryawan();
-        }
+        function batalEditKaryawan() { resetFormKaryawan(); }
 
         function resetFormKaryawan() {
             document.getElementById('formKaryawan').reset();
             document.getElementById('edit-karyawan-id').value = '';
-
             document.getElementById('password').required = true;
             document.getElementById('password').placeholder = 'Minimal 8 karakter...';
-
             document.getElementById('judul-form-karyawan').innerText = 'Tambah Karyawan Baru';
             document.getElementById('btn-simpan-karyawan').innerText = 'Simpan Data Karyawan';
             document.getElementById('btn-batal-edit').style.display = 'none';
-
             document.getElementById('nama-error').style.display = 'none';
             document.getElementById('username-error').style.display = 'none';
             document.getElementById('password-error').style.display = 'none';
@@ -1232,47 +957,30 @@
 
         function validasiKaryawan() {
             const editId = document.getElementById('edit-karyawan-id').value;
-
             const nama = document.getElementById('nama').value.trim();
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
             const jamMasuk = document.getElementById('jam_masuk').value;
             const jamPulang = document.getElementById('jam_pulang').value;
-
             const validNama = /^[A-Za-zÀ-ÿ ]{3,50}$/.test(nama);
             const validUsername = /^[A-Za-z0-9_]{3,20}$/.test(username);
             const validPassword = editId ? (password === '' || password.length >= 8) : password.length >= 8;
             const validJam = !jamMasuk || !jamPulang || jamMasuk < jamPulang;
-
             document.getElementById('nama-error').style.display = validNama ? 'none' : 'block';
             document.getElementById('username-error').style.display = validUsername ? 'none' : 'block';
             document.getElementById('password-error').style.display = validPassword ? 'none' : 'block';
-
-            if (!validJam) {
-                alert('Jam pulang harus lebih besar dari jam masuk.');
-            }
-
+            if (!validJam) { alert('Jam pulang harus lebih besar dari jam masuk.'); }
             return validNama && validUsername && validPassword && validJam;
         }
 
         document.getElementById('formKaryawan').addEventListener('submit', async function (e) {
             e.preventDefault();
-
             const role = getRole();
-
-            if (role !== 'Admin' && role !== 'Admin Besar') {
-                alert('Akses ditolak. Hanya Admin yang dapat mengelola karyawan.');
-                return;
-            }
-
-            if (!validasiKaryawan()) {
-                alert('Periksa kembali data karyawan.');
-                return;
-            }
+            if (role !== 'Admin' && role !== 'Admin Besar') { alert('Akses ditolak. Hanya Admin yang dapat mengelola karyawan.'); return; }
+            if (!validasiKaryawan()) { alert('Periksa kembali data karyawan.'); return; }
 
             const tombol = document.getElementById('btn-simpan-karyawan');
             const editId = document.getElementById('edit-karyawan-id').value;
-
             const dataBaru = {
                 nama: document.getElementById('nama').value.trim(),
                 username: document.getElementById('username').value.trim(),
@@ -1289,70 +997,28 @@
             try {
                 tombol.innerText = editId ? 'Mengupdate...' : 'Menyimpan...';
                 tombol.disabled = true;
-
-                const response = await fetch(url, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(dataBaru)
-                });
-
+                const response = await fetch(url, { method: method, headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }, body: JSON.stringify(dataBaru) });
                 const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.error || result.message || 'Terjadi kesalahan');
-                }
-
+                if (!response.ok) { throw new Error(result.error || result.message || 'Terjadi kesalahan'); }
                 alert(editId ? 'Data karyawan berhasil diperbarui!' : 'Karyawan berhasil didaftarkan!');
-
                 resetFormKaryawan();
                 loadDataKaryawan();
-            } catch (error) {
-                alert('Gagal: ' + (error.message || 'Error jaringan. Pastikan backend Railway menyala.'));
-            } finally {
-                tombol.innerText = document.getElementById('edit-karyawan-id').value
-                    ? 'Update Data Karyawan'
-                    : 'Simpan Data Karyawan';
-
-                tombol.disabled = false;
-            }
+            } catch (error) { alert('Gagal: ' + (error.message || 'Error jaringan.')); } 
+            finally { tombol.innerText = document.getElementById('edit-karyawan-id').value ? 'Update Data Karyawan' : 'Simpan Data Karyawan'; tombol.disabled = false; }
         });
 
         async function hapusKaryawan(id, nama) {
             const role = getRole();
-
-            if (role !== 'Admin' && role !== 'Admin Besar') {
-                alert('Akses ditolak. Hanya Admin yang dapat menghapus karyawan.');
-                return;
-            }
-
+            if (role !== 'Admin' && role !== 'Admin Besar') { alert('Akses ditolak. Hanya Admin yang dapat menghapus karyawan.'); return; }
             const yakin = confirm(`Yakin ingin menghapus karyawan "${nama}"?`);
-
-            if (!yakin) {
-                return;
-            }
-
+            if (!yakin) { return; }
             try {
-                const response = await fetch(`${API_URL}/${id}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-
+                const response = await fetch(`${API_URL}/${id}`, { method: 'DELETE', headers: { 'Accept': 'application/json' } });
                 const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.message || result.pesan || 'Gagal menghapus karyawan.');
-                }
-
+                if (!response.ok) { throw new Error(result.message || result.pesan || 'Gagal menghapus karyawan.'); }
                 alert(result.message || 'Karyawan berhasil dihapus.');
                 loadDataKaryawan();
-            } catch (error) {
-                alert(error.message || 'Gagal menghapus karyawan.');
-            }
+            } catch (error) { alert(error.message || 'Gagal menghapus karyawan.'); }
         }
 
         function logoutSistem() {
