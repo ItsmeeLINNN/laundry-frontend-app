@@ -3,139 +3,411 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spincycle - Pembayaran</title>
+    <title>Spincycle Laundry - Pembayaran</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
-        :root { --dark-blue: #15428F; --light-blue: #9BB8EA; --bg-card: #E2E4E5; --text-main: #333333; --text-sub: #666666; --success: #10B981; }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
-        body { background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .mobile-screen { background: linear-gradient(180deg, #ffffff 0%, #e6f0fa 100%); width: 375px; height: 750px; border-radius: 30px; box-shadow: 0 15px 45px rgba(21, 66, 143, 0.15); border: 10px solid #333; position: relative; overflow: hidden; display: flex; flex-direction: column; }
-        
-        .header { padding: 25px 20px 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .header i { font-size: 18px; color: var(--dark-blue); cursor: pointer; }
-        .header h2 { font-size: 18px; color: var(--dark-blue); font-weight: bold; }
-        
-        .scrollable-content { flex: 1; overflow-y: auto; padding: 0 20px 100px 20px; scrollbar-width: none; }
-        .scrollable-content::-webkit-scrollbar { display: none; }
+        :root {
+            --dark-blue: #15428f;
+            --light-blue: #9bb8ea;
+            --bg-page: #e0eafc;
+            --bg-panel: #ffffff;
+            --text-main: #333333;
+            --text-secondary: #666666;
+            --success: #10b981;
+            --border: #e7edf8;
+        }
 
-        .total-card { background: var(--dark-blue); color: white; border-radius: 20px; padding: 30px 20px; text-align: center; margin-bottom: 25px; box-shadow: 0 10px 20px rgba(21, 66, 143, 0.2); }
-        .total-card p { font-size: 11px; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .total-card h1 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; }
-        .nota-badge { background: rgba(255,255,255,0.2); display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 10px; margin-bottom: 10px; }
+        * {
+            box-sizing: border-box;
+        }
 
-        .section-title { font-size: 14px; font-weight: bold; color: var(--dark-blue); margin-bottom: 12px; }
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+        }
 
-        /* Method Tabs */
-        .method-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
-        .btn-metode { background: white; border: 2px solid #eee; border-radius: 12px; padding: 15px 10px; text-align: center; cursor: pointer; transition: 0.2s; color: var(--text-main); }
-        .btn-metode i { font-size: 20px; margin-bottom: 8px; color: var(--text-sub); }
-        .btn-metode h4 { font-size: 11px; font-weight: bold; }
-        .btn-metode.active { border-color: var(--dark-blue); background: #f4f8ff; }
-        .btn-metode.active i, .btn-metode.active h4 { color: var(--dark-blue); }
+        body {
+            background: linear-gradient(135deg, var(--bg-page) 0%, #cfdef3 100%);
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
 
-        /* Dynamic Detail Boxes */
-        .payment-detail { display: none; background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #eee; animation: fadeIn 0.3s ease; }
-        .payment-detail.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        .mobile-screen {
+            width: 375px;
+            min-height: 750px;
+            background: linear-gradient(180deg, var(--bg-panel) 0%, #e6f0fa 100%);
+            border-radius: 30px;
+            border: 10px solid #333;
+            box-shadow: 0 15px 45px rgba(21, 66, 143, 0.15);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
 
-        /* TUNAI */
-        .form-label { font-size: 11px; font-weight: bold; color: var(--text-sub); margin-bottom: 8px; display: block; }
-        .form-input { width: 100%; padding: 15px; border: 2px solid #eee; border-radius: 12px; font-size: 16px; font-weight: bold; color: var(--dark-blue); outline: none; margin-bottom: 15px; }
-        .form-input:focus { border-color: var(--light-blue); }
-        .kembalian-box { background: #f0f4f8; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .kembalian-box p { font-size: 12px; font-weight: bold; color: var(--text-sub); }
-        .kembalian-box h3 { font-size: 18px; font-weight: 800; color: var(--success); }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 20px 15px;
+        }
 
-        /* QRIS */
-        .qris-box { text-align: center; padding: 10px; }
-        .qris-box i { font-size: 100px; color: var(--dark-blue); margin-bottom: 15px; }
-        .qris-box p { font-size: 11px; color: var(--text-sub); line-height: 1.5; }
+        .header i {
+            font-size: 18px;
+            color: var(--dark-blue);
+            cursor: pointer;
+        }
 
-        /* TRANSFER */
-        .bank-list { display: flex; flex-direction: column; gap: 10px; }
-        .bank-item { background: #f4f8ff; padding: 12px 15px; border-radius: 10px; border-left: 4px solid var(--dark-blue); }
-        .bank-name { font-weight: bold; color: var(--dark-blue); font-size: 13px; margin-bottom: 5px; }
-        .bank-acc { font-family: monospace; font-size: 16px; color: #333; letter-spacing: 1px; margin-bottom: 3px;}
-        .bank-owner { font-size: 10px; color: var(--text-sub); }
+        .header h2 {
+            font-size: 18px;
+            color: var(--dark-blue);
+            font-weight: 700;
+            margin: 0;
+        }
 
-        .floating-action { position: absolute; bottom: 0; left: 0; right: 0; background-color: white; padding: 20px; border-top: 1px solid #eee; z-index: 10; }
-        .btn-bayar { width: 100%; background-color: var(--success); color: white; border: none; padding: 16px; border-radius: 12px; font-weight: bold; font-size: 14px; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s; }
-        .btn-bayar:disabled { background: #ccc; cursor: not-allowed; }
-        .btn-bayar:active:not(:disabled) { transform: scale(0.98); }
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 20px 100px;
+            scrollbar-width: none;
+        }
+
+        .scrollable-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .total-card {
+            background: var(--dark-blue);
+            color: #ffffff;
+            border-radius: 20px;
+            padding: 30px 20px;
+            margin-bottom: 24px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(21, 66, 143, 0.2);
+        }
+
+        .total-card p {
+            margin: 0 0 6px;
+            font-size: 11px;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .total-card h1 {
+            margin: 0;
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .nota-badge {
+            display: inline-block;
+            margin-bottom: 12px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.18);
+            font-size: 10px;
+            letter-spacing: 0.4px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            color: var(--dark-blue);
+            font-weight: 700;
+            margin-bottom: 14px;
+        }
+
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        .btn-metode {
+            background: #ffffff;
+            border: 2px solid #eee;
+            border-radius: 14px;
+            padding: 16px 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: border-color 0.2s ease, background-color 0.2s ease;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-metode i {
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+            font-size: 20px;
+        }
+
+        .btn-metode h4 {
+            margin: 0;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .btn-metode.active {
+            border-color: var(--dark-blue);
+            background: #f4f8ff;
+        }
+
+        .btn-metode.active i,
+        .btn-metode.active h4 {
+            color: var(--dark-blue);
+        }
+
+        .payment-detail {
+            display: none;
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 20px;
+            border: 1px solid #eee;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            animation: fadeIn 0.25s ease;
+        }
+
+        .payment-detail.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 16px 14px;
+            border-radius: 14px;
+            border: 2px solid #eee;
+            font-size: 16px;
+            color: var(--dark-blue);
+            outline: none;
+            margin-bottom: 16px;
+        }
+
+        .form-input:focus {
+            border-color: var(--light-blue);
+            box-shadow: 0 0 0 4px rgba(155, 184, 234, 0.18);
+        }
+
+        .kembalian-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            border-radius: 14px;
+            background: #f0f4f8;
+        }
+
+        .kembalian-box p {
+            margin: 0;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .kembalian-box h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--success);
+        }
+
+        .qris-box {
+            text-align: center;
+            padding: 18px 10px;
+        }
+
+        .qris-box i {
+            font-size: 88px;
+            color: var(--dark-blue);
+            margin-bottom: 16px;
+        }
+
+        .qris-box p {
+            margin: 0;
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .bank-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .bank-item {
+            padding: 14px 16px;
+            border-radius: 14px;
+            border-left: 4px solid var(--dark-blue);
+            background: #f4f8ff;
+        }
+
+        .bank-name {
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--dark-blue);
+        }
+
+        .bank-acc {
+            margin-bottom: 4px;
+            font-family: monospace;
+            font-size: 16px;
+            color: var(--text-main);
+            letter-spacing: 0.8px;
+        }
+
+        .bank-owner {
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+
+        .floating-action {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 18px 20px 24px;
+            background: rgba(255,255,255,0.96);
+            border-top: 1px solid var(--border);
+        }
+
+        .btn-bayar {
+            width: 100%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            background-color: var(--success);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .btn-bayar:disabled {
+            background: #c0c0c0;
+            cursor: not-allowed;
+        }
+
+        .btn-bayar:active:not(:disabled) {
+            transform: scale(0.98);
+        }
     </style>
 </head>
 <body>
     <div class="mobile-screen">
-        <div class="header">
-            <i class="fas fa-arrow-left" onclick="window.history.back()"></i>
+        <header class="header">
+            <button type="button" class="icon-button" onclick="window.history.back()" aria-label="Kembali">
+                <i class="fas fa-arrow-left"></i>
+            </button>
             <h2>Proses Pembayaran</h2>
-            <div style="width: 18px;"></div>
-        </div>
+            <span aria-hidden="true" style="width:18px;display:inline-block;"></span>
+        </header>
 
-        <div class="scrollable-content">
-            <div class="total-card">
-                <div class="nota-badge" id="nota-id">NOTA #0</div>
-                <p>Total Tagihan</p>
+        <main class="scrollable-content">
+            <section class="total-card" aria-labelledby="total-tagihan-label">
+                <span class="nota-badge" id="nota-id">NOTA #0</span>
+                <p id="total-tagihan-label">Total Tagihan</p>
                 <h1 id="total-tagihan">Rp 0</h1>
-            </div>
+            </section>
 
-            <div class="section-title">Pilih Metode Pembayaran</div>
-            <div class="method-grid">
-                <div class="btn-metode active" onclick="pilihMetode('Tunai', this)">
-                    <i class="fas fa-money-bill-wave"></i><h4>Tunai</h4>
+            <section aria-labelledby="metode-title">
+                <p class="section-title" id="metode-title">Pilih Metode Pembayaran</p>
+                <div class="method-grid">
+                    <button type="button" class="btn-metode active" onclick="pilihMetode('Tunai', this)">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <h4>Tunai</h4>
+                    </button>
+                    <button type="button" class="btn-metode" onclick="pilihMetode('QRIS', this)">
+                        <i class="fas fa-qrcode"></i>
+                        <h4>QRIS</h4>
+                    </button>
+                    <button type="button" class="btn-metode" onclick="pilihMetode('Transfer', this)">
+                        <i class="fas fa-university"></i>
+                        <h4>Transfer Bank</h4>
+                    </button>
                 </div>
-                <div class="btn-metode" onclick="pilihMetode('QRIS', this)">
-                    <i class="fas fa-qrcode"></i><h4>QRIS</h4>
-                </div>
-                <div class="btn-metode" onclick="pilihMetode('Transfer', this)">
-                    <i class="fas fa-university"></i><h4>Transfer Bank</h4>
-                </div>
-            </div>
+            </section>
 
-            <div class="payment-detail active" id="detail-Tunai">
-                <label class="form-label">Jumlah Uang Diterima (Rp)</label>
-                <input type="number" id="uang_diterima" class="form-input" placeholder="Masukkan nominal" oninput="hitungKembalian()">
+            <section class="payment-detail active" id="detail-Tunai">
+                <label class="form-label" for="uang_diterima">Jumlah Uang Diterima (Rp)</label>
+                <input
+                    type="number"
+                    id="uang_diterima"
+                    class="form-input"
+                    placeholder="Masukkan nominal"
+                    oninput="hitungKembalian()"
+                />
                 <div class="kembalian-box">
                     <p>Kembalian:</p>
                     <h3 id="kembalian">Rp 0</h3>
                 </div>
-            </div>
+            </section>
 
-            <div class="payment-detail" id="detail-QRIS">
+            <section class="payment-detail" id="detail-QRIS">
                 <div class="qris-box">
                     <i class="fas fa-qrcode"></i>
                     <h3 style="color:var(--dark-blue); font-size:16px; margin-bottom:5px;">Scan QRIS</h3>
                     <p>Minta pelanggan memindai kode QR di atas menggunakan aplikasi M-Banking atau e-Wallet (Gopay, OVO, Dana).</p>
                 </div>
-            </div>
+            </section>
 
-            <div class="payment-detail" id="detail-Transfer">
-                <label class="form-label" style="margin-bottom: 12px;">Pilihan Rekening Pembayaran:</label>
+            <section class="payment-detail" id="detail-Transfer">
+                <p class="form-label">Pilihan Rekening Pembayaran</p>
                 <div class="bank-list">
-                    <div class="bank-item">
+                    <article class="bank-item">
                         <div class="bank-name">Bank BCA</div>
                         <div class="bank-acc">123 456 7890</div>
                         <div class="bank-owner">a.n Spincycle Laundry</div>
-                    </div>
-                    <div class="bank-item">
+                    </article>
+                    <article class="bank-item">
                         <div class="bank-name">Bank Mandiri</div>
                         <div class="bank-acc">098 765 4321</div>
                         <div class="bank-owner">a.n Spincycle Laundry</div>
-                    </div>
-                    <div class="bank-item">
+                    </article>
+                    <article class="bank-item">
                         <div class="bank-name">Bank BRI</div>
                         <div class="bank-acc">1122 3344 5566</div>
                         <div class="bank-owner">a.n Spincycle Laundry</div>
-                    </div>
+                    </article>
                 </div>
-            </div>
-        </div> 
+            </section>
+        </main>
 
-        <div class="floating-action">
-            <button class="btn-bayar" id="btn-bayar" onclick="lunaskanPesanan()">
-                <i class="fas fa-check-circle"></i> Verifikasi & Lunas
+        <footer class="floating-action">
+            <button type="button" class="btn-bayar" id="btn-bayar" onclick="lunaskanPesanan()">
+                <i class="fas fa-check-circle"></i>
+                Verifikasi & Lunas
             </button>
-        </div>
+        </footer>
     </div>
 
     <script>
@@ -145,47 +417,38 @@
         let statusPesananSaatIni = '';
         let metodeBayar = 'Tunai';
 
-        window.onload = function() {
-            // Tarik data yang dilempar dari list_order.html
+        window.onload = () => {
             orderId = localStorage.getItem('bayar_order_id');
             totalTagihan = parseFloat(localStorage.getItem('bayar_total')) || 0;
             statusPesananSaatIni = localStorage.getItem('bayar_status_pesanan') || 'Diproses';
-            
+
             if (!orderId) {
-                alert("Data pesanan tidak valid!");
+                alert('Data pesanan tidak valid!');
                 window.location.href = 'list_order.html';
                 return;
             }
 
             document.getElementById('nota-id').innerText = `NOTA ORD-${orderId}`;
-            document.getElementById('total-tagihan').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(totalTagihan);
+            document.getElementById('total-tagihan').innerText = `Rp ${new Intl.NumberFormat('id-ID').format(totalTagihan)}`;
         };
 
-        function pilihMetode(metode, btn) {
+        function pilihMetode(metode, tombol) {
             metodeBayar = metode;
-            
-            // Ubah style tombol aktif
-            document.querySelectorAll('.btn-metode').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            // Sembunyikan semua detail, lalu tampilkan yang dipilih
-            document.querySelectorAll('.payment-detail').forEach(d => d.classList.remove('active'));
+            document.querySelectorAll('.btn-metode').forEach(item => item.classList.remove('active'));
+            tombol.classList.add('active');
+            document.querySelectorAll('.payment-detail').forEach(box => box.classList.remove('active'));
             document.getElementById(`detail-${metode}`).classList.add('active');
-
-            // Reset input tunai jika pindah tab
             document.getElementById('uang_diterima').value = '';
             document.getElementById('kembalian').innerText = 'Rp 0';
         }
 
         function hitungKembalian() {
             const uangDiterima = parseFloat(document.getElementById('uang_diterima').value) || 0;
-            let kembalian = uangDiterima - totalTagihan;
-            if (kembalian < 0) kembalian = 0;
-            document.getElementById('kembalian').innerText = 'Rp ' + new Intl.NumberFormat('id-ID').format(kembalian);
+            const kembalian = Math.max(0, uangDiterima - totalTagihan);
+            document.getElementById('kembalian').innerText = `Rp ${new Intl.NumberFormat('id-ID').format(kembalian)}`;
         }
 
         async function lunaskanPesanan() {
-            // Validasi uang kurang untuk Cash
             if (metodeBayar === 'Tunai') {
                 const uangDiterima = parseFloat(document.getElementById('uang_diterima').value) || 0;
                 if (uangDiterima < totalTagihan) {
@@ -193,36 +456,33 @@
                     return;
                 }
             } else {
-                if(!confirm(`Pastikan pelanggan sudah melakukan transfer/QRIS sejumlah Rp ${new Intl.NumberFormat('id-ID').format(totalTagihan)}. Lanjutkan?`)){
-                    return;
-                }
+                const konfirmasi = confirm(`Pastikan pelanggan sudah melakukan transfer/QRIS sejumlah Rp ${new Intl.NumberFormat('id-ID').format(totalTagihan)}. Lanjutkan?`);
+                if (!konfirmasi) return;
             }
 
-            const btnBayar = document.getElementById('btn-bayar');
-            btnBayar.disabled = true;
-            btnBayar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+            const tombolBayar = document.getElementById('btn-bayar');
+            tombolBayar.disabled = true;
+            tombolBayar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
 
             try {
-                // Tembak API PUT untuk mengupdate status menjadi LUNAS
-                // Note: Kita mengirim kembali status_pesanan lama agar tidak ter-reset.
-                const res = await fetch(`${API_URL}/pesanan/${orderId}/status`, {
+                const response = await fetch(`${API_URL}/pesanan/${orderId}/status`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ status_pesanan: statusPesananSaatIni, status_pembayaran: 'Lunas' })
                 });
 
-                if (res.ok) {
-                    alert('Pembayaran Berhasil Dikonfirmasi!');
-                    window.location.href = 'list_order.html'; // Kembali ke daftar
+                if (response.ok) {
+                    alert('Pembayaran berhasil dikonfirmasi!');
+                    window.location.href = 'list_order.html';
                 } else {
                     alert('Gagal mengupdate status pesanan.');
-                    btnBayar.disabled = false;
-                    btnBayar.innerHTML = '<i class="fas fa-check-circle"></i> Verifikasi & Lunas';
+                    tombolBayar.disabled = false;
+                    tombolBayar.innerHTML = '<i class="fas fa-check-circle"></i> Verifikasi & Lunas';
                 }
-            } catch (e) {
+            } catch (error) {
                 alert('Gagal terhubung ke server. Pastikan internet lancar.');
-                btnBayar.disabled = false;
-                btnBayar.innerHTML = '<i class="fas fa-check-circle"></i> Verifikasi & Lunas';
+                tombolBayar.disabled = false;
+                tombolBayar.innerHTML = '<i class="fas fa-check-circle"></i> Verifikasi & Lunas';
             }
         }
     </script>
