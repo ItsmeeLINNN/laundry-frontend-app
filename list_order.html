@@ -770,9 +770,16 @@ function bukaModalDetail(id) {
 
     const noHp = order.no_hp || order.phone || '-';
 
+    // BARU: Logika pendeteksian otomatis jenis cucian berdasarkan angka desimal pada kolom berat
+    const isKiloan = (Number(order.berat) % 1 !== 0) || Number(order.berat) === 0;
+    const labelKuantitas = isKiloan ? 'Berat Cucian' : 'Jumlah Satuan';
+    const nilaiKuantitas = isKiloan ? `${order.berat} Kg` : `${Math.round(order.berat)} Pcs`;
+
     const rows = [
         ['Nama Pelanggan', order.nama_pelanggan || '-'],
         ['No HP', noHp],
+        ['Jenis Cucian', isKiloan ? 'Kiloan (Kg)' : 'Satuan (Pcs)'], // Ditambahkan jenis cucian
+        [labelKuantitas, nilaiKuantitas], // Ditambahkan berat / kuantitas satuan
         [
             'Tgl Masuk',
             order.tanggal_masuk
@@ -806,16 +813,18 @@ function bukaModalDetail(id) {
             ? `62${phone.substring(1)}`
             : phone;
 
-        // PEMBARUAN: Format teks invoice yang lebih detail, rapi, dan profesional
         const tanggalMasukInvoice = order.tanggal_masuk ? new Date(order.tanggal_masuk).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
         const statusPembayaranInvoice = (order.status_pembayaran || 'Belum Lunas').toUpperCase();
         
+        // BARU: Sinkronisasi rincian kuantitas ke teks Invoice WhatsApp
         const waText = `*SPINCYCLE LAUNDRY* \n` +
                        `----------------------------------------\n` +
                        `*INVOICE NOTA: ORD-${order.id}*\n` +
                        `----------------------------------------\n` +
                        ` *Pelanggan:* ${order.nama_pelanggan || '-'}\n` +
                        ` *Tgl Masuk:* ${tanggalMasukInvoice}\n` +
+                       ` *Jenis Cucian:* ${isKiloan ? 'Kiloan' : 'Satuan'}\n` +
+                       `${isKiloan ? '⚖️ *Berat:* ' + order.berat + ' Kg' : '🔢 *Jumlah:* ' + Math.round(order.berat) + ' Pcs'}\n` +
                        ` *Status Bayar:* *${statusPembayaranInvoice}*\n` +
                        ` *Status Cucian:* ${order.status_pesanan || 'Diproses'}\n` +
                        `----------------------------------------\n` +
@@ -825,7 +834,6 @@ function bukaModalDetail(id) {
 
         const waButton = document.createElement('button');
         waButton.className = 'wa-btn';
-        // PEMBARUAN: Mengubah Teks Tombol
         waButton.innerHTML = '<i class="fab fa-whatsapp" style="font-size:16px;"></i> Kirim Invoice via WA';
 
         waButton.addEventListener('click', function () {
