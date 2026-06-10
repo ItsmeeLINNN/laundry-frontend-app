@@ -810,18 +810,18 @@ function bukaModalDetail(id) {
         const tanggalMasukInvoice = order.tanggal_masuk ? new Date(order.tanggal_masuk).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : '-';
         const statusPembayaranInvoice = (order.status_pembayaran || 'Belum Lunas').toUpperCase();
         
-        const waText = `*SPINCYCLE LAUNDRY* 🧺\n` +
+        const waText = `*SPINCYCLE LAUNDRY* \n` +
                        `----------------------------------------\n` +
                        `*INVOICE NOTA: ORD-${order.id}*\n` +
                        `----------------------------------------\n` +
-                       `👤 *Pelanggan:* ${order.nama_pelanggan || '-'}\n` +
-                       `📅 *Tgl Masuk:* ${tanggalMasukInvoice}\n` +
-                       `💳 *Status Bayar:* *${statusPembayaranInvoice}*\n` +
-                       `👕 *Status Cucian:* ${order.status_pesanan || 'Diproses'}\n` +
+                       ` *Pelanggan:* ${order.nama_pelanggan || '-'}\n` +
+                       ` *Tgl Masuk:* ${tanggalMasukInvoice}\n` +
+                       ` *Status Bayar:* *${statusPembayaranInvoice}*\n` +
+                       ` *Status Cucian:* ${order.status_pesanan || 'Diproses'}\n` +
                        `----------------------------------------\n` +
-                       `💰 *TOTAL TAGIHAN:* *Rp ${formatRp(order.total_harga)}*\n` +
+                       ` *TOTAL TAGIHAN:* *Rp ${formatRp(order.total_harga)}*\n` +
                        `----------------------------------------\n` +
-                       `Terima kasih telah memercayakan cucian Anda kepada kami! 🙏✨`;
+                       `Terima kasih telah memercayakan cucian Anda kepada kami! `;
 
         const waButton = document.createElement('button');
         waButton.className = 'wa-btn';
