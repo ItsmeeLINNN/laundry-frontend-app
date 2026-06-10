@@ -497,12 +497,15 @@
         .filter(item => item.category === 'Kiloan')
         .reduce((total, item) => total + item.qty, 0);
 
+      // Payload untuk Backend
       const payload = {
         pelanggan_id: localStorage.getItem('trx_pelanggan_id'),
-        paket_id: localStorage.getItem('trx_kecepatan_val'),
-        berat: totalBeratKiloan > 0 ? totalBeratKiloan : 1,
+        paket_id: localStorage.getItem('trx_kecepatan_val'), 
+        berat: totalBeratKiloan > 0 ? totalBeratKiloan : 1, 
         metode_pengambilan: 'ambil_sendiri',
-        jarak_km: 0
+        jarak_km: 0,
+        // INI YANG BARU: Kirimkan total harga final ke backend
+        total_harga: localStorage.getItem('trx_total_tagihan') 
       };
 
       try {
