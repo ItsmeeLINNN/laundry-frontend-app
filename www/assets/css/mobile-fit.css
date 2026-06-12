@@ -24,11 +24,11 @@ body.login-page {
         radial-gradient(circle at top left, rgba(77, 160, 255, 0.18), transparent 34%),
         linear-gradient(
             145deg,
-            #ffffff 0%,
-            #f5faff 28%,
-            #dceeff 58%,
-            #4da0ff 84%,
-            #3b8fe8 100%
+            #3b8fe8 0%,
+            #4da0ff 16%,
+            #dceeff 42%,
+            #f5faff 72%,
+            #ffffff 100%
         );
     background-attachment: fixed;
     color: #0f172a;
@@ -40,11 +40,11 @@ body.app-page {
         radial-gradient(circle at bottom right, rgba(77, 160, 255, 0.16), transparent 36%),
         linear-gradient(
             315deg,
-            #ffffff 0%,
-            #f5faff 30%,
-            #dceeff 60%,
-            #4da0ff 86%,
-            #3b8fe8 100%
+            #3b8fe8 0%,
+            #4da0ff 14%,
+            #dceeff 40%,
+            #f5faff 70%,
+            #ffffff 100%
         );
     background-attachment: fixed;
     color: #0f172a;
