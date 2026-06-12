@@ -10,16 +10,44 @@ body {
     min-height: 100%;
     margin: 0;
     overflow-x: hidden;
-    background:
-        radial-gradient(circle at top left, rgba(191, 219, 254, 0.55), transparent 32%),
-        linear-gradient(180deg, #ffffff 0%, #eef6ff 45%, #dbeafe 100%) !important;
-    background-attachment: fixed;
     background-color: #eef6ff;
 }
 
 body {
     min-height: 100dvh;
     height: 100dvh;
+}
+
+body.login-page {
+    min-height: 100dvh;
+    background:
+        radial-gradient(circle at top left, rgba(77, 160, 255, 0.18), transparent 34%),
+        linear-gradient(
+            145deg,
+            #ffffff 0%,
+            #f5faff 28%,
+            #dceeff 58%,
+            #4da0ff 84%,
+            #3b8fe8 100%
+        );
+    background-attachment: fixed;
+    color: #0f172a;
+}
+
+body.app-page {
+    min-height: 100dvh;
+    background:
+        radial-gradient(circle at bottom right, rgba(77, 160, 255, 0.16), transparent 36%),
+        linear-gradient(
+            315deg,
+            #ffffff 0%,
+            #f5faff 30%,
+            #dceeff 60%,
+            #4da0ff 86%,
+            #3b8fe8 100%
+        );
+    background-attachment: fixed;
+    color: #0f172a;
 }
 
 .mobile-screen,
@@ -45,6 +73,7 @@ body {
 
 .app,
 .app-shell,
+.container,
 .phone-container,
 .main-wrapper,
 .page-wrapper {
@@ -52,6 +81,9 @@ body {
 }
 
 .card,
+.form-card,
+.panel,
+.profile-card,
 .info-card,
 .stat-card,
 .summary-card,
@@ -60,8 +92,10 @@ body {
 .setting-card,
 .filter-card,
 .table-wrapper,
-.form-card {
-    box-shadow: 0 12px 32px rgba(21, 66, 143, 0.08);
+.login-card {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 14px 34px rgba(21, 66, 143, 0.10);
 }
 
 .scrollable-content,
