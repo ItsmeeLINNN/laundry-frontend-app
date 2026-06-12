@@ -10,6 +10,11 @@ body {
     min-height: 100%;
     margin: 0;
     overflow-x: hidden;
+    background:
+        radial-gradient(circle at top left, rgba(191, 219, 254, 0.55), transparent 32%),
+        linear-gradient(180deg, #ffffff 0%, #eef6ff 45%, #dbeafe 100%) !important;
+    background-attachment: fixed;
+    background-color: #eef6ff;
 }
 
 body {
@@ -26,6 +31,7 @@ body {
     border: 0 !important;
     border-radius: 0 !important;
     box-shadow: none !important;
+    background: transparent !important;
 }
 
 .container {
@@ -35,6 +41,27 @@ body {
 .mobile-screen {
     position: relative;
     overflow: hidden;
+}
+
+.app,
+.app-shell,
+.phone-container,
+.main-wrapper,
+.page-wrapper {
+    background: transparent !important;
+}
+
+.card,
+.info-card,
+.stat-card,
+.summary-card,
+.order-card,
+.payment-card,
+.setting-card,
+.filter-card,
+.table-wrapper,
+.form-card {
+    box-shadow: 0 12px 32px rgba(21, 66, 143, 0.08);
 }
 
 .scrollable-content,
