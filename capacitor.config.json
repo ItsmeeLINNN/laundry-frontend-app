@@ -1,0 +1,6 @@
+{
+  "appId": "com.spincycle.laundry",
+  "appName": "Spincycle",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}

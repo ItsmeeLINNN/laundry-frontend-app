@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Spincycle</string>
+    <string name="title_activity_main">Spincycle</string>
+    <string name="package_name">com.spincycle.laundry</string>
+    <string name="custom_url_scheme">com.spincycle.laundry</string>
+</resources>
