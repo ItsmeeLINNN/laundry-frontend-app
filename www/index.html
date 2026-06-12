@@ -246,6 +246,11 @@
     const btnTogglePassword = document.getElementById('btnTogglePassword');
 
     window.addEventListener('load', function () {
+        if (window.LaundryAuth && window.LaundryAuth.hasValidSession()) {
+            window.location.href = 'dashboard.html';
+            return;
+        }
+
         const savedUsername = localStorage.getItem('remember_username');
 
         if (savedUsername) {
@@ -286,12 +291,25 @@
         return user.nama || user.name || user.fullname || user.username || fallbackUsername;
     }
 
+    function normalisasiRoleLogin(role) {
+        const value = String(role || '').trim();
+        const roleValid = ['Admin', 'Kasir', 'Karyawan'].find(function (item) {
+            return item.toLowerCase() === value.toLowerCase();
+        });
+
+        return roleValid || value;
+    }
+
     function ambilRoleUser(user) {
-        return user.role || user.jabatan || user.hak_akses || user.level || 'Karyawan';
+        return normalisasiRoleLogin(user.role || user.jabatan || user.hak_akses || user.level || 'Karyawan');
     }
 
     function ambilTokenLogin(result, user) {
         return result.token || result.accessToken || user.token || user.jwt || '';
+    }
+
+    function roleBisaLogin(role) {
+        return ['Admin', 'Kasir'].includes(normalisasiRoleLogin(role));
     }
 
     inputUsername.addEventListener('input', function () {
@@ -375,12 +393,39 @@
                 return;
             }
 
-            localStorage.setItem('id_kasir', user.id || '');
-            localStorage.setItem('nama_kasir', nama);
-            localStorage.setItem('username_kasir', user.username || username);
-            localStorage.setItem('role_kasir', role);
-            localStorage.setItem('auth_token', token);
-            localStorage.setItem('laundry_token', token);
+            if (!roleBisaLogin(role)) {
+                if (window.LaundryAuth) {
+                    window.LaundryAuth.clearAuth();
+                }
+                alert('Akun ini tidak memiliki akses login aplikasi.');
+                return;
+            }
+
+            const sessionUser = {
+                id: user.id || '',
+                nama,
+                username: user.username || username,
+                role
+            };
+
+            if (window.LaundryAuth && window.LaundryAuth.setSession) {
+                const saved = window.LaundryAuth.setSession(sessionUser, token);
+                if (!saved) {
+                    alert('Role login tidak valid untuk aplikasi.');
+                    return;
+                }
+            } else {
+                localStorage.setItem('auth_token', token);
+                localStorage.setItem('laundry_token', token);
+                localStorage.setItem('user_id', sessionUser.id);
+                localStorage.setItem('user_name', sessionUser.nama);
+                localStorage.setItem('username', sessionUser.username);
+                localStorage.setItem('user_role', sessionUser.role);
+                localStorage.setItem('id_kasir', sessionUser.id);
+                localStorage.setItem('nama_kasir', sessionUser.nama);
+                localStorage.setItem('username_kasir', sessionUser.username);
+                localStorage.setItem('role_kasir', sessionUser.role);
+            }
 
             if (rememberMe.checked) {
                 localStorage.setItem('remember_username', username);

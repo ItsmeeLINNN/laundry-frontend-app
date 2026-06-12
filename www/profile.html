@@ -783,7 +783,7 @@
 
         const defaultSettings = { nama_laundry: 'Spincycle Laundry', alamat: 'Alamat belum diatur', telepon: '08123456789', app_version: APP_VERSION };
 
-        function getRole() { return localStorage.getItem('role_kasir') || 'Karyawan'; }
+        function getRole() { return localStorage.getItem('user_role') || localStorage.getItem('role_kasir') || 'Karyawan'; }
         function bolehEditSettings() { return getRole() === 'Admin'; }
         function labelRole(role) {
             const map = {
@@ -806,7 +806,7 @@
         document.getElementById('setting-telepon').addEventListener('input', function () { if (bolehEditSettings()) { this.value = onlyNumber(this.value); } });
 
         window.onload = function () {
-            const nama = localStorage.getItem('nama_kasir') || 'Andra';
+            const nama = localStorage.getItem('user_name') || localStorage.getItem('nama_kasir') || 'Pengguna';
             const role = getRole();
 
             document.getElementById('display-name').innerText = nama;
@@ -1088,12 +1088,24 @@
 
         function logoutSistem() {
             if (confirm("Apakah Anda yakin ingin keluar dari aplikasi?")) {
-                localStorage.removeItem('nama_kasir');
-                localStorage.removeItem('role_kasir');
-                localStorage.removeItem('username_kasir');
-                localStorage.removeItem('id_kasir');
-                localStorage.removeItem('auth_token');
-                localStorage.removeItem('laundry_token');
+                if (window.LaundryAuth && window.LaundryAuth.clearAuth) {
+                    window.LaundryAuth.clearAuth();
+                } else {
+                    [
+                        'auth_token',
+                        'laundry_token',
+                        'user_id',
+                        'user_name',
+                        'username',
+                        'user_role',
+                        'id_kasir',
+                        'nama_kasir',
+                        'username_kasir',
+                        'role_kasir'
+                    ].forEach(function (key) {
+                        localStorage.removeItem(key);
+                    });
+                }
                 window.location.href = 'index.html';
             }
         }

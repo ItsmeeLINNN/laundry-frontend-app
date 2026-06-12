@@ -534,9 +534,9 @@
         const API_URL = window.LAUNDRY_API_BASE;
 
         window.onload = async () => {
-            const namaKasir = localStorage.getItem('nama_kasir') || 'Kasir';
-            document.getElementById('greet-name').innerText = namaKasir.split(' ')[0];
-            document.getElementById('user-initial').innerText = namaKasir.charAt(0).toUpperCase();
+            const userName = localStorage.getItem('user_name') || localStorage.getItem('nama_kasir') || 'Pengguna';
+            document.getElementById('greet-name').innerText = userName.split(' ')[0];
+            document.getElementById('user-initial').innerText = userName.charAt(0).toUpperCase();
 
             try {
                 // Fetch Statistik Dashboard

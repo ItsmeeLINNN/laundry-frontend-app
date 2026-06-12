@@ -393,7 +393,7 @@
     <script>
         const apiUrl = `${window.LAUNDRY_API_BASE}/layanan`;
 
-        const roleKasir = localStorage.getItem('role_kasir') || 'Karyawan';
+        const userRole = localStorage.getItem('user_role') || localStorage.getItem('role_kasir') || 'Karyawan';
 
         const formLayanan = document.getElementById('formLayanan');
         const serviceList = document.getElementById('service-list');
@@ -440,9 +440,12 @@
         });
 
         function aturUI() {
-            if (roleKasir === 'Admin') {
+            if (userRole === 'Admin') {
                 document.getElementById('admin-panel').style.display = 'block';
                 document.getElementById('role-status').textContent = 'Mode Admin: Anda dapat menambah/menghapus layanan.';
+            } else if (userRole === 'Kasir') {
+                document.getElementById('admin-panel').style.display = 'none';
+                document.getElementById('role-status').textContent = 'Mode Kasir: Anda hanya dapat melihat daftar harga.';
             } else {
                 document.getElementById('admin-panel').style.display = 'none';
                 document.getElementById('role-status').textContent = 'Mode Karyawan: Anda hanya dapat melihat daftar harga.';
@@ -538,7 +541,7 @@
 
             item.appendChild(details);
 
-            if (roleKasir === 'Admin') {
+            if (userRole === 'Admin') {
                 const deleteButton = document.createElement('button');
                 deleteButton.className = 'btn-delete';
                 deleteButton.type = 'button';
@@ -555,7 +558,7 @@
         }
 
         async function simpanLayanan() {
-            if (roleKasir !== 'Admin') {
+            if (userRole !== 'Admin') {
                 alert('Akses ditolak. Hanya Admin yang dapat menambah layanan.');
                 return;
             }
@@ -612,7 +615,7 @@
         }
 
         async function hapusLayanan(id, name) {
-            if (roleKasir !== 'Admin') {
+            if (userRole !== 'Admin') {
                 alert('Akses ditolak. Hanya Admin yang dapat menghapus layanan.');
                 return;
             }
