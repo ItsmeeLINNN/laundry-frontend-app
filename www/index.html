@@ -279,6 +279,15 @@
             .trim();
     }
 
+    function tampilkanLoginError(message) {
+        if (window.showToast) {
+            window.showToast(message, 'error');
+            return;
+        }
+
+        console.error(message);
+    }
+
     function ambilUserDariResponse(result) {
         if (!result || typeof result !== 'object') {
             return null;
@@ -327,17 +336,17 @@
         inputUsername.value = username;
 
         if (!username || !password) {
-            alert('Username dan password wajib diisi!');
+            tampilkanLoginError('Username dan password wajib diisi!');
             return;
         }
 
         if (username.length < 3) {
-            alert('Username minimal 3 karakter!');
+            tampilkanLoginError('Username minimal 3 karakter!');
             return;
         }
 
         if (password.length < 6) {
-            alert('Password minimal 6 karakter!');
+            tampilkanLoginError('Password minimal 6 karakter!');
             return;
         }
 
@@ -365,14 +374,14 @@
                 result = text ? JSON.parse(text) : {};
             } catch (error) {
                 console.error('Response bukan JSON:', text);
-                alert('Server tidak mengembalikan JSON. Cek backend Railway.');
+                tampilkanLoginError('Server tidak mengembalikan JSON. Cek backend Railway.');
                 return;
             }
 
             console.log('LOGIN RESPONSE:', result);
 
             if (!response.ok) {
-                alert(result.message || result.pesan || result.error || 'Login gagal. Periksa username dan password.');
+                tampilkanLoginError(result.message || result.pesan || result.error || 'Login gagal. Periksa username dan password.');
                 return;
             }
 
@@ -380,7 +389,7 @@
 
             if (!user || typeof user !== 'object') {
                 console.error('Data user tidak ditemukan:', result);
-                alert('Response login tidak valid. Data user tidak ditemukan.');
+                tampilkanLoginError('Response login tidak valid. Data user tidak ditemukan.');
                 return;
             }
 
@@ -389,7 +398,7 @@
             const token = ambilTokenLogin(result, user);
 
             if (!token) {
-                alert('Login berhasil, tetapi token autentikasi tidak ditemukan dari server.');
+                tampilkanLoginError('Login berhasil, tetapi token autentikasi tidak ditemukan dari server.');
                 return;
             }
 
@@ -397,7 +406,7 @@
                 if (window.LaundryAuth) {
                     window.LaundryAuth.clearAuth();
                 }
-                alert('Akun ini tidak memiliki akses login aplikasi.');
+                tampilkanLoginError('Akun ini tidak memiliki akses login aplikasi.');
                 return;
             }
 
@@ -411,7 +420,7 @@
             if (window.LaundryAuth && window.LaundryAuth.setSession) {
                 const saved = window.LaundryAuth.setSession(sessionUser, token);
                 if (!saved) {
-                    alert('Role login tidak valid untuk aplikasi.');
+                    tampilkanLoginError('Role login tidak valid untuk aplikasi.');
                     return;
                 }
             } else {
@@ -435,8 +444,8 @@
 
             window.location.href = 'dashboard.html';
         } catch (error) {
-            console.error('Error login:', error);
-            alert("Gagal terhubung ke server. Pastikan internet lancar.");
+            console.error('Login fetch error:', error);
+            tampilkanLoginError('Gagal terhubung ke server. Cek koneksi internet, CORS backend, atau URL API Railway.');
         } finally {
             btnSubmit.innerText = teksAsli;
             btnSubmit.disabled = false;
