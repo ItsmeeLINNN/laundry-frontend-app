@@ -138,10 +138,40 @@
             color: var(--text-sub);
         }
 
+        .role-note {
+            display: none;
+            margin-bottom: 12px;
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid #bfdbfe;
+            background: #eff6ff;
+            color: #1e40af;
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 1.45;
+        }
+
+        .permission-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(50px, 1fr));
+            gap: 8px;
+            min-width: 220px;
+        }
+
+        .permission-cell {
+            display: grid;
+            justify-items: center;
+            gap: 4px;
+            color: var(--text-sub);
+            font-size: 9px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
         .switch {
             position: relative;
-            width: 48px;
-            height: 28px;
+            width: 42px;
+            height: 24px;
             flex-shrink: 0;
         }
 
@@ -163,8 +193,8 @@
         .slider::before {
             content: "";
             position: absolute;
-            width: 22px;
-            height: 22px;
+            width: 18px;
+            height: 18px;
             left: 3px;
             top: 3px;
             background: #ffffff;
@@ -178,7 +208,7 @@
         }
 
         .switch input:checked + .slider::before {
-            transform: translateX(20px);
+            transform: translateX(18px);
         }
 
         .switch input:disabled + .slider {
@@ -191,6 +221,18 @@
             text-align: center;
             color: var(--text-sub);
             font-size: 12px;
+        }
+
+        @media (max-width: 430px) {
+            .access-item {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .permission-grid {
+                width: 100%;
+                min-width: 0;
+            }
         }
     </style>
     <script src="config.js"></script>
@@ -211,10 +253,11 @@
         <main class="scrollable-content">
             <section class="intro">
                 <h2>Role Access</h2>
-                <p>Atur halaman yang bisa dibuka oleh setiap jabatan. Admin selalu memiliki akses penuh.</p>
+                <p>Atur permission fitur untuk setiap jabatan. Admin selalu memiliki akses penuh.</p>
             </section>
 
             <div class="role-tabs" id="role-tabs"></div>
+            <div class="role-note" id="role-note">Karyawan tidak memiliki akses login aplikasi.</div>
             <div class="access-list" id="access-list">
                 <div class="message"><i class="fas fa-spinner fa-spin"></i> Memuat kontrol akses...</div>
             </div>
@@ -223,22 +266,44 @@
 
     <script>
         const API_URL = LaundryAuth.API_BASE;
+        const ALLOWED_ROLES = ['Admin', 'Kasir', 'Karyawan'];
+        const PERMISSIONS = [
+            { key: 'can_read', label: 'Baca' },
+            { key: 'can_create', label: 'Tambah' },
+            { key: 'can_update', label: 'Edit' },
+            { key: 'can_delete', label: 'Hapus' }
+        ];
+
         let roles = [];
-        let pages = [];
+        let features = [];
         let accessRows = [];
         let activeRole = 'Kasir';
 
         window.addEventListener('DOMContentLoaded', loadAccess);
 
-        function rowKey(role, pageKey) {
-            return `${role}::${pageKey}`;
+        function rowKey(role, featureKey) {
+            return `${role}::${featureKey}`;
         }
 
         function accessMap() {
             return accessRows.reduce((map, row) => {
-                map[rowKey(row.role, row.page_key)] = Number(row.can_access) === 1;
+                map[rowKey(row.role, row.feature_key)] = {
+                    can_create: Number(row.can_create) === 1,
+                    can_read: Number(row.can_read) === 1,
+                    can_update: Number(row.can_update) === 1,
+                    can_delete: Number(row.can_delete) === 1
+                };
                 return map;
             }, {});
+        }
+
+        function defaultPermissions(role) {
+            return {
+                can_create: role === 'Admin',
+                can_read: role === 'Admin',
+                can_update: role === 'Admin',
+                can_delete: role === 'Admin'
+            };
         }
 
         async function loadAccess() {
@@ -252,9 +317,9 @@
                     throw new Error(result.message || result.pesan || 'Gagal mengambil kontrol akses.');
                 }
 
-                roles = result.data.roles || [];
-                pages = result.data.pages || [];
-                accessRows = result.data.access || [];
+                roles = (result.data.roles || []).filter((role) => ALLOWED_ROLES.includes(role));
+                features = result.data.features || [];
+                accessRows = (result.data.access || []).filter((row) => ALLOWED_ROLES.includes(row.role));
                 activeRole = roles.includes('Kasir') ? 'Kasir' : roles[0] || 'Admin';
 
                 renderTabs();
@@ -279,36 +344,62 @@
 
         function renderAccessList() {
             const host = document.getElementById('access-list');
+            const note = document.getElementById('role-note');
             const map = accessMap();
+            note.style.display = activeRole === 'Karyawan' ? 'block' : 'none';
 
-            host.innerHTML = pages.map((page) => {
-                const checked = activeRole === 'Admin' || map[rowKey(activeRole, page.page_key)];
+            host.innerHTML = features.map((feature) => {
+                const key = rowKey(activeRole, feature.key);
+                const row = map[key] || defaultPermissions(activeRole);
                 const disabled = activeRole === 'Admin';
+                const switches = PERMISSIONS.map((permission) => {
+                    const checked = activeRole === 'Admin' || row[permission.key];
+
+                    return `
+                        <div class="permission-cell">
+                            <span>${permission.label}</span>
+                            <label class="switch" title="${disabled ? 'Admin selalu aktif' : 'Ubah permission ' + permission.label}">
+                                <input
+                                    type="checkbox"
+                                    ${checked ? 'checked' : ''}
+                                    ${disabled ? 'disabled' : ''}
+                                    onchange="updateAccess('${activeRole}', '${feature.key}', '${permission.key}', this.checked)"
+                                >
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    `;
+                }).join('');
 
                 return `
                     <article class="access-item">
                         <div class="access-title">
-                            <h3>${page.page_name}</h3>
-                            <p>${page.page_key}</p>
+                            <h3>${feature.name}</h3>
+                            <p>${feature.key}</p>
                         </div>
-                        <label class="switch" title="${disabled ? 'Admin selalu aktif' : 'Ubah akses'}">
-                            <input type="checkbox" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''} onchange="updateAccess('${activeRole}', '${page.page_key}', this.checked)">
-                            <span class="slider"></span>
-                        </label>
+                        <div class="permission-grid">${switches}</div>
                     </article>
                 `;
             }).join('');
         }
 
-        async function updateAccess(role, pageKey, canAccess) {
+        async function updateAccess(role, featureKey, permissionKey, isAllowed) {
+            const key = rowKey(role, featureKey);
+            const map = accessMap();
+            const nextPermissions = {
+                ...defaultPermissions(role),
+                ...(map[key] || {})
+            };
+            nextPermissions[permissionKey] = isAllowed;
+
             try {
-                const response = await fetch(`${API_URL}/access-control/${encodeURIComponent(role)}/${encodeURIComponent(pageKey)}`, {
+                const response = await fetch(`${API_URL}/access-control/${encodeURIComponent(role)}/${encodeURIComponent(featureKey)}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
                         Accept: 'application/json'
                     },
-                    body: JSON.stringify({ can_access: canAccess })
+                    body: JSON.stringify(nextPermissions)
                 });
                 const result = await response.json();
 
@@ -316,18 +407,23 @@
                     throw new Error(result.message || result.pesan || 'Gagal memperbarui akses.');
                 }
 
-                const key = rowKey(role, pageKey);
-                const index = accessRows.findIndex((row) => rowKey(row.role, row.page_key) === key);
+                const index = accessRows.findIndex((row) => rowKey(row.role, row.feature_key) === key);
 
                 if (index >= 0) {
-                    accessRows[index].can_access = canAccess ? 1 : 0;
+                    accessRows[index] = {
+                        ...accessRows[index],
+                        ...Object.fromEntries(Object.entries(nextPermissions).map(([name, value]) => [name, value ? 1 : 0]))
+                    };
                 } else {
-                    const page = pages.find((item) => item.page_key === pageKey);
+                    const feature = features.find((item) => item.key === featureKey);
                     accessRows.push({
                         role,
-                        page_key: pageKey,
-                        page_name: page ? page.page_name : pageKey,
-                        can_access: canAccess ? 1 : 0
+                        feature_key: featureKey,
+                        feature_name: feature ? feature.name : featureKey,
+                        can_create: nextPermissions.can_create ? 1 : 0,
+                        can_read: nextPermissions.can_read ? 1 : 0,
+                        can_update: nextPermissions.can_update ? 1 : 0,
+                        can_delete: nextPermissions.can_delete ? 1 : 0
                     });
                 }
 

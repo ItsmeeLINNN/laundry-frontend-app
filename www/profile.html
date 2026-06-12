@@ -610,7 +610,7 @@
                             <i class="fas fa-user-lock"></i>
                             <div class="menu-text">
                                 <h4>Kontrol Akses Role</h4>
-                                <p>Atur halaman untuk Admin, Kasir, Karyawan, dan Kurir</p>
+                                <p>Atur fitur untuk Admin, Kasir, dan Karyawan</p>
                             </div>
                         </div>
                         <i class="fas fa-chevron-right" style="color:#ccc; font-size:14px;"></i>
@@ -635,16 +635,16 @@
                             <small class="error-text" id="nama-error">Nama hanya boleh huruf dan spasi, minimal 3 karakter.</small>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" id="username-group">
                             <label>Username</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-at"></i>
-                                <input type="text" id="username" placeholder="Username untuk login..." minlength="3" maxlength="20" pattern="[A-Za-z0-9_]+" title="Hanya huruf, angka, dan underscore" required>
+                                <input type="text" id="username" placeholder="Username untuk login..." minlength="3" maxlength="50" pattern="[A-Za-z0-9_]+" title="Hanya huruf, angka, dan underscore" required>
                             </div>
-                            <small class="error-text" id="username-error">Username hanya boleh huruf, angka, dan underscore, 3-20 karakter.</small>
+                            <small class="error-text" id="username-error">Username hanya boleh huruf, angka, dan underscore, 3-50 karakter.</small>
                         </div>
 
-                        <div class="form-group">
+                        <div class="form-group" id="password-group">
                             <label>Password</label>
                             <div class="input-wrapper">
                                 <i class="fas fa-lock"></i>
@@ -661,8 +661,13 @@
                                     <option value="Admin">Admin</option>
                                     <option value="Kasir">Kasir</option>
                                     <option value="Karyawan">Karyawan</option>
-                                    <option value="Kurir">Kurir</option>
                                 </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group" id="karyawan-login-note" style="display:none;">
+                            <div style="padding:10px 12px;border-radius:12px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af;font-size:12px;font-weight:700;line-height:1.4;">
+                                Karyawan tidak memiliki akses login aplikasi.
                             </div>
                         </div>
 
@@ -774,6 +779,7 @@
         const API_URL = `${window.LAUNDRY_API_BASE}/karyawan`;
         const SETTINGS_API_URL = `${window.LAUNDRY_API_BASE}/settings`;
         const APP_VERSION = 'v1.0.0';
+        const LOGIN_ROLES = ['Admin', 'Kasir'];
 
         const defaultSettings = { nama_laundry: 'Spincycle Laundry', alamat: 'Alamat belum diatur', telepon: '08123456789', app_version: APP_VERSION };
 
@@ -783,8 +789,7 @@
             const map = {
                 Admin: 'Administrator',
                 Kasir: 'Kasir',
-                Karyawan: 'Karyawan',
-                Kurir: 'Kurir'
+                Karyawan: 'Karyawan'
             };
             return map[role] || role || 'Karyawan';
         }
@@ -795,6 +800,7 @@
 
         document.getElementById('nama').addEventListener('input', function () { this.value = onlyLetters(this.value); });
         document.getElementById('username').addEventListener('input', function () { this.value = onlyUsername(this.value); });
+        document.getElementById('jabatan').addEventListener('change', syncLoginFields);
         document.getElementById('setting-nama').addEventListener('input', function () { if (bolehEditSettings()) { this.value = onlySettingText(this.value); } });
         document.getElementById('setting-alamat').addEventListener('input', function () { if (bolehEditSettings()) { this.value = onlySettingText(this.value); } });
         document.getElementById('setting-telepon').addEventListener('input', function () { if (bolehEditSettings()) { this.value = onlyNumber(this.value); } });
@@ -811,6 +817,7 @@
 
             if (role === 'Admin') {
                 document.getElementById('admin-menu').style.display = 'block';
+                syncLoginFields();
                 loadDataKaryawan();
             }
 
@@ -953,11 +960,10 @@
             document.getElementById('nama').value = karyawan.nama || '';
             document.getElementById('username').value = karyawan.username || '';
             document.getElementById('password').value = '';
-            document.getElementById('jabatan').value = karyawan.jabatan || 'Kasir';
+            document.getElementById('jabatan').value = LOGIN_ROLES.includes(karyawan.jabatan) ? karyawan.jabatan : 'Karyawan';
             document.getElementById('jam_masuk').value = karyawan.jam_masuk ? String(karyawan.jam_masuk).slice(0, 5) : '';
             document.getElementById('jam_pulang').value = karyawan.jam_pulang ? String(karyawan.jam_pulang).slice(0, 5) : '';
-            document.getElementById('password').required = false;
-            document.getElementById('password').placeholder = 'Kosongkan jika tidak mengubah password';
+            syncLoginFields();
             document.getElementById('judul-form-karyawan').innerText = 'Edit Data Karyawan';
             document.getElementById('btn-simpan-karyawan').innerText = 'Update Data Karyawan';
             document.getElementById('btn-batal-edit').style.display = 'block';
@@ -966,11 +972,41 @@
 
         function batalEditKaryawan() { resetFormKaryawan(); }
 
+        function jabatanBisaLogin() {
+            return LOGIN_ROLES.includes(document.getElementById('jabatan').value);
+        }
+
+        function syncLoginFields() {
+            const canLogin = jabatanBisaLogin();
+            const isEdit = Boolean(document.getElementById('edit-karyawan-id').value);
+            const usernameInput = document.getElementById('username');
+            const passwordInput = document.getElementById('password');
+            const usernameGroup = document.getElementById('username-group');
+            const passwordGroup = document.getElementById('password-group');
+            const note = document.getElementById('karyawan-login-note');
+
+            usernameGroup.style.display = canLogin ? 'block' : 'none';
+            passwordGroup.style.display = canLogin ? 'block' : 'none';
+            note.style.display = canLogin ? 'none' : 'block';
+
+            usernameInput.required = canLogin;
+            passwordInput.required = canLogin && !isEdit;
+            usernameInput.disabled = !canLogin;
+            passwordInput.disabled = !canLogin;
+            passwordInput.placeholder = isEdit ? 'Kosongkan jika tidak mengubah password' : 'Minimal 8 karakter...';
+
+            if (!canLogin) {
+                usernameInput.value = '';
+                passwordInput.value = '';
+                document.getElementById('username-error').style.display = 'none';
+                document.getElementById('password-error').style.display = 'none';
+            }
+        }
+
         function resetFormKaryawan() {
             document.getElementById('formKaryawan').reset();
             document.getElementById('edit-karyawan-id').value = '';
-            document.getElementById('password').required = true;
-            document.getElementById('password').placeholder = 'Minimal 8 karakter...';
+            syncLoginFields();
             document.getElementById('judul-form-karyawan').innerText = 'Tambah Karyawan Baru';
             document.getElementById('btn-simpan-karyawan').innerText = 'Simpan Data Karyawan';
             document.getElementById('btn-batal-edit').style.display = 'none';
@@ -984,11 +1020,12 @@
             const nama = document.getElementById('nama').value.trim();
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
+            const canLogin = jabatanBisaLogin();
             const jamMasuk = document.getElementById('jam_masuk').value;
             const jamPulang = document.getElementById('jam_pulang').value;
             const validNama = /^[A-Za-zÀ-ÿ ]{3,50}$/.test(nama);
-            const validUsername = /^[A-Za-z0-9_]{3,20}$/.test(username);
-            const validPassword = editId ? (password === '' || password.length >= 8) : password.length >= 8;
+            const validUsername = !canLogin || /^[A-Za-z0-9_]{3,50}$/.test(username);
+            const validPassword = !canLogin || (editId ? (password === '' || password.length >= 8) : password.length >= 8);
             const validJam = !jamMasuk || !jamPulang || jamMasuk < jamPulang;
             document.getElementById('nama-error').style.display = validNama ? 'none' : 'block';
             document.getElementById('username-error').style.display = validUsername ? 'none' : 'block';
@@ -1005,15 +1042,19 @@
 
             const tombol = document.getElementById('btn-simpan-karyawan');
             const editId = document.getElementById('edit-karyawan-id').value;
+            const jabatan = document.getElementById('jabatan').value;
             const dataBaru = {
                 nama: document.getElementById('nama').value.trim(),
-                username: document.getElementById('username').value.trim(),
-                password: document.getElementById('password').value,
-                jabatan: document.getElementById('jabatan').value,
+                jabatan,
                 jam_masuk: document.getElementById('jam_masuk').value,
                 jam_pulang: document.getElementById('jam_pulang').value,
                 status_aktif: true
             };
+
+            if (LOGIN_ROLES.includes(jabatan)) {
+                dataBaru.username = document.getElementById('username').value.trim();
+                dataBaru.password = document.getElementById('password').value;
+            }
 
             const url = editId ? `${API_URL}/${editId}` : API_URL + '/register';
             const method = editId ? 'PUT' : 'POST';

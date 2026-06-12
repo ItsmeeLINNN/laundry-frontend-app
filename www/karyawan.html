@@ -91,6 +91,21 @@
 
         .error-text {
             color: #b00020;
+            display: none;
+        }
+
+        .is-hidden {
+            display: none !important;
+        }
+
+        .login-note {
+            padding: 10px 12px;
+            border: 1px solid #bfdbfe;
+            border-radius: 8px;
+            background: #eff6ff;
+            color: #1e40af;
+            font-size: 0.9rem;
+            font-weight: 600;
         }
 
         button {
@@ -177,23 +192,23 @@
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="username-group">
                 <label for="username">Username</label>
                 <input
                     type="text"
                     id="username"
                     required
-                    minlength="4"
-                    maxlength="20"
+                    minlength="3"
+                    maxlength="50"
                     pattern="[A-Za-z0-9_]+"
                     title="Username hanya huruf, angka, dan underscore"
                 />
                 <div class="error-text" id="username-error">
-                    Username hanya boleh huruf, angka, dan underscore, 4-20 karakter.
+                    Username hanya boleh huruf, angka, dan underscore, 3-50 karakter.
                 </div>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" id="password-group">
                 <label for="password">Password</label>
                 <input
                     type="password"
@@ -233,8 +248,11 @@
                     <option value="Admin">Admin</option>
                     <option value="Kasir">Kasir</option>
                     <option value="Karyawan">Karyawan</option>
-                    <option value="Kurir">Kurir</option>
                 </select>
+            </div>
+
+            <div class="form-group is-hidden" id="karyawan-login-note">
+                <div class="login-note">Karyawan tidak memiliki akses login aplikasi.</div>
             </div>
 
             <div class="form-group">
@@ -295,6 +313,62 @@
 
 <script>
     const API_URL = `${window.LAUNDRY_API_BASE}/karyawan`;
+    const LOGIN_ROLES = ['Admin', 'Kasir'];
+
+    function selectedJabatan() {
+        return document.getElementById('jabatan').value;
+    }
+
+    function jabatanBisaLogin() {
+        return LOGIN_ROLES.includes(selectedJabatan());
+    }
+
+    function syncLoginFields() {
+        const canLogin = jabatanBisaLogin();
+        const usernameGroup = document.getElementById('username-group');
+        const passwordGroup = document.getElementById('password-group');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const note = document.getElementById('karyawan-login-note');
+
+        usernameGroup.classList.toggle('is-hidden', !canLogin);
+        passwordGroup.classList.toggle('is-hidden', !canLogin);
+        note.classList.toggle('is-hidden', canLogin);
+
+        usernameInput.required = canLogin;
+        passwordInput.required = canLogin;
+        usernameInput.disabled = !canLogin;
+        passwordInput.disabled = !canLogin;
+
+        if (!canLogin) {
+            usernameInput.value = '';
+            passwordInput.value = '';
+            document.getElementById('username-error').style.display = 'none';
+            document.getElementById('password-error').style.display = 'none';
+        }
+    }
+
+    function validateFormKaryawan() {
+        const nama = document.getElementById('nama').value.trim();
+        const username = document.getElementById('username').value.trim();
+        const password = document.getElementById('password').value;
+        const noTelepon = document.getElementById('no_telepon').value.trim();
+        const hariKerja = document.getElementById('hari_kerja').value.trim();
+        const validNama = /^[A-Za-zÀ-ÿ ]{3,50}$/.test(nama);
+        const validTelepon = noTelepon === '' || /^[0-9]{10,13}$/.test(noTelepon);
+        const validHari = hariKerja === '' || /^[A-Za-zÀ-ÿ ]+$/.test(hariKerja);
+        const canLogin = jabatanBisaLogin();
+        const validUsername = !canLogin || /^[A-Za-z0-9_]{3,50}$/.test(username);
+        const validPassword = !canLogin || password.length >= 8;
+
+        document.getElementById('nama-error').style.display = validNama ? 'none' : 'block';
+        document.getElementById('telepon-error').style.display = validTelepon ? 'none' : 'block';
+        document.getElementById('hari-error').style.display = validHari ? 'none' : 'block';
+        document.getElementById('username-error').style.display = validUsername ? 'none' : 'block';
+        document.getElementById('password-error').style.display = validPassword ? 'none' : 'block';
+
+        return validNama && validTelepon && validHari && validUsername && validPassword;
+    }
 
     async function loadDataKaryawan() {
         try {
@@ -321,7 +395,7 @@
                 tbody.innerHTML += `
                     <tr>
                         <td>${karyawan.nama}</td>
-                        <td>${karyawan.username}</td>
+                        <td>${karyawan.username || '-'}</td>
                         <td>${karyawan.jabatan}</td>
                         <td>${karyawan.hari_kerja || '-'}</td>
                         <td>${karyawan.jam_masuk || '-'} s/d ${karyawan.jam_pulang || '-'}</td>
@@ -342,16 +416,25 @@
     document.getElementById('formKaryawan').addEventListener('submit', async function(event) {
         event.preventDefault();
 
+        if (!validateFormKaryawan()) {
+            alert('Periksa kembali data karyawan.');
+            return;
+        }
+
+        const jabatan = selectedJabatan();
         const dataBaru = {
-            nama: document.getElementById('nama').value,
-            username: document.getElementById('username').value,
-            password: document.getElementById('password').value,
-            no_telepon: document.getElementById('no_telepon').value,
-            jabatan: document.getElementById('jabatan').value,
-            hari_kerja: document.getElementById('hari_kerja').value,
+            nama: document.getElementById('nama').value.trim(),
+            no_telepon: document.getElementById('no_telepon').value.trim(),
+            jabatan,
+            hari_kerja: document.getElementById('hari_kerja').value.trim(),
             jam_masuk: document.getElementById('jam_masuk').value,
             jam_pulang: document.getElementById('jam_pulang').value,
         };
+
+        if (LOGIN_ROLES.includes(jabatan)) {
+            dataBaru.username = document.getElementById('username').value.trim();
+            dataBaru.password = document.getElementById('password').value;
+        }
 
         try {
             const response = await fetch(`${API_URL}/register`, {
@@ -364,15 +447,18 @@
             if (response.ok) {
                 alert(`Berhasil: ${result.message}`);
                 document.getElementById('formKaryawan').reset();
+                syncLoginFields();
                 loadDataKaryawan();
             } else {
-                alert(`Gagal: ${result.error || 'Terjadi kesalahan'}`);
+                alert(`Gagal: ${result.message || result.error || 'Terjadi kesalahan'}`);
             }
         } catch (error) {
             alert('Error jaringan. Pastikan backend Railway menyala.');
         }
     });
 
+    document.getElementById('jabatan').addEventListener('change', syncLoginFields);
+    syncLoginFields();
     loadDataKaryawan();
 </script>
 
