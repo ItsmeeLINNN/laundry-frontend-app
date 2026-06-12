@@ -1,0 +1,123 @@
+:root {
+    --app-bottom-safe: env(safe-area-inset-bottom, 0px);
+    --app-top-safe: env(safe-area-inset-top, 0px);
+}
+
+html,
+body {
+    width: 100%;
+    min-width: 0;
+    min-height: 100%;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+body {
+    min-height: 100dvh;
+    height: 100dvh;
+}
+
+.mobile-screen,
+.container {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+.container {
+    overflow-y: auto;
+}
+
+.mobile-screen {
+    position: relative;
+    overflow: hidden;
+}
+
+.scrollable-content,
+main.scrollable-content {
+    min-height: 0;
+    -webkit-overflow-scrolling: touch;
+}
+
+.bottom-nav,
+.floating-action,
+.floating-summary {
+    padding-bottom: max(var(--app-bottom-safe), 0px);
+}
+
+.bottom-nav {
+    flex-shrink: 0;
+}
+
+img,
+canvas,
+svg,
+video,
+table {
+    max-width: 100%;
+}
+
+input,
+select,
+textarea,
+button {
+    max-width: 100%;
+    font: inherit;
+}
+
+table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.method-grid,
+.quick-actions,
+.stats-grid,
+.summary-grid {
+    min-width: 0;
+}
+
+@media (max-width: 420px) {
+    .quick-actions {
+        gap: 8px !important;
+    }
+
+    .action-icon {
+        width: 44px !important;
+        height: 44px !important;
+    }
+
+    .method-grid {
+        gap: 8px !important;
+    }
+
+    .btn-metode {
+        padding: 12px 6px !important;
+    }
+
+    .search-row,
+    .date-row,
+    .row {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 360px) {
+    .header,
+    .scrollable-content,
+    .search-filter-container,
+    .floating-summary,
+    .floating-action {
+        padding-left: 14px !important;
+        padding-right: 14px !important;
+    }
+
+    .nav-item {
+        font-size: 8px !important;
+    }
+}
