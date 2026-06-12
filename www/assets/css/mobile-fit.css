@@ -50,6 +50,20 @@ body.app-page {
     color: #0f172a;
 }
 
+body.dashboard-page {
+    background:
+        radial-gradient(circle at bottom center, rgba(77, 160, 255, 0.18), transparent 38%),
+        linear-gradient(
+            180deg,
+            #ffffff 0%,
+            #f5faff 30%,
+            #dceeff 62%,
+            #4da0ff 88%,
+            #3b8fe8 100%
+        );
+    background-attachment: fixed;
+}
+
 .mobile-screen,
 .container {
     width: 100% !important;
