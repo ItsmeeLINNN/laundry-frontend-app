@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spincycle Laundry - Kontrol Akses</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-blue: #15428f;
+            --light-blue: #9bb8ea;
+            --text-main: #1f2d3d;
+            --text-sub: #7b8794;
+            --success: #10b981;
+            --danger: #dc2626;
+            --border: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            background: #e0eafc;
+        }
+
+        .mobile-screen {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, #ffffff 0%, #e6f0fa 100%);
+        }
+
+        .header {
+            padding: 25px 20px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eef1f5;
+            background: #ffffff;
+        }
+
+        .header button {
+            border: none;
+            background: transparent;
+            color: var(--dark-blue);
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            color: var(--dark-blue);
+            font-weight: 800;
+        }
+
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 18px 20px 28px;
+        }
+
+        .intro {
+            margin-bottom: 16px;
+        }
+
+        .intro h2 {
+            font-size: 22px;
+            color: var(--dark-blue);
+            margin-bottom: 5px;
+        }
+
+        .intro p {
+            color: var(--text-sub);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .role-tabs {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+
+        .role-tab {
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: var(--text-sub);
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 800;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .role-tab.active {
+            background: var(--dark-blue);
+            color: #ffffff;
+            border-color: var(--dark-blue);
+        }
+
+        .access-list {
+            display: grid;
+            gap: 10px;
+        }
+
+        .access-item {
+            background: #ffffff;
+            border: 1px solid #edf2f7;
+            border-radius: 12px;
+            padding: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 12px rgba(21, 66, 143, 0.05);
+        }
+
+        .access-title h3 {
+            font-size: 13px;
+            color: var(--text-main);
+            margin-bottom: 3px;
+        }
+
+        .access-title p {
+            font-size: 10px;
+            color: var(--text-sub);
+        }
+
+        .switch {
+            position: relative;
+            width: 48px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #cbd5e1;
+            border-radius: 999px;
+            transition: .2s;
+        }
+
+        .slider::before {
+            content: "";
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            left: 3px;
+            top: 3px;
+            background: #ffffff;
+            border-radius: 50%;
+            transition: .2s;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, .18);
+        }
+
+        .switch input:checked + .slider {
+            background: var(--success);
+        }
+
+        .switch input:checked + .slider::before {
+            transform: translateX(20px);
+        }
+
+        .switch input:disabled + .slider {
+            cursor: not-allowed;
+            opacity: .55;
+        }
+
+        .message {
+            padding: 18px;
+            text-align: center;
+            color: var(--text-sub);
+            font-size: 12px;
+        }
+    </style>
+    <script src="config.js"></script>
+    <script src="app-ui.js"></script>
+    <script src="access-guard.js"></script>
+    <link rel="stylesheet" href="mobile-fit.css">
+</head>
+<body>
+    <div class="mobile-screen">
+        <header class="header">
+            <button type="button" aria-label="Kembali" onclick="window.location.href='profile.html'">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h1>Kontrol Akses</h1>
+            <span style="width:18px"></span>
+        </header>
+
+        <main class="scrollable-content">
+            <section class="intro">
+                <h2>Role Access</h2>
+                <p>Atur halaman yang bisa dibuka oleh setiap jabatan. Admin selalu memiliki akses penuh.</p>
+            </section>
+
+            <div class="role-tabs" id="role-tabs"></div>
+            <div class="access-list" id="access-list">
+                <div class="message"><i class="fas fa-spinner fa-spin"></i> Memuat kontrol akses...</div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API_URL = LaundryAuth.API_BASE;
+        let roles = [];
+        let pages = [];
+        let accessRows = [];
+        let activeRole = 'Kasir';
+
+        window.addEventListener('DOMContentLoaded', loadAccess);
+
+        function rowKey(role, pageKey) {
+            return `${role}::${pageKey}`;
+        }
+
+        function accessMap() {
+            return accessRows.reduce((map, row) => {
+                map[rowKey(row.role, row.page_key)] = Number(row.can_access) === 1;
+                return map;
+            }, {});
+        }
+
+        async function loadAccess() {
+            try {
+                const response = await fetch(`${API_URL}/access-control`, {
+                    headers: { Accept: 'application/json' }
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || result.pesan || 'Gagal mengambil kontrol akses.');
+                }
+
+                roles = result.data.roles || [];
+                pages = result.data.pages || [];
+                accessRows = result.data.access || [];
+                activeRole = roles.includes('Kasir') ? 'Kasir' : roles[0] || 'Admin';
+
+                renderTabs();
+                renderAccessList();
+            } catch (error) {
+                document.getElementById('access-list').innerHTML = `<div class="message" style="color:var(--danger);">${error.message}</div>`;
+            }
+        }
+
+        function renderTabs() {
+            const host = document.getElementById('role-tabs');
+            host.innerHTML = roles.map((role) => `
+                <button type="button" class="role-tab ${role === activeRole ? 'active' : ''}" onclick="setRole('${role}')">${role}</button>
+            `).join('');
+        }
+
+        function setRole(role) {
+            activeRole = role;
+            renderTabs();
+            renderAccessList();
+        }
+
+        function renderAccessList() {
+            const host = document.getElementById('access-list');
+            const map = accessMap();
+
+            host.innerHTML = pages.map((page) => {
+                const checked = activeRole === 'Admin' || map[rowKey(activeRole, page.page_key)];
+                const disabled = activeRole === 'Admin';
+
+                return `
+                    <article class="access-item">
+                        <div class="access-title">
+                            <h3>${page.page_name}</h3>
+                            <p>${page.page_key}</p>
+                        </div>
+                        <label class="switch" title="${disabled ? 'Admin selalu aktif' : 'Ubah akses'}">
+                            <input type="checkbox" ${checked ? 'checked' : ''} ${disabled ? 'disabled' : ''} onchange="updateAccess('${activeRole}', '${page.page_key}', this.checked)">
+                            <span class="slider"></span>
+                        </label>
+                    </article>
+                `;
+            }).join('');
+        }
+
+        async function updateAccess(role, pageKey, canAccess) {
+            try {
+                const response = await fetch(`${API_URL}/access-control/${encodeURIComponent(role)}/${encodeURIComponent(pageKey)}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json'
+                    },
+                    body: JSON.stringify({ can_access: canAccess })
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || result.pesan || 'Gagal memperbarui akses.');
+                }
+
+                const key = rowKey(role, pageKey);
+                const index = accessRows.findIndex((row) => rowKey(row.role, row.page_key) === key);
+
+                if (index >= 0) {
+                    accessRows[index].can_access = canAccess ? 1 : 0;
+                } else {
+                    const page = pages.find((item) => item.page_key === pageKey);
+                    accessRows.push({
+                        role,
+                        page_key: pageKey,
+                        page_name: page ? page.page_name : pageKey,
+                        can_access: canAccess ? 1 : 0
+                    });
+                }
+
+                showToast(result.message || 'Kontrol akses diperbarui.', 'success');
+            } catch (error) {
+                showToast(error.message || 'Gagal memperbarui akses.', 'error');
+                renderAccessList();
+            }
+        }
+    </script>
+</body>
+</html>

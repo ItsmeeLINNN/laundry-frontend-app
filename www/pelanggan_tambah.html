@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spincycle Laundry - Customers CRUD</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+    <style>
+        :root {
+            --dark-blue: #15428F;
+            --light-blue: #9BB8EA;
+            --text-main: #333333;
+            --text-sub: #757575;
+            --input-bg: #F5F5F5;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --success: #25D366;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden; /* Mencegah layar utama bergeser */
+            background-color: #e0eafc; /* Warna background utama */
+        }
+
+        .mobile-screen {
+            width: 100%;
+            height: 100%;
+            border-radius: 0; /* Menghilangkan sudut melengkung */
+            border: none; /* Menghilangkan bingkai hitam */
+            box-shadow: none; /* Menghilangkan bayangan */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, #ffffff 0%, #e6f0fa 100%); 
+        }
+
+        .header {
+            padding: 25px 20px 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header i {
+            font-size: 18px;
+            color: var(--dark-blue);
+            cursor: pointer;
+        }
+
+        .header h2 {
+            font-size: 18px;
+            color: var(--dark-blue);
+            font-weight: bold;
+        }
+
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 20px 20px 20px;
+            scrollbar-width: none;
+        }
+
+        .scrollable-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .title-area {
+            margin-bottom: 15px;
+        }
+
+        .title-area h1 {
+            font-size: 24px;
+            color: var(--dark-blue);
+            margin-bottom: 4px;
+        }
+
+        .title-area p {
+            font-size: 11px;
+            color: var(--dark-blue);
+            opacity: 0.8;
+        }
+
+        .form-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            margin-bottom: 25px;
+            border-top: 4px solid var(--dark-blue);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 10px;
+            font-weight: bold;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-wrapper i {
+            position: absolute;
+            left: 15px;
+            color: #bdbdbd;
+            font-size: 13px;
+        }
+
+        .input-wrapper input {
+            width: 100%;
+            background-color: var(--input-bg);
+            border: 1px solid #eee;
+            border-radius: 10px;
+            padding: 12px 12px 12px 40px;
+            font-size: 13px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .input-wrapper input:focus {
+            border-color: var(--light-blue);
+            background: white;
+        }
+
+        .input-wrapper input:invalid {
+            border-color: #ffb3b3;
+        }
+
+        .error-text {
+            display: none;
+            color: var(--danger);
+            font-size: 10px;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-save {
+            flex: 1;
+            background-color: var(--dark-blue);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(21, 66, 143, 0.15);
+            transition: 0.2s;
+        }
+
+        .btn-save:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-cancel {
+            display: none;
+            background-color: white;
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--dark-blue);
+            margin-bottom: 12px;
+        }
+
+        .customer-item {
+            background: white;
+            padding: 12px 15px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        }
+
+        .cust-main-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .cust-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--light-blue);
+            color: var(--dark-blue);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .cust-details {
+            min-width: 0;
+        }
+
+        .cust-details h4 {
+            font-size: 13px;
+            color: var(--text-main);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 145px;
+        }
+
+        .cust-details p {
+            font-size: 10px;
+            color: var(--text-sub);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-icon {
+            background: none;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .btn-edit {
+            color: var(--warning);
+        }
+
+        .btn-delete {
+            color: var(--danger);
+        }
+
+        .btn-wa {
+            background-color: var(--success);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            font-size: 14px;
+            margin-left: 5px;
+        }
+
+        .empty-message,
+        .error-message {
+            text-align: center;
+            font-size: 12px;
+            padding-top: 10px;
+        }
+
+        .empty-message {
+            color: #aaa;
+        }
+
+        .error-message {
+            color: var(--danger);
+        }
+
+        .bottom-nav {
+            background-color: white;
+            height: 65px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            border-top: 1px solid #eee;
+            z-index: 10;
+        }
+
+        .nav-item {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 9px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .nav-item i {
+            font-size: 18px;
+        }
+
+        .nav-item.active {
+            color: var(--dark-blue);
+            font-weight: bold;
+        }
+    </style>
+    <script src="config.js"></script>
+    <script src="app-ui.js"></script>
+    <script src="access-guard.js"></script>
+    <link rel="stylesheet" href="mobile-fit.css">
+</head>
+
+<body>
+    <div class="mobile-screen">
+        <div class="header">
+            <i class="fas fa-arrow-left" onclick="window.location.href='dashboard.html'"></i>
+            <h2>Data Pelanggan</h2>
+            <div style="width:18px"></div>
+        </div>
+
+        <div class="scrollable-content">
+            <div class="title-area">
+                <h1 id="form-title">Tambah Data</h1>
+                <p>Kelola buku kontak pelanggan toko</p>
+            </div>
+
+            <form class="form-card" id="customer-form" novalidate>
+                <input type="hidden" id="cust-id" value="">
+
+                <div class="form-group">
+                    <label for="cust-name">Nama Lengkap</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-user"></i>
+                        <input
+                            type="text"
+                            id="cust-name"
+                            placeholder="Contoh: Justin Dean"
+                            autocomplete="off"
+                            required
+                            minlength="3"
+                            maxlength="50"
+                            pattern="[A-Za-zÀ-ÿ ]+"
+                            title="Nama hanya boleh berisi huruf dan spasi"
+                        >
+                    </div>
+                    <small class="error-text" id="name-error">Nama hanya boleh berisi huruf dan spasi, minimal 3 karakter.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="cust-phone">Nomor WhatsApp</label>
+                    <div class="input-wrapper">
+                        <i class="fab fa-whatsapp"></i>
+                        <input
+                            type="tel"
+                            id="cust-phone"
+                            placeholder="Contoh: 08123456789"
+                            autocomplete="off"
+                            required
+                            inputmode="numeric"
+                            minlength="10"
+                            maxlength="13"
+                            pattern="[0-9]{10,13}"
+                            title="Nomor WhatsApp hanya boleh berisi angka 10 sampai 13 digit"
+                        >
+                    </div>
+                    <small class="error-text" id="phone-error">Nomor WhatsApp hanya boleh angka, 10 sampai 13 digit.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="cust-address">Alamat (Opsional)</label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input
+                            type="text"
+                            id="cust-address"
+                            placeholder="Contoh: Jl Sudirman No 10"
+                            autocomplete="off"
+                            maxlength="100"
+                            pattern="[A-Za-zÀ-ÿ0-9 ]*"
+                            title="Alamat hanya boleh berisi huruf, angka, dan spasi"
+                        >
+                    </div>
+                    <small class="error-text" id="address-error">Alamat hanya boleh berisi huruf, angka, dan spasi.</small>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn-save" id="btn-submit">Simpan Pelanggan</button>
+                    <button type="button" class="btn-cancel" id="btn-cancel">Batal</button>
+                </div>
+            </form>
+
+            <div class="section-title">Daftar Kontak</div>
+            <div id="customer-list"></div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item" onclick="window.location.href='dashboard.html'">
+                <i class="fas fa-home"></i>
+                <span>BERANDA</span>
+            </div>
+
+            <div class="nav-item" onclick="window.location.href='list_order.html'">
+                <i class="fas fa-file-alt"></i>
+                <span>PESANAN</span>
+            </div>
+
+            <div class="nav-item active" onclick="window.location.href='pelanggan_tambah.html'">
+                <i class="fas fa-users"></i>
+                <span>CUSTOMERS</span>
+            </div>
+
+            <div class="nav-item" onclick="window.location.href='profile.html'">
+                <i class="fas fa-user"></i>
+                <span>PROFILE</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = `${window.LAUNDRY_API_BASE}/pelanggan`;
+
+        const form = document.getElementById('customer-form');
+        const customerList = document.getElementById('customer-list');
+
+        const inputId = document.getElementById('cust-id');
+        const inputName = document.getElementById('cust-name');
+        const inputPhone = document.getElementById('cust-phone');
+        const inputAddress = document.getElementById('cust-address');
+
+        const btnSubmit = document.getElementById('btn-submit');
+        const btnCancel = document.getElementById('btn-cancel');
+        const formTitle = document.getElementById('form-title');
+
+        const nameError = document.getElementById('name-error');
+        const phoneError = document.getElementById('phone-error');
+        const addressError = document.getElementById('address-error');
+
+        function bersihkanInput() {
+            inputName.value = inputName.value.replace(/[^A-Za-zÀ-ÿ ]/g, '');
+            inputName.value = inputName.value.replace(/\s+/g, ' ');
+
+            inputPhone.value = inputPhone.value.replace(/[^0-9]/g, '');
+
+            inputAddress.value = inputAddress.value.replace(/[^A-Za-zÀ-ÿ0-9 ]/g, '');
+            inputAddress.value = inputAddress.value.replace(/\s+/g, ' ');
+        }
+
+        inputName.addEventListener('input', bersihkanInput);
+        inputPhone.addEventListener('input', bersihkanInput);
+        inputAddress.addEventListener('input', bersihkanInput);
+
+        function tampilkanErrorValidasi() {
+            const name = inputName.value.trim();
+            const phone = inputPhone.value.trim();
+            const address = inputAddress.value.trim();
+
+            const nameValid = /^[A-Za-zÀ-ÿ ]{3,50}$/.test(name);
+            const phoneValid = /^[0-9]{10,13}$/.test(phone);
+            const addressValid = address === '' || /^[A-Za-zÀ-ÿ0-9 ]{1,100}$/.test(address);
+
+            nameError.style.display = nameValid ? 'none' : 'block';
+            phoneError.style.display = phoneValid ? 'none' : 'block';
+            addressError.style.display = addressValid ? 'none' : 'block';
+
+            return nameValid && phoneValid && addressValid;
+        }
+
+        function setLoading(status) {
+            if (status) {
+                btnSubmit.disabled = true;
+                btnSubmit.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Proses...';
+            } else {
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = inputId.value ? 'Update Pelanggan' : 'Simpan Pelanggan';
+            }
+        }
+
+        function resetForm() {
+            formTitle.innerText = 'Tambah Data';
+            inputId.value = '';
+            inputName.value = '';
+            inputPhone.value = '';
+            inputAddress.value = '';
+
+            btnSubmit.innerText = 'Simpan Pelanggan';
+            btnSubmit.style.backgroundColor = 'var(--dark-blue)';
+            btnCancel.style.display = 'none';
+
+            nameError.style.display = 'none';
+            phoneError.style.display = 'none';
+            addressError.style.display = 'none';
+        }
+
+        function buatElemenPelanggan(pelanggan) {
+            const item = document.createElement('div');
+            item.className = 'customer-item';
+
+            const mainInfo = document.createElement('div');
+            mainInfo.className = 'cust-main-info';
+
+            const avatar = document.createElement('div');
+            avatar.className = 'cust-avatar';
+            avatar.textContent = pelanggan.name ? pelanggan.name.charAt(0).toUpperCase() : 'C';
+
+            const details = document.createElement('div');
+            details.className = 'cust-details';
+
+            const name = document.createElement('h4');
+            name.textContent = pelanggan.name || '-';
+
+            const phone = document.createElement('p');
+            phone.textContent = pelanggan.phone || '-';
+
+            details.appendChild(name);
+            details.appendChild(phone);
+
+            mainInfo.appendChild(avatar);
+            mainInfo.appendChild(details);
+
+            const actionButtons = document.createElement('div');
+            actionButtons.className = 'action-buttons';
+
+            const editButton = document.createElement('button');
+            editButton.className = 'btn-icon btn-edit';
+            editButton.type = 'button';
+            editButton.innerHTML = '<i class="fas fa-edit"></i>';
+            editButton.addEventListener('click', function () {
+                siapkanEdit(pelanggan);
+            });
+
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'btn-icon btn-delete';
+            deleteButton.type = 'button';
+            deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+            deleteButton.addEventListener('click', function () {
+                hapusPelanggan(pelanggan.id, pelanggan.name);
+            });
+
+            const waLink = document.createElement('a');
+            waLink.className = 'btn-wa';
+            waLink.target = '_blank';
+            waLink.rel = 'noopener noreferrer';
+            waLink.href = 'https://wa.me/' + String(pelanggan.phone || '').replace(/[^0-9]/g, '');
+            waLink.innerHTML = '<i class="fab fa-whatsapp"></i>';
+
+            actionButtons.appendChild(editButton);
+            actionButtons.appendChild(deleteButton);
+            actionButtons.appendChild(waLink);
+
+            item.appendChild(mainInfo);
+            item.appendChild(actionButtons);
+
+            return item;
+        }
+
+        async function muatDaftarPelanggan() {
+            try {
+                customerList.innerHTML = '<p class="empty-message">Memuat data pelanggan...</p>';
+
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.pesan || 'Gagal mengambil data pelanggan.');
+                }
+
+                const data = Array.isArray(result.data) ? result.data : [];
+
+                customerList.innerHTML = '';
+
+                if (data.length === 0) {
+                    customerList.innerHTML = '<p class="empty-message">Belum ada data pelanggan.</p>';
+                    return;
+                }
+
+                data.forEach(function (pelanggan) {
+                    customerList.appendChild(buatElemenPelanggan(pelanggan));
+                });
+            } catch (error) {
+                console.error(error);
+                customerList.innerHTML = '<p class="error-message">Gagal mengambil data dari server.</p>';
+            }
+        }
+
+        function siapkanEdit(pelanggan) {
+            formTitle.innerText = 'Edit Data';
+
+            inputId.value = pelanggan.id || '';
+            inputName.value = pelanggan.name || '';
+            inputPhone.value = pelanggan.phone || '';
+            inputAddress.value = pelanggan.address || '';
+
+            btnSubmit.innerText = 'Update Pelanggan';
+            btnSubmit.style.backgroundColor = 'var(--warning)';
+            btnCancel.style.display = 'block';
+
+            document.querySelector('.scrollable-content').scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        async function simpanPelanggan() {
+            bersihkanInput();
+
+            if (!tampilkanErrorValidasi()) {
+                alert('Periksa kembali data pelanggan. Masih ada input yang tidak sesuai.');
+                return;
+            }
+
+            const id = inputId.value.trim();
+
+            const dataPelanggan = {
+                name: inputName.value.trim(),
+                phone: inputPhone.value.trim(),
+                address: inputAddress.value.trim()
+            };
+
+            const method = id ? 'PUT' : 'POST';
+            const fetchUrl = id ? `${apiUrl}/${id}` : apiUrl;
+
+            try {
+                setLoading(true);
+
+                const response = await fetch(fetchUrl, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(dataPelanggan)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.pesan || 'Data gagal disimpan.');
+                }
+
+                if (result.status === 'SUKSES' || result.success === true) {
+                    alert(result.pesan || 'Data pelanggan berhasil disimpan.');
+                    resetForm();
+                    await muatDaftarPelanggan();
+                } else {
+                    alert(result.pesan || 'Data gagal disimpan.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert(error.message || 'Terjadi kesalahan sistem.');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        async function hapusPelanggan(id, name) {
+            const konfirmasi = confirm(`Yakin ingin menghapus pelanggan "${name}" dari sistem?`);
+
+            if (!konfirmasi) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`${apiUrl}/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.pesan || 'Gagal menghapus data.');
+                }
+
+                if (result.status === 'SUKSES' || result.success === true) {
+                    await muatDaftarPelanggan();
+                } else {
+                    alert(result.pesan || 'Gagal menghapus data.');
+                }
+            } catch (error) {
+                console.error(error);
+                alert(error.message || 'Gagal menghapus data.');
+            }
+        }
+
+        form.addEventListener('submit', function (event) {
+            event.preventDefault();
+            simpanPelanggan();
+        });
+
+        btnCancel.addEventListener('click', resetForm);
+
+        window.addEventListener('load', muatDaftarPelanggan);
+    </script>
+</body>
+</html>

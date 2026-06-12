@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spincycle Laundry - Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+
+        /* =========================================
+           CSS Murni: Replikasi UI Login/Register
+        ========================================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden; /* Mencegah layar utama bergeser */
+            background-color: #e0eafc; /* Warna background utama */
+        }
+
+        .mobile-screen {
+            width: 100%;
+            height: 100%;
+            border-radius: 0; /* Menghilangkan sudut melengkung */
+            border: none; /* Menghilangkan bingkai hitam */
+            box-shadow: none; /* Menghilangkan bayangan */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(180deg, #ffffff 0%, #e6f0fa 100%); 
+        }
+
+        .content-wrapper {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 40px 30px;
+            overflow-y: auto;
+        }
+
+        .header-top {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .welcome-text {
+            color: #2f5d96;
+            font-size: 14px;
+            line-height: 1.4;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .mid-text {
+            color: white;
+            margin-bottom: 25px;
+        }
+
+        .mid-text h2 {
+            font-size: 20px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .mid-text p {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .form-section {
+            width: 100%;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #333;
+            outline: none;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        #password {
+            padding-right: 50px;
+        }
+
+        .toggle-password {
+            position: absolute;
+            right: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #aaa;
+            font-size: 14px;
+            transition: 0.2s;
+            z-index: 5;
+        }
+
+        .toggle-password:hover {
+            color: #2f5d96;
+        }
+
+        .input-group input::placeholder {
+            color: #aaa;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: #204177; 
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(32, 65, 119, 0.3);
+            transition: 0.3s;
+        }
+
+        .btn-submit:hover {
+            background-color: #16305a;
+        }
+
+        .btn-submit:disabled {
+            background-color: #5a739e;
+            cursor: not-allowed;
+        }
+
+        .extra-links {
+            margin-top: 15px;
+            font-size: 11px;
+            color: white;
+        }
+
+        .extra-links label {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            }
+
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+    </style>
+    <script src="config.js"></script>
+    <script src="app-ui.js"></script>
+    <script src="access-guard.js"></script>
+    <link rel="stylesheet" href="mobile-fit.css">
+</head>
+<body>
+
+    <div class="mobile-screen">
+        <div class="content-wrapper">
+            
+            <div class="header-top">
+                <div style="margin-bottom: 15px;">
+                    <img src="Logo4.png" alt="Logo Spincycle" style="width: 100px; height: auto; border-radius: 18px; box-shadow: 0 0px 0px rgba(0,0,0,0.1);">
+                </div>
+
+                <div class="welcome-text">
+                    welcome to,<br>spincycle laundry
+                </div>
+            </div>
+
+            <form id="formLogin" class="form-section">
+                <div class="mid-text">
+                    <h2>Langsung Login kan</h2>
+                    <p>Lengkapi data dirimu dulu ya</p>
+                </div>
+
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        id="username" 
+                        placeholder="Username" 
+                        autocomplete="username"
+                        minlength="3"
+                        maxlength="30"
+                        required
+                    >
+                </div>
+
+                <div class="input-group">
+                    <input 
+                        type="password" 
+                        id="password" 
+                        placeholder="Password" 
+                        autocomplete="current-password"
+                        minlength="6"
+                        maxlength="72"
+                        required
+                    >
+                    <i class="fas fa-eye toggle-password" id="btnTogglePassword"></i>
+                </div>
+
+                <button type="submit" class="btn-submit" id="btnMasuk">Masuk</button>
+
+                <div class="extra-links">
+                    <label>
+                        <input type="checkbox" id="rememberMe"> Remember Me
+                    </label>
+                </div>
+            </form>
+
+        </div>
+    </div>
+
+<script>
+    const API_LOGIN_URL = `${window.LAUNDRY_API_BASE}/karyawan/login`;
+
+    const formLogin = document.getElementById('formLogin');
+    const inputUsername = document.getElementById('username');
+    const inputPassword = document.getElementById('password');
+    const rememberMe = document.getElementById('rememberMe');
+    const btnSubmit = document.getElementById('btnMasuk');
+    const btnTogglePassword = document.getElementById('btnTogglePassword');
+
+    window.addEventListener('load', function () {
+        const savedUsername = localStorage.getItem('remember_username');
+
+        if (savedUsername) {
+            inputUsername.value = savedUsername;
+            rememberMe.checked = true;
+        }
+    });
+
+    btnTogglePassword.addEventListener('click', function () {
+        const typeCurrent = inputPassword.getAttribute('type');
+        
+        if (typeCurrent === 'password') {
+            inputPassword.setAttribute('type', 'text');
+            this.classList.remove('fa-eye');
+            this.classList.add('fa-eye-slash');
+        } else {
+            inputPassword.setAttribute('type', 'password');
+            this.classList.remove('fa-eye-slash');
+            this.classList.add('fa-eye');
+        }
+    });
+
+    function bersihkanUsername(value) {
+        return String(value || '')
+            .replace(/[^A-Za-z0-9_]/g, '')
+            .trim();
+    }
+
+    function ambilUserDariResponse(result) {
+        if (!result || typeof result !== 'object') {
+            return null;
+        }
+
+        return result.data || result.user || result.karyawan || result.result || result;
+    }
+
+    function ambilNamaUser(user, fallbackUsername) {
+        return user.nama || user.name || user.fullname || user.username || fallbackUsername;
+    }
+
+    function ambilRoleUser(user) {
+        return user.role || user.jabatan || user.hak_akses || user.level || 'Karyawan';
+    }
+
+    function ambilTokenLogin(result, user) {
+        return result.token || result.accessToken || user.token || user.jwt || '';
+    }
+
+    inputUsername.addEventListener('input', function () {
+        this.value = bersihkanUsername(this.value);
+    });
+
+    formLogin.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const teksAsli = btnSubmit.innerText;
+
+        const username = bersihkanUsername(inputUsername.value);
+        const password = inputPassword.value;
+
+        inputUsername.value = username;
+
+        if (!username || !password) {
+            alert('Username dan password wajib diisi!');
+            return;
+        }
+
+        if (username.length < 3) {
+            alert('Username minimal 3 karakter!');
+            return;
+        }
+
+        if (password.length < 6) {
+            alert('Password minimal 6 karakter!');
+            return;
+        }
+
+        btnSubmit.innerText = "Memeriksa data...";
+        btnSubmit.disabled = true;
+
+        try {
+            const response = await fetch(API_LOGIN_URL, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            });
+
+            const text = await response.text();
+
+            let result = {};
+
+            try {
+                result = text ? JSON.parse(text) : {};
+            } catch (error) {
+                console.error('Response bukan JSON:', text);
+                alert('Server tidak mengembalikan JSON. Cek backend Railway.');
+                return;
+            }
+
+            console.log('LOGIN RESPONSE:', result);
+
+            if (!response.ok) {
+                alert(result.message || result.pesan || result.error || 'Login gagal. Periksa username dan password.');
+                return;
+            }
+
+            const user = ambilUserDariResponse(result);
+
+            if (!user || typeof user !== 'object') {
+                console.error('Data user tidak ditemukan:', result);
+                alert('Response login tidak valid. Data user tidak ditemukan.');
+                return;
+            }
+
+            const nama = ambilNamaUser(user, username);
+            const role = ambilRoleUser(user);
+            const token = ambilTokenLogin(result, user);
+
+            if (!token) {
+                alert('Login berhasil, tetapi token autentikasi tidak ditemukan dari server.');
+                return;
+            }
+
+            localStorage.setItem('id_kasir', user.id || '');
+            localStorage.setItem('nama_kasir', nama);
+            localStorage.setItem('username_kasir', user.username || username);
+            localStorage.setItem('role_kasir', role);
+            localStorage.setItem('auth_token', token);
+            localStorage.setItem('laundry_token', token);
+
+            if (rememberMe.checked) {
+                localStorage.setItem('remember_username', username);
+            } else {
+                localStorage.removeItem('remember_username');
+            }
+
+            window.location.href = 'dashboard.html';
+        } catch (error) {
+            console.error('Error login:', error);
+            alert("Gagal terhubung ke server. Pastikan internet lancar.");
+        } finally {
+            btnSubmit.innerText = teksAsli;
+            btnSubmit.disabled = false;
+        }
+    });
+</script>
+</body>
+</html>

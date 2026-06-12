@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spincycle - Ringkasan Pesanan</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --dark-blue: #15428f;
+      --light-blue: #9bb8ea;
+      --badge-blue: #88b0e6;
+      --bg-card: #e2e4e5;
+      --text-main: #333333;
+      --text-sub: #666666;
+      --success: #10b981;
+      --warning: #d97706;
+      --bg-page: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden; /* Mencegah layar utama bergeser */
+      background-color: #e0eafc; /* Warna background utama */
+    }
+
+    .mobile-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 0; /* Menghilangkan sudut melengkung */
+      border: none; /* Menghilangkan bingkai hitam */
+      box-shadow: none; /* Menghilangkan bayangan */
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #ffffff 0%, #e6f0fa 100%);
+    }
+
+    .header {
+      padding: 25px 20px 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header i {
+      font-size: 18px;
+      color: var(--dark-blue);
+      cursor: pointer;
+    }
+
+    .header h2 {
+      font-size: 18px;
+      color: var(--dark-blue);
+      font-weight: 700;
+    }
+
+    .header .spacer {
+      width: 18px;
+    }
+
+    .progress-container {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .progress-step {
+      width: 40px;
+      height: 6px;
+      background-color: #dfdfdf;
+      border-radius: 5px;
+    }
+
+    .progress-step.active {
+      background-color: var(--badge-blue);
+    }
+
+    .scrollable-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 20px 100px;
+    }
+
+    .scrollable-content::-webkit-scrollbar {
+      display: none;
+    }
+
+    .customer-card,
+    .order-list,
+    .info-card {
+      background-color: #ffffff;
+      border-radius: 15px;
+      padding: 15px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+      margin-bottom: 15px;
+    }
+
+    .customer-card {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .customer-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: var(--light-blue);
+      color: var(--dark-blue);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: 700;
+      font-size: 18px;
+    }
+
+    .customer-info h3 {
+      font-size: 15px;
+      color: var(--dark-blue);
+      margin-bottom: 4px;
+    }
+
+    .customer-info p {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .section-title {
+      font-size: 13px;
+      color: var(--dark-blue);
+      font-weight: 700;
+      margin: 10px 0;
+      text-transform: uppercase;
+    }
+
+    .date-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      gap: 10px;
+    }
+
+    .date-badge {
+      flex: 1;
+      display: inline-block;
+      background: #f0f4f8;
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--dark-blue);
+      text-align: center;
+      line-height: 1.4;
+    }
+
+    .date-badge.complete {
+      background: #e6f4ea;
+      color: #0d652d;
+    }
+
+    .order-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #eee;
+      margin-bottom: 10px;
+    }
+
+    .order-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .item-detail h4 {
+      font-size: 13px;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .item-detail p {
+      font-size: 11px;
+      color: var(--text-sub);
+    }
+
+    .item-price {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--dark-blue);
+    }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+      border-bottom: 1px dashed #eee;
+      padding-bottom: 12px;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .note-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .info-label {
+      font-size: 11px;
+      color: var(--text-sub);
+      margin-bottom: 4px;
+    }
+
+    .info-value {
+      font-size: 13px;
+      color: var(--text-main);
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .note-row .info-value {
+      font-weight: 400;
+      font-style: italic;
+      color: var(--warning);
+      text-align: left;
+    }
+
+    .total-section {
+      background-color: var(--dark-blue);
+      border-radius: 15px;
+      padding: 20px;
+      color: #ffffff;
+      margin-bottom: 20px;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .total-row.grand-total {
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      opacity: 1;
+      color: var(--success);
+    }
+
+    .floating-action {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #ffffff;
+      padding: 20px;
+      border-top: 1px solid #eee;
+      z-index: 10;
+    }
+
+    .btn-lanjut {
+      width: 100%;
+      background-color: var(--dark-blue);
+      color: #ffffff;
+      border: none;
+      padding: 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(21, 66, 143, 0.2);
+      transition: transform 0.2s ease;
+    }
+
+    .btn-lanjut:active {
+      transform: scale(0.98);
+    }
+  </style>
+  <script src="config.js"></script>
+  <script src="app-ui.js"></script>
+  <script src="access-guard.js"></script>
+  <link rel="stylesheet" href="mobile-fit.css">
+</head>
+<body>
+  <div class="mobile-screen">
+    <div class="header">
+      <i class="fas fa-arrow-left" onclick="window.history.back()"></i>
+      <h2>Ringkasan Pesanan</h2>
+      <div class="spacer"></div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-step"></div>
+      <div class="progress-step active"></div>
+      <div class="progress-step"></div>
+    </div>
+
+    <div class="scrollable-content">
+      <div class="customer-card">
+        <div class="customer-avatar" id="cust-initial">C</div>
+        <div class="customer-info">
+          <h3 id="cust-name">Memuat Data...</h3>
+          <p id="cust-phone">Nomor HP</p>
+        </div>
+      </div>
+
+      <div class="date-row">
+        <div class="date-badge">
+          Masuk:<br><span id="tgl-masuk">...</span>
+        </div>
+        <div class="date-badge complete">
+          Selesai:<br><span id="tgl-selesai">...</span>
+        </div>
+      </div>
+
+      <div class="section-title">Detail Cucian & Item</div>
+
+      <div class="order-list" id="order-container"></div>
+
+      <div class="info-card">
+        <div class="info-row">
+          <div>
+            <div class="info-label">Paket Kecepatan</div>
+            <div class="info-value" id="paket-nama">Memuat...</div>
+          </div>
+        </div>
+
+        <div class="info-row">
+          <div>
+            <div class="info-label">Pengiriman</div>
+            <div class="info-value">Pelanggan Ambil Sendiri</div>
+          </div>
+        </div>
+
+        <div class="info-row note-row">
+          <div class="info-label">Catatan Tambahan</div>
+          <div class="info-value" id="pesanan-catatan">Tidak ada catatan.</div>
+        </div>
+      </div>
+
+      <div class="total-section">
+        <div class="total-row">
+          <span>Biaya Layanan Dasar</span>
+          <span id="biaya-dasar">Rp 0</span>
+        </div>
+        <div class="total-row">
+          <span id="label-kecepatan">Biaya Kecepatan</span>
+          <span id="biaya-kecepatan">Rp 0</span>
+        </div>
+        <div class="total-row grand-total">
+          <span>Total Tagihan</span>
+          <span id="grandtotal-val">Rp 0</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="floating-action">
+      <button class="btn-lanjut" id="btn-simpan" type="button" onclick="simpanPesananKeDB()">
+        <i class="fas fa-save"></i> Simpan Pesanan (Belum Lunas)
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const keranjangLokalKey = 'trx_keranjang';
+    const transaksiKeysPrefix = 'trx_';
+
+    window.addEventListener('DOMContentLoaded', initRingkasan);
+
+    function initRingkasan() {
+      const dataOrderRaw = localStorage.getItem(keranjangLokalKey);
+
+      if (!dataOrderRaw) {
+        alert('Data pesanan kosong! Kembali ke transaksi.');
+        window.location.href = 'transaksi_baru.html';
+        return;
+      }
+
+      const keranjangLokal = JSON.parse(dataOrderRaw);
+      const namaLengkap = localStorage.getItem('trx_pelanggan_nama') || 'Pelanggan';
+      const multiplier = parseFloat(localStorage.getItem('trx_multiplier')) || 1;
+      const estimasiJam = parseInt(localStorage.getItem('trx_estimasi_jam'), 10) || 24;
+      const namaKecepatan = localStorage.getItem('trx_kecepatan_nama') || 'Reguler';
+      const catatan = localStorage.getItem('trx_catatan') || 'Tidak ada catatan';
+
+      renderPelanggan(namaLengkap);
+      renderPesanan(keranjangLokal);
+      renderPaket(namaKecepatan, catatan);
+      renderTanggal(estimasiJam);
+      renderTotal(keranjangLokal, multiplier, namaKecepatan);
+
+      localStorage.setItem('trx_total_tagihan', hitungGrandTotal(keranjangLokal, multiplier));
+    }
+
+    function renderPelanggan(namaLengkap) {
+      const namaSaja = namaLengkap.split(' (')[0].trim();
+      const noHpMatch = namaLengkap.match(/\(([^)]+)\)/);
+
+      document.getElementById('cust-name').textContent = namaSaja;
+      document.getElementById('cust-phone').textContent = noHpMatch ? noHpMatch[1] : '-';
+      document.getElementById('cust-initial').textContent = namaSaja.charAt(0).toUpperCase();
+    }
+
+    function renderPesanan(keranjangLokal) {
+      const formatter = new Intl.NumberFormat('id-ID');
+      const orderContainer = document.getElementById('order-container');
+
+      orderContainer.innerHTML = keranjangLokal
+        .map(item => {
+          const subItem = item.price * item.qty;
+          return `
+            <div class="order-item">
+              <div class="item-detail">
+                <h4>${item.service_name}</h4>
+                <p>${item.qty} ${item.unit} x Rp ${formatter.format(item.price)}</p>
+              </div>
+              <div class="item-price">Rp ${formatter.format(subItem)}</div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    function renderPaket(namaKecepatan, catatan) {
+      document.getElementById('paket-nama').textContent = namaKecepatan;
+      document.getElementById('pesanan-catatan').textContent = catatan;
+    }
+
+    function renderTanggal(estimasiJam) {
+      const tglMasuk = new Date();
+      const tglSelesai = new Date(tglMasuk.getTime() + estimasiJam * 60 * 60 * 1000);
+
+      document.getElementById('tgl-masuk').innerHTML = formatWaktuHTML(tglMasuk);
+      document.getElementById('tgl-selesai').innerHTML = formatWaktuHTML(tglSelesai);
+    }
+
+    function renderTotal(keranjangLokal, multiplier, namaKecepatan) {
+      const formatter = new Intl.NumberFormat('id-ID');
+      const baseSubtotal = hitungSubtotal(keranjangLokal);
+      const biayaKecepatan = baseSubtotal * (multiplier - 1);
+      const grandTotal = baseSubtotal + biayaKecepatan;
+
+      document.getElementById('label-kecepatan').textContent = `Layanan ${namaKecepatan.split(' (')[0]}`;
+      document.getElementById('biaya-dasar').textContent = `Rp ${formatter.format(baseSubtotal)}`;
+      document.getElementById('biaya-kecepatan').textContent = `Rp ${formatter.format(biayaKecepatan)}`;
+      document.getElementById('grandtotal-val').textContent = `Rp ${formatter.format(grandTotal)}`;
+    }
+
+    function hitungSubtotal(keranjangLokal) {
+      return keranjangLokal.reduce((total, item) => total + item.price * item.qty, 0);
+    }
+
+    function hitungGrandTotal(keranjangLokal, multiplier) {
+      return hitungSubtotal(keranjangLokal) * multiplier;
+    }
+
+    function formatWaktuHTML(date) {
+      const opsiTanggal = { day: 'numeric', month: 'short', year: 'numeric' };
+      const tgl = date.toLocaleDateString('id-ID', opsiTanggal);
+      const jam = date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+      return `${tgl}<br><span style="color:#666; font-size:10px; display:inline-block; margin-top:2px;">Jam ${jam} WIB</span>`;
+    }
+
+    async function simpanPesananKeDB() {
+      const btnSimpan = document.getElementById('btn-simpan');
+      const originalText = btnSimpan.innerHTML;
+
+      btnSimpan.disabled = true;
+      btnSimpan.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...';
+
+      const pelangganId = localStorage.getItem('trx_pelanggan_id');
+      const paketId = localStorage.getItem('trx_kecepatan_val');
+      const totalHarga = localStorage.getItem('trx_total_tagihan');
+      const keranjangData = JSON.parse(localStorage.getItem('trx_keranjang') || '[]');
+      const itemPertama = keranjangData[0] || {};
+      const items = keranjangData
+        .filter((item) => Number(item.qty) > 0)
+        .map((item) => ({
+          layanan_id: parseInt(item.id || item.layanan_id, 10),
+          qty: parseFloat(item.qty)
+        }));
+
+      const payload = {
+        pelanggan_id: pelangganId ? parseInt(pelangganId) : null,
+        paket_id: paketId ? parseInt(paketId) : null, 
+        berat: itemPertama.qty ? parseFloat(itemPertama.qty) : 1,
+        metode_pengambilan: 'ambil_sendiri',
+        jarak_km: 0,
+        total_harga: totalHarga ? parseInt(totalHarga) : null,
+        layanan_id: itemPertama.id ? parseInt(itemPertama.id) : null,
+        catatan: localStorage.getItem('trx_catatan') || '',
+        items
+      };
+
+      if (!payload.pelanggan_id || !payload.paket_id || !payload.total_harga || payload.items.length === 0) {
+          alert(`Gagal memproses! Data transaksi di penampungan browser Anda tidak lengkap.\n\nSilakan kembali ke halaman "Transaksi Baru", lakukan Hard Refresh (Ctrl + F5), lalu ulangi pembuatan pesanan.`);
+          btnSimpan.disabled = false;
+          btnSimpan.innerHTML = originalText;
+          return;
+      }
+
+      try {
+        const response = await fetch(`${window.LAUNDRY_API_BASE}/pesanan`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Terjadi kesalahan sistem');
+        }
+
+        alert(`Pesanan berhasil disimpan!\nNomor Nota: ORD-${result.nota_id}\n\nSilakan lanjutkan ke Daftar Pesanan.`);
+        hapusLocalStorageTransaksi();
+        window.location.href = 'list_order.html';
+      } catch (error) {
+        alert(`Gagal menyimpan pesanan: ${error.message}`);
+        btnSimpan.disabled = false;
+        btnSimpan.innerHTML = originalText;
+      }
+    }
+
+    function hapusLocalStorageTransaksi() {
+      Object.keys(localStorage)
+        .filter(key => key.startsWith(transaksiKeysPrefix))
+        .forEach(key => localStorage.removeItem(key));
+    }
+  </script>
+</body>
+</html>
